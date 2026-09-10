@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_chip_prioridad.xml  →  res/drawable/
+    Fondo redondeado para el chip de prioridad.
+    El color se cambia dinámicamente desde el Adapter según el valor:
+        Alta   → #D32F2F  (rojo)
+        Media  → #F57C00  (naranja)
+        Baja   → #388E3C  (verde)
+    Este drawable solo define la forma; el color se aplica con
+    setBackgroundTintList() o con setBackgroundColor() en el Adapter.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <solid android:color="#757575" />   <!-- color base / fallback -->
+</shape>

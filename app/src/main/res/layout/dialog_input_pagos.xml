@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btnback"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/delete"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registrar Pago"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/black" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Codpago:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/txtcodpago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Codpago"
+            android:textSize="17sp"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Venta N°:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/txtidfv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Venta N°"
+            android:textSize="17sp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Saldo Anterior:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/txtsaldoant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+
+            android:enabled="false"
+            android:inputType="number"
+            tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Valor Pagado:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/txtvalor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck,VisualLintBounds" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Saldo Actual:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/txtsaldoact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:enabled="false"
+            android:inputType="number"
+            tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck,VisualLintTextFieldSize" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Próximo Cobro:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/txtfechacobro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:inputType="date"
+            android:clickable="true"
+            android:focusable="false"
+            tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TextFields,TouchTargetSizeCheck,VisualLintTextFieldSize" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Referencia:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <Spinner
+            android:id="@+id/spnref"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:entries="@array/options_refpago"
+            tools:ignore="TouchTargetSizeCheck" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/black" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btnborrar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/refresh"
+            tools:ignore="SpeakableTextPresentCheck" />
+        <ImageButton
+            android:id="@+id/btnfecha"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/fecha"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="SpeakableTextPresentCheck"/>
+        <ImageButton
+            android:id="@+id/btnpago"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/aceptar"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btnback"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/delete"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar Vendedor"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/black" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Vendedor"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <Spinner
+            android:id="@+id/spnvd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:entries="@array/options_refpago"
+            tools:ignore="TouchTargetSizeCheck" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/black" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btaceptar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/aceptar"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            tools:ignore="SpeakableTextPresentCheck"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/nav_editarcliente"
+    android:orientation="vertical"
+    tools:context=".EditarClienteFragment">
+
+    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/titulo4"
+    android:gravity="center"
+    android:textSize="20sp"
+    android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/lblidcl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lblidcl1"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtcliente"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtcliente"
+        android:inputType="text"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/txtid"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtid"
+        android:inputType="number"
+        android:maxLength="10"
+        android:textColorHint="#546E7A"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtcelular"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcelular"
+        android:inputType="number"
+        android:maxLength="10"
+        android:textColorHint="#546E7A"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtdir"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtdir"
+        android:inputType="text"
+        android:textColorHint="#546E7A"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/txtcodeudor"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtcodeudor"
+        android:inputType="text"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/txtcelcodeudor"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcelcodeudor"
+        android:inputType="number"
+        android:textColorHint="#546E7A"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtobservacion"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:elegantTextHeight="true"
+        android:hint="@string/txtobservacion"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:gravity="top|start"
+        android:scrollbars="vertical"
+        android:overScrollMode="always"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/bteditar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="51dp"
+        android:background="@null"
+        android:contentDescription="@string/lbleditar"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/actualizarcliente" />
+
+    <ImageButton
+        android:id="@+id/bteliminar"
+        android:layout_width="53dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="98dp"
+        android:background="@null"
+        android:contentDescription="@string/lbleliminar"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/eliminarcliente" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

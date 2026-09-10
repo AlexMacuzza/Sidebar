@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="5dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="?attr/colorSurface">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+        <!-- Fila superior: Descripción + Chip Prioridad -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <!-- Ícono de tarea -->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/addevent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Tarea" />
+            <!-- Descripción -->
+            <TextView
+                android:id="@+id/txtdescagenda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="Descripción de la tarea" />
+            <!-- Chip de Prioridad -->
+            <TextView
+                android:id="@+id/txtprioridadagenda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:background="@drawable/bg_chip_prioridad"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:text="Alta" />
+        </LinearLayout>
+        <!-- Separador sutil -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Fila inferior: Fecha + ID (oculto) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Ícono calendario -->
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="6dp"
+                android:src="@android:drawable/ic_menu_my_calendar"
+                android:scaleType="centerCrop"
+                android:contentDescription="Fecha" />
+
+            <!-- Fecha -->
+            <TextView
+                android:id="@+id/txtfechaagenda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:text="2026-01-01" />
+
+            <!-- ID oculto (uso interno del adapter/click listener) -->
+            <TextView
+                android:id="@+id/txtidagenda"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                android:text="0" />
+            <ImageButton
+                android:id="@+id/bteliminar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="118dp"
+                android:background="@null"
+                android:contentDescription="Eliminar"
+                android:gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/eliminar" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

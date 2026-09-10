@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/nav_buscar_clientes"
+    android:orientation="vertical"
+    tools:context=".BuscarClientesFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".BuscarClientesFragment">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo2"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        <EditText
+            android:id="@+id/txtid"
+            android:layout_width="150dp"
+            android:layout_height="48dp"
+            android:autofillHints="phone"
+            android:hint="@string/txtid"
+            android:maxLength="10"
+            android:inputType="number" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+
+        <TextView
+            android:id="@+id/lblcliente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/lblcelular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/btbuscar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Buscar"
+        android:textColor="#000000"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        tools:ignore="HardcodedText,VisualLintButtonSize" />
+    </RelativeLayout>

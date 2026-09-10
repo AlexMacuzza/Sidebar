@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_inicio1"
+            android:icon="@drawable/inicio"
+            android:title="@string/inicio" />
+
+        <item
+            android:id="@+id/nav_agenda"
+            android:icon="@drawable/agenda"
+            android:title="Agenda"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/nav_consulta_lista_clientes_imagen"
+            android:icon="@drawable/clientes"
+            android:title="@string/clientes"/>
+        <item
+            android:id="@+id/nav_cobradores"
+            android:icon="@drawable/cobradores"
+            android:title="@string/menu_cobradores"/>
+        <item
+            android:id="@+id/nav_consulta_compras"
+            android:icon="@drawable/compras"
+            android:title="Compras"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/nav_consulta_ventas"
+            android:icon="@drawable/aceptar"
+            android:title="Consultar Ventas"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/nav_inventario"
+            android:icon="@drawable/logoapp"
+            android:title="@string/menu_inventario"/>
+        <item
+            android:id="@+id/nav_mercancia"
+            android:icon="@drawable/mercancia"
+            android:title="@string/menu_mercancia"
+            app:iconTint="@null" />
+        <item
+            android:id="@+id/nav_ventas"
+            android:icon="@drawable/nuevaventa"
+            android:title="Nueva Venta"/>
+        <item
+            android:id="@+id/nav_pagos"
+            android:icon="@drawable/pesos"
+            android:title="@string/pagos"
+            app:iconTint="@null"
+            app:itemIconTint="@null"/>
+        <item
+            android:id="@+id/nav_proveedores"
+            android:icon="@drawable/proveedores"
+            android:title="Proveedores"
+            app:iconTint="@null"
+            app:itemIconTint="@null"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/nav_usuarios"
+            android:icon="@drawable/users"
+            android:title="@string/menu_usuarios"/>
+        <item
+            android:id="@+id/nav_vendedores"
+            android:icon="@drawable/vendedores"
+            android:title="@string/menu_vendedores"/>
+    </group>
+    <item
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/nav_salir"
+                android:icon="@drawable/config"
+                android:title="Acerca de..."
+                tools:ignore="HardcodedText" />
+        </menu>
+    </item>
+</menu>

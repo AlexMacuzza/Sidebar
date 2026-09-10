@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_nuevo_vendedor"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".NuevoVendedorFragment">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/titulo15"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    <EditText
+        android:id="@+id/txtvendedor"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtvendedor"
+        android:inputType="text"
+        tools:ignore="Autofill" />
+    <EditText
+        android:id="@+id/txtcedvd"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtid"
+        android:maxLength="10"
+        android:inputType="number"
+        tools:ignore="Autofill" />
+    <EditText
+        android:id="@+id/txtcelvd"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcelular"
+        android:maxLength="10"
+        android:inputType="number"
+        tools:ignore="Autofill" />
+    <EditText
+        android:id="@+id/txtdirvd"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtdir"
+        android:inputType="text"
+        tools:ignore="Autofill" />
+    <ImageButton
+        android:id="@+id/btregistrar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="51dp"
+        android:background="@null"
+        android:gravity="center"
+        android:contentDescription="@string/lbleditar"
+        android:scaleType="centerCrop"
+        android:src="@drawable/aceptar"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</LinearLayout>

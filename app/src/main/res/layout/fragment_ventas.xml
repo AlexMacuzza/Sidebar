@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_ventas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".VentasFragment">
+    <LinearLayout
+        android:id="@+id/layoutdatos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+        <TextView
+            android:id="@+id/lblvd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblvd1"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/teal_700" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cliente"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btbcliente"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@null"
+                android:gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/buscarcliente"/>
+            <ImageButton
+                android:id="@+id/btncliente"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@null"
+                android:gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/nuevocliente"/>
+            <TextView
+                android:id="@+id/txtidcl"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:hint="Id"
+                android:enabled="false"
+                android:textSize="17sp"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txtcliente"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:hint="Nombre"
+                android:enabled="false"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/teal_700" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@null"
+                android:gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/fondot"
+                tools:ignore="SpeakableTextPresentCheck" />
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo21"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+            <ImageButton
+                android:id="@+id/btnmercancia"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@null"
+                android:gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/buscarmercancia" />
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/idRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scrollbars="vertical" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/teal_700" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Subtotales"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:text="       Total         " />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="   Valor Pagado    " />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="     Saldo    " />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/txtventat"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:enabled="false"
+                android:imeOptions="actionDone"
+                android:maxLength="10" />
+            <EditText
+                android:id="@+id/txtvpagado"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="10"
+                android:imeOptions="actionDone"
+                android:textColorHint="#546E7A"
+                tools:ignore="Autofill" />
+
+            <EditText
+                android:id="@+id/txtsaldo"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:inputType="number"
+                android:maxLength="10"
+                android:textColorHint="#546E7A"
+                tools:ignore="Autofill,SpeakableTextPresentCheck" />
+            <ImageButton
+                android:id="@+id/btnborrar"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@null"
+                android:gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/delete"
+                tools:ignore="TouchTargetSizeCheck" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/teal_700" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cuotas y Fechas de Cobro"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text=" Forma de Pago       " />
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text=" Valor Cuota        "
+                android:textSize="15sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="   Cuotas            " />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width  = "match_parent"
+            android:layout_height = "wrap_content"
+            android:orientation   = "horizontal">
+            <!--Forma de pago-->
+            <Spinner
+                android:id="@+id/spnrfpago"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/options_fpago"
+                tools:ignore="TouchTargetSizeCheck" />
+            <EditText
+                android:id="@+id/txtctanormal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="10"
+                android:imeOptions="actionDone"/>
+            <!--# de Cuotas -->
+            <EditText
+                android:id="@+id/txtnctas"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:enabled="false" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text=" Vencimiento     " />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text= "   Fecha de Cobro    " />
+            <TextView
+                android:id="@+id/lblobs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text= "   Observaciones    "
+                android:visibility="gone"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <!-- Fecha vencimiento-->
+            <EditText
+                android:id="@+id/txtfechav"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:inputType="text"
+                android:enabled="false"/>
+            <!-- Calendario Fecha de cobro -->
+            <EditText
+                android:id="@+id/txtfechacobro"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:focusable="false" />
+            <EditText
+                android:id="@+id/txtobs"
+                android:layout_width="150dp"
+                android:layout_height="48dp"
+                android:inputType="text"
+                android:focusable="true"
+                android:imeOptions="actionDone"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/teal_700" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btregistrarv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/aceptar"/>
+    </LinearLayout>
+</LinearLayout>

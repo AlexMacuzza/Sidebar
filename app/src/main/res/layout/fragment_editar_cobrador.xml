@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_editar_cobrador"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EditarCobradorFragment">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/titulo9"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/lblidcob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lblidcob"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtcobrador"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtcobrador"
+        android:inputType="text"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/txtcedcob"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtid"
+        android:inputType="number"
+        android:maxLength="10"
+        android:textColorHint="#546E7A"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtcelcob"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcelular"
+        android:inputType="number"
+        android:maxLength="10"
+        android:textColorHint="#546E7A"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtdircob"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtdir"
+        android:inputType="text"
+        android:textColorHint="#546E7A"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/bteditar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="51dp"
+            android:background="@null"
+            android:gravity="center"
+            android:contentDescription="@string/lbleditar"
+            android:scaleType="centerCrop"
+            android:src="@drawable/aceptar" />
+        <ImageButton
+            android:id="@+id/bteliminar"
+            android:layout_width="53dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="98dp"
+            android:background="@null"
+            android:contentDescription="@string/lbleliminar"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/eliminar" />
+    </RelativeLayout>
+
+</LinearLayout>

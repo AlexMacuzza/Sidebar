@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_nuevo_usuario"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".NuevoUsuarioFragment">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/titulo17"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    <EditText
+        android:id="@+id/txtuser"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtuser"
+        android:inputType="textEmailAddress"
+        tools:ignore="Autofill" />
+    <EditText
+        android:id="@+id/txtclave"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtclave"
+        android:maxLength="10"
+        android:inputType="numberPassword"
+        tools:ignore="Autofill" />
+    <EditText
+        android:id="@+id/txtcclave"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcclave"
+        android:maxLength="10"
+        android:inputType="numberPassword"
+        tools:ignore="Autofill" />
+    <TextView
+        android:id="@+id/lblperfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="@string/txtperfil" />
+    <Spinner
+        android:id="@+id/spnrperfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/options_perfiles" />
+    <EditText
+        android:id="@+id/txtpermisos"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtpermisos"
+        android:inputType="text"
+        android:text="@string/txtpermisos"
+        tools:ignore="Autofill"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/lblsuc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="@string/txtsuc" />
+    <EditText
+        android:id="@+id/txtsuc"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:enabled="false"
+        android:hint="@string/txtsuc"
+        android:inputType="text"
+        android:text="INPROASEO"
+        tools:ignore="Autofill" />
+    <ImageButton
+        android:id="@+id/btregistrar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="51dp"
+        android:background="@null"
+        android:gravity="center"
+        android:contentDescription="@string/lbleditar"
+        android:scaleType="centerCrop"
+        android:src="@drawable/aceptar"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</LinearLayout>

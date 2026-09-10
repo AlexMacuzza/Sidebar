@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nav_clientes_imagen"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ClientesImagenFragment">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/titulo1"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <EditText
+        android:id="@+id/txtid"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtid"
+        android:maxLength="10"
+        android:inputType="number"
+        android:imeOptions="actionNext"
+        tools:ignore="Autofill" />
+
+        <ImageButton
+            android:id="@+id/btbuscarcl"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/buscarcliente"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <EditText
+        android:id="@+id/lblcliente"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcliente"
+        android:inputType="text"
+        android:imeOptions="actionNext"
+        tools:ignore="Autofill" />
+    <ImageButton
+        android:id="@+id/btfotocl"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@null"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/camara"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/txtcelular"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcelular"
+        android:maxLength="10"
+        android:inputType="number"
+        android:imeOptions="actionNext"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtdir"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtdir"
+        android:inputType="text"
+        android:imeOptions="actionNext"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtcodeudor"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/txtcodeudor"
+        android:inputType="text"
+        android:imeOptions="actionNext"
+        tools:ignore="Autofill" />
+
+    <EditText
+        android:id="@+id/txtcelcodeudor"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:hint="@string/txtcelcodeudor"
+        android:inputType="number"
+        android:imeOptions="actionNext"
+        tools:ignore="Autofill" />
+    <EditText
+        android:id="@+id/txtobservacion"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:elegantTextHeight="true"
+        android:hint="@string/txtobservacion"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        tools:ignore="Autofill" />
+    <ImageView
+        android:id="@+id/imgFoto"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:src="@drawable/clientesfoto"
+        android:layout_gravity="center" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/teal_700" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btaceptar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/aceptar"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </LinearLayout>
+</LinearLayout>

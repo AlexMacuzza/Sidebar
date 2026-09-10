@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_inicio1"><!-- Fragmento de Principal-->
+ <fragment
+     android:id="@+id/nav_inicio1"
+     android:name="com.amcsoftware.sidebar.InicioFragment"
+     android:label="@string/titulo23"
+     android:layout="@layout/fragment_inicio"
+     tools:layout="@layout/fragment_inicio" />
+ <fragment
+     android:id="@+id/nav_agenda"
+     android:name="com.amcsoftware.sidebar.fragment_agenda"
+     android:label="Agenda"
+     android:layout="@layout/fragment_agenda"
+     tools:layout="@layout/fragment_agenda" >
+  <action
+      android:id="@+id/recargarConsultaT"
+      app:destination="@id/nav_agenda"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_clientes"
+     android:name="com.amcsoftware.sidebar.ClientesFragment"
+     android:label="@string/titulo13"
+     android:layout="@layout/fragment_clientes"
+     tools:layout="@layout/fragment_clientes"/>
+ <fragment
+     android:id="@+id/nav_cobradores"
+     android:name="com.amcsoftware.sidebar.CobradoresFragment"
+     android:label="@string/titulo10"
+     tools:layout="@layout/fragment_cobradores" >
+  <action
+      android:id="@+id/registrarCobrador"
+      app:destination="@id/nav_nuevo_cobrador"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+  <action
+      android:id="@+id/actualizarCobrador"
+      app:destination="@id/nav_editar_cobrador"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_consulta_compras"
+     android:name="com.amcsoftware.sidebar.ConsultaComprasFragment"
+     android:label="Compras"
+     tools:layout="@layout/fragment_consulta_compras">
+  <action
+      android:id="@+id/nuevaCompra"
+      app:destination="@id/nav_compras"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim"/>
+  <action
+      android:id="@+id/recargarConsultaC"
+      app:destination="@id/nav_consulta_compras"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim"/>
+ </fragment>
+ <fragment
+     android:id="@+id/nav_compras"
+     android:name="com.amcsoftware.sidebar.ComprasFragment"
+     android:label="Compras"
+     tools:layout="@layout/fragment_compras"/>
+ <fragment
+     android:id="@+id/nav_pagos"
+     android:name="com.amcsoftware.sidebar.PagosFragment"
+     android:label="@string/titulo24"
+     android:layout="@layout/fragment_pagos"
+     tools:layout="@layout/fragment_pagos" >
+  <action
+      android:id="@+id/recargarConsultaP"
+      app:destination="@+id/nav_pagos"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_proveedores"
+     android:name="com.amcsoftware.sidebar.ProveedoresFragment"
+     android:label="Proveedores"
+     android:layout="@layout/fragment_proveedores"
+     tools:layout="@layout/fragment_proveedores" />
+ <fragment
+     android:id="@+id/nav_usuarios"
+     android:name="com.amcsoftware.sidebar.UsuariosFragment"
+     android:label="@string/menu_usuarios"
+     android:layout="@layout/fragment_usuarios"
+     tools:layout="@layout/fragment_usuarios">
+  <action
+      android:id="@+id/registrarUsuario"
+      app:destination="@+id/nav_nuevo_usuario"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+  <action
+      android:id="@+id/actualizarUsuario"
+      app:destination="@+id/nav_editar_usuario"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_vendedores"
+     android:name="com.amcsoftware.sidebar.VendedoresFragment"
+     android:label="@string/menu_vendedores"
+     android:layout="@layout/fragment_vendedores"
+     tools:layout="@layout/fragment_vendedores">
+  <action
+      android:id="@+id/registrarVendedor"
+      app:destination="@id/nav_nuevo_vendedor"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+  <action
+      android:id="@+id/actualizarVendedor"
+      app:destination="@id/nav_editar_vendedor"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim"/>
+ </fragment>
+ <fragment
+     android:id="@+id/nav_nuevo_vendedor"
+     android:name="com.amcsoftware.sidebar.NuevoVendedorFragment"
+     android:label="@string/menu_vendedores"
+     android:layout="@layout/fragment_nuevo_vendedor"
+     tools:layout="@layout/fragment_nuevo_vendedor"/>
+ <fragment
+     android:id="@+id/nav_editar_vendedor"
+     android:name="com.amcsoftware.sidebar.EditarVendedorFragment"
+     android:label="@string/titulo12"
+     tools:layout="@layout/fragment_editar_vendedor" />
+ <fragment
+     android:id="@+id/nav_editarcliente"
+     android:name="com.amcsoftware.sidebar.EditarClienteFragment"
+     android:label="@string/titulo13"
+     tools:layout="@layout/fragment_editar_cliente" />
+ <fragment
+     android:id="@+id/nav_nueva_mercancia"
+     android:name="com.amcsoftware.sidebar.NuevaMercanciaFragment"
+     android:label="@string/titulo11"
+     tools:layout="@layout/fragment_nueva_mercancia" />
+ <fragment
+     android:id="@+id/nav_editar_mercancia"
+     android:name="com.amcsoftware.sidebar.EditarMercanciaFragment"
+     android:label="@string/titulo11"
+     tools:layout="@layout/fragment_editar_mercancia" />
+ <fragment
+     android:id="@+id/nav_nuevo_cobrador"
+     android:name="com.amcsoftware.sidebar.NuevoCobradorFragment"
+     android:label="@string/titulo10"
+     tools:layout="@layout/fragment_nuevo_cobrador" />
+ <fragment
+     android:id="@+id/nav_editar_cobrador"
+     android:name="com.amcsoftware.sidebar.EditarCobradorFragment"
+     android:label="@string/titulo10"
+     tools:layout="@layout/fragment_editar_cobrador" />
+ <fragment
+     android:id="@+id/nav_nuevo_usuario"
+     android:name="com.amcsoftware.sidebar.NuevoUsuarioFragment"
+     android:label="@string/menu_usuarios"
+     android:layout="@layout/fragment_nuevo_usuario"
+     tools:layout="@layout/fragment_nuevo_usuario"/>
+ <fragment
+     android:id="@+id/nav_editar_usuario"
+     android:name="com.amcsoftware.sidebar.EditarUsuarioFragment"
+     android:label="@string/menu_usuarios"
+     android:layout="@layout/fragment_editar_usuario"
+     tools:layout="@layout/fragment_editar_usuario"/>
+ <fragment
+     android:id="@+id/nav_ventas"
+     android:name="com.amcsoftware.sidebar.VentasFragment"
+     android:label="@string/titulo19"
+     android:layout="@layout/fragment_ventas"
+     tools:layout="@layout/fragment_ventas">
+  <action
+      android:id="@+id/actualizarVentas"
+      app:destination="@+id/nav_actventa"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+  <action
+      android:id="@+id/buscarCliente"
+      app:destination="@id/nav_buscar_clientes_ventas" />
+  <action
+      android:id="@+id/buscarMercancia"
+      app:destination="@id/nav_buscar_mercancias_ventas"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+  <action
+      android:id="@+id/nuevoClienteFotoV"
+      app:destination="@id/nav_clientes_imagen"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_buscar_clientes_ventas"
+     android:name="com.amcsoftware.sidebar.ClientesVentasFragment"
+     android:label="@string/menu_clientes"
+     android:layout="@layout/fragment_clientes_ventas"
+     tools:layout="@layout/fragment_clientes_ventas">
+  <action
+      android:id="@+id/nuevoClienteVentas"
+      app:destination="@id/nav_clientes"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_buscar_mercancias_ventas"
+     android:name="com.amcsoftware.sidebar.MercanciasVentasFragment"
+     android:label="@string/menu_mercancia"
+     android:layout="@layout/fragment_mercancias_ventas"
+     tools:layout="@layout/fragment_mercancias_ventas"/>
+ <fragment
+     android:id="@+id/nav_inventario"
+     android:name="com.amcsoftware.sidebar.InventarioFragment"
+     android:label="@string/titulo22"
+     tools:layout="@layout/fragment_inventario" />
+ <fragment
+     android:id="@+id/nav_consulta_ventas"
+     android:name="com.amcsoftware.sidebar.ConsultaVentasFragment"
+     android:label="@string/titulo19"
+     tools:layout="@layout/fragment_consulta_ventas" >
+  <action
+      android:id="@+id/recargarConsultaV"
+      app:destination="@id/nav_consulta_ventas"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_clientes_imagen"
+     android:name="com.amcsoftware.sidebar.ClientesImagenFragment"
+     android:label="Clientes"
+     tools:layout="@layout/fragment_clientes_imagen" />
+ <fragment
+     android:id="@+id/nav_editar_clientes_imagen"
+     android:name="com.amcsoftware.sidebar.EditarClienteImagenFragment"
+     android:label="Clientes"
+     tools:layout="@layout/fragment_editar_cliente_imagen" />
+ <fragment
+     android:id="@+id/nav_mercancia"
+     android:name="com.amcsoftware.sidebar.MercanciaFragment"
+     android:label="@string/titulo11"
+     android:layout="@layout/fragment_mercancia"
+     tools:layout="@layout/fragment_mercancia">
+  <action
+      android:id="@+id/actualizarMercancia"
+      app:destination="@id/nav_editar_mercancia"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+  <action
+      android:id="@+id/registrarMercancia"
+      app:destination="@id/nav_nueva_mercancia"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_consulta_lista_clientes_imagen"
+     android:name="com.amcsoftware.sidebar.ConsultaListaClientesImagenFragment"
+     android:label="Clientes"
+     tools:layout="@layout/fragment_consulta_lista_clientes_imagen" >
+  <action
+      android:id="@+id/recargarConsultaCl"
+      app:destination="@id/nav_consulta_lista_clientes_imagen"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+  <action
+      android:id="@+id/nuevoClienteFoto"
+      app:destination="@id/nav_clientes_imagen"
+      app:enterAnim="@anim/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_exit_anim" />
+  <action
+      android:id="@+id/editarClienteFoto"
+      app:destination="@id/nav_editar_clientes_imagen"
+      app:enterAnim="@animator/nav_default_enter_anim"
+      app:exitAnim="@anim/nav_default_enter_anim" />
+ </fragment>
+ <fragment
+     android:id="@+id/nav_salir"
+     android:name="com.amcsoftware.sidebar.SalirFragment"
+     android:label="Acerca de..."
+     android:layout="@layout/fragment_salir"
+     tools:layout="@layout/fragment_salir" />
+ <!-- Destino secundario: se llega desde nav_ventas, no desde el menú drawer -->
+ <fragment
+     android:id="@+id/nav_actventa"
+     android:name="com.amcsoftware.sidebar.ActualizarVentasFragment"
+     android:label="Actualizar Venta"
+     android:layout="@layout/fragment_actualizarventas"
+     tools:layout="@layout/fragment_actualizarventas" />
+</navigation>

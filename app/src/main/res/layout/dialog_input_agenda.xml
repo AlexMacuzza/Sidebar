@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <!-- Header: Título con botón de cerrar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btcerrar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/delete" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/new_task"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <!-- Separador -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginVertical="8dp"
+        android:background="?attr/colorOnSurface" />
+    <!-- Campo: Descripción -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/description"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/txtdesc"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:hint="@string/hint_description"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+    <!-- Campo: Fecha -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/date"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/txtfecha"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="@string/hint_date"
+            android:importantForAutofill="no"
+            android:inputType="date"
+            android:minHeight="48dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+    <!-- Campo: Prioridad -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/priority"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+        <Spinner
+            android:id="@+id/spnprt"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:entries="@array/options_prioridad"
+            android:minHeight="48dp" />
+    </LinearLayout>
+
+    <!-- Separador -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginVertical="8dp"
+        android:background="?attr/colorOnSurface" />
+
+    <!-- Botones de acción -->
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btlimpiar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/clear"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/refresh" />
+
+        <ImageButton
+            android:id="@+id/btguardar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/save"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/aceptar" />
+    </LinearLayout>
+</LinearLayout>

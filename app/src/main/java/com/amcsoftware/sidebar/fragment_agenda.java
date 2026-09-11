@@ -2,20 +2,15 @@ package com.amcsoftware.sidebar;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.icu.util.Calendar;
-import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -24,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amcsoftware.sidebar.Entidades.Agenda;
 import com.amcsoftware.sidebar.adapter.AgendaAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 
 // ── Volley ────────────────────────────────────────────────────────────────────
 import com.android.volley.Request;
@@ -50,7 +46,6 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
     private static final String URL_LISTA   = "https://www.wmcsoftware.net/apps/softpymes/listaAgenda.php";
 
     private RecyclerView recyclerView;
-    private ProgressBar progressBar;
 
     // ── Datos ─────────────────────────────────────────────────────────────────
     private AgendaAdapter adapter;
@@ -59,9 +54,9 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
     // ── Volley queue (una sola instancia por fragmento) ───────────────────────
     private RequestQueue requestQueue;
 
-    // ── Dialog ────────────────────────────────────────────────────────────────
-    private AlertDialog alertDialog;
-    private SweetAlertDialog dialogCargando;
+    // ── Dialogs ───────────────────────────────────────────────────────────────
+    private AlertDialog alertDialog;              // diálogo de entrada "nueva tarea"
+    private SweetAlertDialog dialogCargando;      // spinner SweetAlert
 
     SearchView searchView;
 
@@ -77,7 +72,6 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         ImageButton btntarea = vista.findViewById(R.id.btntarea);
         ImageButton btrefresh = vista.findViewById(R.id.btrefresh);
         recyclerView = vista.findViewById(R.id.idRecycler);
-        progressBar  = vista.findViewById(R.id.progressBar);
         searchView = vista.findViewById(R.id.txtbuscar);
 
         // Cola de Volley
@@ -90,61 +84,23 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
 
         // Búsqueda
         searchView.setOnQueryTextListener(this);
-        /*searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override public boolean onQueryTextSubmit(String q) { adapter.filtrado(q); return true; }
-            @Override public boolean onQueryTextChange(String q) { adapter.filtrado(q); return true; }
-        });*/
 
         btntarea.setOnClickListener(v -> mostrarDialogNuevaTarea());
         btrefresh.setOnClickListener(v -> {
-            if (hayConectividad()) {
+            if (AppUtils.hayConectividad(requireContext())) {
                 cargarTareas();
             } else {
-                alertSinInternet();
+                AppUtils.alertSinInternet(requireContext());
             }
         });
 
         // Carga inicial con verificación de red
-        if (hayConectividad()) {
+        if (AppUtils.hayConectividad(requireContext())) {
             cargarTareas();
         } else {
-            alertSinInternet();
+            AppUtils.alertSinInternet(requireContext());
         }
         return vista;
-    }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  CONECTIVIDAD
-    // ════════════════════════════════════════════════════════════════════════
-    /**
-     * Comprueba si el dispositivo tiene conexión activa a Internet.
-     * Usa NetworkCapabilities (API 23+), compatible con Android 6 en adelante.
-     */
-    private boolean hayConectividad() {
-        ConnectivityManager cm = (ConnectivityManager)
-                requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) return false;
-
-        android.net.Network red = cm.getActiveNetwork();
-        if (red == null) return false;
-
-        NetworkCapabilities caps = cm.getNetworkCapabilities(red);
-        return caps != null && (
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)     ||
-                        caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                        caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-        );
-    }
-
-    /** SweetAlert específico para ausencia de internet */
-    private void alertSinInternet() {
-        if (getContext() == null) return;
-        new SweetAlertDialog(requireContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Sin conexión")
-                .setContentText("Verifica tu conexión a Internet e intenta de nuevo.")
-                .setConfirmText("Entendido")
-                .setConfirmClickListener(SweetAlertDialog::dismissWithAnimation)
-                .show();
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -156,8 +112,6 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         builder.setTitle("");
         View viewInflada = LayoutInflater.from(getContext())
                 .inflate(R.layout.dialog_input_agenda, null);
-        /*View viewInflada = LayoutInflater.from(getContext())
-                .inflate(R.layout.dialog_input_agenda, null);*/
 
         final EditText    desc      = viewInflada.findViewById(R.id.txtdesc);
         final EditText    fecha     = viewInflada.findViewById(R.id.txtfecha);
@@ -190,16 +144,15 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
                     ? cmbpr.getSelectedItem().toString() : "";
 
             if (sDesc.isEmpty() || sFecha.isEmpty() || sPrioridad.isEmpty()) {
-                alertAdvertencia();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                        "Completa todos los campos antes de guardar.");
                 return;
-
             }
             // Verificar conectividad antes del POST
-            if (!hayConectividad()) {
-                alertSinInternet();
+            if (!AppUtils.hayConectividad(requireContext())) {
+                AppUtils.alertSinInternet(requireContext());
                 return;
             }
-            //dialogTarea.dismissWithAnimation();
             guardarTarea(sDesc, sFecha, sPrioridad);
             alertDialog.dismiss();
         });
@@ -207,7 +160,6 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         builder.setView(viewInflada);
         alertDialog = builder.create();
         alertDialog.show();
-        //dialogTarea.show();
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -215,13 +167,11 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
     // ════════════════════════════════════════════════════════════════════════
     private void guardarTarea(String descripcion, String fecha, String prioridad) {
         mostrarCargando("Guardando...");
-        //mostrarProgress(true);
         // StringRequest permite enviar parámetros POST clásicos (application/x-www-form-urlencoded)
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 URL_GUARDAR,
                 response -> {
-                    //mostrarProgress(false);
                     cerrarCargando();
                     try {
                         JSONObject resp    = new JSONObject(response);
@@ -232,22 +182,19 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
                             String nuevoId = resp.optString("id", "");
                             adapter.agregarItem(new Agenda(nuevoId, descripcion, fecha, prioridad));
                             recyclerView.scrollToPosition(0);
-                            Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show();
-                            //alertExito("¡Guardado!", mensaje);
+                            AppUtils.alertExito(requireContext(), "¡Guardado!", mensaje);
                         } else {
-                            //mostrarMensaje(mensaje);
-                            alertError("Error", mensaje);
+                            AppUtils.alertError(requireContext(), "Error", mensaje);
                         }
                     } catch (Exception e) {
-                        alertError("Error", "No se pudo procesar la respuesta del servidor.");
-                        //mostrarMensaje("Error al procesar la respuesta.");
+                        AppUtils.alertError(requireContext(), "Error",
+                                "No se pudo procesar la respuesta del servidor.");
                     }
                 },
                 error -> {
-                    //mostrarProgress(false);
                     cerrarCargando();
-                    //mostrarMensaje("Error de red: " + error.getMessage());
-                    alertError("Error de red", "No se pudo conectar al servidor.\n" + error.getMessage());
+                    AppUtils.alertError(requireContext(), "Error de red",
+                            "No se pudo conectar al servidor.\n" + error.getMessage());
                 }
         ) {
             // Parámetros POST
@@ -268,7 +215,6 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
     //  VOLLEY – Cargar lista de tareas (GET → JSON)
     // ════════════════════════════════════════════════════════════════════════
     private void cargarTareas() {
-        //mostrarProgress(true);
         mostrarCargando("Cargando tareas...");
         // JsonObjectRequest parsea el JSON automáticamente
         @SuppressLint("NotifyDataSetChanged") JsonObjectRequest request = new JsonObjectRequest(
@@ -276,11 +222,11 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
                 URL_LISTA,
                 null,   // body nulo para GET
                 response -> {
-                    //mostrarProgress(false);
                     cerrarCargando();
                     try {
                         if (!response.getBoolean("success")) {
-                            mostrarMensaje(response.getString("mensaje"));
+                            AppUtils.alertError(requireContext(), "Softpymes",
+                                    response.getString("mensaje"));
                             return;
                         }
                         listaAgenda.clear();
@@ -296,13 +242,14 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
                         }
                         adapter.actualizarLista();
                     } catch (Exception e) {
-                        mostrarMensaje("Error al procesar los datos.");
+                        AppUtils.alertError(requireContext(), "Softpymes",
+                                "Error al procesar los datos.");
                     }
                 },
                 error -> {
-                    //mostrarProgress(false);
                     cerrarCargando();
-                    mostrarMensaje("Error de red: " + error.getMessage());
+                    AppUtils.alertError(requireContext(), "Error de red",
+                            "No se pudo conectar al servidor.\n" + error.getMessage());
                 }
         );
 
@@ -310,65 +257,15 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    //  Helpers
+    //  Helpers de carga (SweetAlert) — delegan en AppUtils
     // ════════════════════════════════════════════════════════════════════════
-
-    private void mostrarMensaje(String mensaje) {
-        if (getContext() == null) return;
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Softpymes")
-                .setMessage(mensaje)
-                .setPositiveButton("Aceptar", null)
-                .show();
-    }
-
-    /** Spinner de carga con título y subtítulo */
     private void mostrarCargando(String titulo) {
         if (getContext() == null) return;
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-        dialogCargando = new SweetAlertDialog(requireContext(), SweetAlertDialog.PROGRESS_TYPE);
-        dialogCargando.setTitleText(titulo);
-        dialogCargando.setContentText("Por favor espera.");
-        dialogCargando.setCancelable(false);
-        dialogCargando.show();
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), titulo, "Por favor espera.");
     }
 
     private void cerrarCargando() {
-        if (progressBar != null) progressBar.setVisibility(View.GONE);
-        if (dialogCargando != null && dialogCargando.isShowing())
-            dialogCargando.dismissWithAnimation();
-    }
-
-    //Transacción exitosa
-    /*private void alertExito(String titulo, String mensaje) {
-        if (getContext() == null) return;
-        new SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
-                .setTitleText(titulo)
-                .setContentText(mensaje)
-                .setConfirmText("OK")
-                .setConfirmClickListener(SweetAlertDialog::dismissWithAnimation)
-                .show();
-    }*/
-
-    //Error en la transacción
-    private void alertError(String titulo, String mensaje) {
-        if (getContext() == null) return;
-        new SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
-                .setTitleText(titulo)
-                .setContentText(mensaje)
-                .setConfirmText("Cerrar")
-                .setConfirmClickListener(SweetAlertDialog::dismissWithAnimation)
-                .show();
-    }
-
-    private void alertAdvertencia() {
-        if (getContext() == null) return;
-        new SweetAlertDialog(requireContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Campos incompletos")
-                .setContentText("Completa todos los campos antes de guardar.")
-                .setConfirmText("OK")
-                .setConfirmClickListener(SweetAlertDialog::dismissWithAnimation)
-                .show();
+        AppUtils.cerrarCargando(dialogCargando);
     }
 
     // ════════════════════════════════════════════════════════════════════════

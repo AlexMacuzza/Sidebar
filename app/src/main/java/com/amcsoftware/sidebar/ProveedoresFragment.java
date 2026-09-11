@@ -13,12 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Proveedores;
 import com.amcsoftware.sidebar.adapter.ProveedoresAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -33,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class ProveedoresFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener,SearchView.OnQueryTextListener {
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
@@ -41,7 +42,7 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
     JsonObjectRequest jsonObjectRequest;
     private JSONObject jsonObject = null;
     private RecyclerView recyclerProveedores;
-    private ProgressBar progressBar;
+    private SweetAlertDialog dialogCargando;
     private RequestQueue request, requestQueue;
     private ProveedoresAdapter adapter;
     String idpr1,nit1,rsocial1,tel1,cel1,dir1,ciudad1;
@@ -62,7 +63,6 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
         recyclerProveedores.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerProveedores.setHasFixedSize(true);
         adapter = new ProveedoresAdapter(listaProveedores);
-        progressBar     = vista.findViewById(R.id.progressBar);
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
         requestQueue = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
 
@@ -123,12 +123,11 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
             if (nit.getText().toString().isEmpty() || rsocial.getText().toString().isEmpty() ||
                     tel.getText().toString().isEmpty() || cel.getText().toString().isEmpty() || ciudad.getText().toString().isEmpty() ||
                     dir.getText().toString().isEmpty()){
-                Toast.makeText(getContext(), "Debe completar todos los campos!", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos", "Debe completar todos los campos.");
             }else{
                 //Confirmar operación
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(requireContext());
-                builder1.setMessage("¿Está seguro de registrar este proveedor?").setTitle("Softpymes");
-                builder1.setPositiveButton("Si", (dialog1, which1) -> {
+                AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                        "¿Está seguro de registrar este proveedor?", "Sí", "No", () -> {
                     nit1        = nit.getText().toString().trim();
                     rsocial1    = rsocial.getText().toString().trim();
                     tel1        = tel.getText().toString().trim();
@@ -137,18 +136,11 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
                     ciudad1     = ciudad.getText().toString().trim();
                     guardarRegistro();
                 });
-                builder1.setNegativeButton("No", (dialog1, which1) ->
-                        Toast.makeText(getContext(),
-                                "Operación cancelada",
-                                Toast.LENGTH_SHORT).show());
-                AlertDialog dialog1 = builder1.create();
-                dialog1.show();//Mostrar
             }
         });
 
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
@@ -194,33 +186,24 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
             nit.requestFocus();
         });
         //Eliminar proveedor
-        btneliminar.setOnClickListener(v->{
+        btneliminar.setOnClickListener(v->
             //Confirmar operación
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(requireContext());
-            builder1.setMessage("¿Está seguro de eliminar este proveedor?").setTitle("Softpymes");
-            builder1.setPositiveButton("Si", (dialog1, which1) -> {
+            AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                    "¿Está seguro de eliminar este proveedor?", "Sí", "No", () -> {
                 idpr1       = idpr.getText().toString().trim();
                 eliminarRegistro();
                 alertDialog.dismiss();
-            });
-            builder1.setNegativeButton("No", (dialog1, which1) ->
-                    Toast.makeText(getContext(),
-                            "Operación cancelada",
-                            Toast.LENGTH_SHORT).show());
-            AlertDialog dialog1 = builder1.create();
-            dialog1.show();//Mostrar
-        });
+            }));
         //Guardar el nuevo proveedor
         btguardar.setOnClickListener(v->{
             if (nit.getText().toString().isEmpty() || rsocial.getText().toString().isEmpty() ||
                     tel.getText().toString().isEmpty() || cel.getText().toString().isEmpty() || ciudad.getText().toString().isEmpty() ||
                     dir.getText().toString().isEmpty()){
-                Toast.makeText(getContext(), "Debe completar todos los campos!", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos", "Debe completar todos los campos.");
             }else{
                 //Confirmar operación
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(requireContext());
-                builder1.setMessage("¿Está seguro de actualizar este proveedor?").setTitle("Softpymes");
-                builder1.setPositiveButton("Si", (dialog1, which1) -> {
+                AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                        "¿Está seguro de actualizar este proveedor?", "Sí", "No", () -> {
                     idpr1       = idpr.getText().toString().trim();
                     nit1        = nit.getText().toString().trim();
                     rsocial1    = rsocial.getText().toString().trim();
@@ -230,52 +213,46 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
                     ciudad1     = ciudad.getText().toString().trim();
                     actualizarRegistro();
                 });
-                builder1.setNegativeButton("No", (dialog1, which1) ->
-                        Toast.makeText(getContext(),
-                                "Operación cancelada",
-                                Toast.LENGTH_SHORT).show());
-                AlertDialog dialog1 = builder1.create();
-                dialog1.show();//Mostrar
             }
         });
 
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
     //FUNCIONES
     private void actualizarRegistro() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/actualizarProveedor.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    boolean ok = false;
+                    String msj = "No se pudo procesar la respuesta del servidor.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success");
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    if (jsonObject.optBoolean("success")) {
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
                         alertDialog.dismiss();
                         listaProveedores.clear();
                         cargarWebService();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
                     }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo actualizar el proveedor.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -296,31 +273,35 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
     }
     private void eliminarRegistro(){
         String url = "https://www.wmcsoftware.net/apps/softpymes/eliminarProveedor.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Eliminando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    boolean ok = true;
+                    String msj = "Proveedor eliminado.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                        Log.e("VOLLEY", "Error: " + e.getMessage());
+                        ok = false;
+                        msj = "No se pudo procesar la respuesta del servidor.";
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
                     listaProveedores.clear();
                     cargarWebService();
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo eliminar el proveedor.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -335,34 +316,35 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
     }
     private void guardarRegistro() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/guardarProveedor.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    boolean ok = false;
+                    String msj = "No se pudo procesar la respuesta del servidor.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success");
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    if (jsonObject.optBoolean("success")) {
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
                         alertDialog.dismiss();
                         listaProveedores.clear();
                         cargarWebService();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
                     }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo guardar el proveedor.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -382,8 +364,8 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaProveedores.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -401,12 +383,9 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
-        // Manejar la respuesta
-        Toast.makeText(getContext(), "No se pudo consultar, ocurrió un error inesperado!" , Toast.LENGTH_LONG).show();
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar los proveedores.");
         Log.e("ProveedoresFragment", "Error inesperado en onResponse: " + error.getMessage());
-
     }
 
     @Override
@@ -414,7 +393,6 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
         Proveedores proveedor;
         JSONArray json = response.optJSONArray("proveedor");
         try {
-            final String  mensaje = response.optString("mensaje","");
             for (int i = 0; i< (json != null ? json.length() : 0); i++){
                 proveedor = new Proveedores();
                 JSONObject jsonObject;
@@ -429,8 +407,7 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
                 proveedor.setCiudad(jsonObject.optString("ciudad"));
                 listaProveedores.add(proveedor);
             }
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            AppUtils.cerrarCargando(dialogCargando);
             adapter = new ProveedoresAdapter(listaProveedores);
             adapter.setOnClickListener(v->{
                 idpr1     = listaProveedores.get(recyclerProveedores.getChildAdapterPosition(v)).getIdpr();
@@ -443,12 +420,9 @@ public class ProveedoresFragment extends Fragment implements Response.Listener<J
                 intputboxActProveedor();
             });
             recyclerProveedores.setAdapter(adapter);
-            Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
-            // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            AppUtils.cerrarCargando(dialogCargando);
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar los proveedores.");
         }
 
     }

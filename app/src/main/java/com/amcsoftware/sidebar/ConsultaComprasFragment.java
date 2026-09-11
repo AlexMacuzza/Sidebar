@@ -14,13 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Factura_Compras;
 import com.amcsoftware.sidebar.Entidades.Proveedores;
 import com.amcsoftware.sidebar.adapter.FacturaComprasAdapter;
 import com.amcsoftware.sidebar.adapter.ProveedoresAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -35,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class ConsultaComprasFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener,
         SearchView.OnQueryTextListener {
     ArrayList<Factura_Compras> listafacturacompras;
@@ -44,7 +45,7 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
     ImageButton btncompra;
     FacturaComprasAdapter adapter;
     ProveedoresAdapter adapter1;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RecyclerView recyclerFacturaCompras;
     RequestQueue request, requestQueue;
     SearchView txtbuscar;//buscador
@@ -76,7 +77,6 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
         adapter    = new FacturaComprasAdapter(listafacturacompras);
         adapter1   = new ProveedoresAdapter(listaProveedores);
 
-        progressBar     = vista.findViewById(R.id.progressBar);
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
         requestQueue    = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
         adapter         = new FacturaComprasAdapter(listafacturacompras);
@@ -104,8 +104,8 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/consultaFacturaCompras.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -124,10 +124,8 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
-        // Manejar la respuesta
-        Toast.makeText((getContext()),"No se pudo actualizar "+error.toString(),Toast.LENGTH_SHORT).show();
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar las compras.");
     }
 
     @Override
@@ -156,8 +154,7 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
                 vproveedores[i]=jsonObject1.optString("nit")+"-"+jsonObject1.optString("rsocial");
             }
 
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            AppUtils.cerrarCargando(dialogCargando);
             adapter = new FacturaComprasAdapter(listafacturacompras);
             adapter.setOnClickListener(v->{
                 //obtener el número de la factura
@@ -190,10 +187,8 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
             }
 
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
-            // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            AppUtils.cerrarCargando(dialogCargando);
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar las compras.");
         }
 
     }
@@ -202,33 +197,31 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
         String url = "https://www.wmcsoftware.net/apps/softpymes/actualizarCompra.php";
         // Validar que los campos no estén vacíos
         if (nit.equals(" ")) {
-            Toast.makeText(getContext(), "No ha seleccionado el proveedor!", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Atención", "No ha seleccionado el proveedor.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    String msj = "Compra actualizada.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
                     } catch (JSONException e) {
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                    AppUtils.alertExito(requireContext(), "Éxito", msj);
                     listafacturacompras.clear();
                     cargarWebService();
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo actualizar la compra.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -244,8 +237,8 @@ public class ConsultaComprasFragment extends Fragment implements Response.Listen
     }
 
     private void buscarProveedores() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaProveedores.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);

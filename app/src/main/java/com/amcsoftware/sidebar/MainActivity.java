@@ -7,12 +7,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -62,15 +61,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 // Alerta de confirmación antes de cerrar la sesión.
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("¿Quiere cerrar la sesión?").setTitle("Softpymes");
-                builder.setPositiveButton("Si", (dialog, which) -> logout());//Cerrar todas las activitys
-                builder.setNegativeButton("No", (dialog, which) ->
-                        Toast.makeText(MainActivity.this,
-                                "Operación cancelada",
-                                Toast.LENGTH_SHORT).show());
-                AlertDialog dialog = builder.create();
-                dialog.show(); // Mostrar la Alerta
+                AppUtils.alertConfirmar(MainActivity.this, "Softpymes",
+                        "¿Quiere cerrar la sesión?", "Sí", "No",
+                        MainActivity.this::logout);
             }
         };
 

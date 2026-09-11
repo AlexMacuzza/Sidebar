@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amcsoftware.sidebar.Entidades.Cliente;
 import com.amcsoftware.sidebar.R;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -215,6 +216,7 @@ public class ClientesImagenAdapter extends RecyclerView.Adapter<ClientesImagenAd
         String idcb,perfil;
         JSONObject   jsonObject = null;
         RequestQueue requestQueue;
+        cn.pedant.SweetAlert.SweetAlertDialog dialogCargando;
 
         public ClientesImagenHolder(View itemView) {
             super(itemView);
@@ -279,7 +281,7 @@ public class ClientesImagenAdapter extends RecyclerView.Adapter<ClientesImagenAd
                     String seleccion = opciones[selectedItemIndex[0]];
                     agregarComentario(idc,v,seleccion);
                 } else {
-                    Toast.makeText(this.context, "No se seleccionó ninguna opción.", Toast.LENGTH_LONG).show();
+                    AppUtils.alertAdvertencia(this.context, "Atención", "No se seleccionó ninguna opción.");
                 }
             });
             // Crea y muestra el AlertDialog
@@ -289,23 +291,33 @@ public class ClientesImagenAdapter extends RecyclerView.Adapter<ClientesImagenAd
 
     private void agregarComentario(String idc, View v, String seleccion) {
         String url = "https://www.wmcsoftware.net/apps/softpymes/calificarCliente.php";
+        dialogCargando = AppUtils.mostrarCargando(context, "Guardando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    String msj = "Calificación registrada.";
+                    boolean ok = true;
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
-                        Toast.makeText((context),"Error al calificar!",Toast.LENGTH_SHORT).show();
+                        ok = false;
+                        msj = "No se pudo procesar la respuesta del servidor.";
                     }
-                    Toast.makeText(context, jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                    if (ok) {
+                        AppUtils.alertExito(context, "Éxito", msj);
+                    } else {
+                        AppUtils.alertError(context, "Atención", msj);
+                    }
                     Navigation.findNavController(v).navigate(R.id.recargarConsultaCl);//Refrescar el fragment
                 },
                 error -> {
-                    // Manejar errores
-                    Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(context, "Error de red", "No se pudo registrar la calificación.");
                 }) {
             @Override
             protected Map<String, String> getParams() {

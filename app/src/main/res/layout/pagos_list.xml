@@ -251,12 +251,6 @@
             android:src="@drawable/eliminar"
             android:visibility="gone"
             tools:ignore="HardcodedText" />
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
     </RelativeLayout>
     <TextView
         android:layout_width="match_parent"

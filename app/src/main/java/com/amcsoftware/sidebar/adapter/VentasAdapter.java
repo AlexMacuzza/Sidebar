@@ -6,12 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amcsoftware.sidebar.Entidades.Ventas;
 import com.amcsoftware.sidebar.R;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import java.util.ArrayList;
 
 // Importamos nuestra interfaz personalizada para la comunicación.
@@ -56,15 +55,9 @@ public class VentasAdapter extends RecyclerView.Adapter<VentasAdapter.VentasView
             int currentPosition = holder.getBindingAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) { // Siempre verifica que la posición sea válida
                 // Alerta de confirmación antes de eliminar.
-                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setMessage("¿Está seguro de eliminar este registro?").setTitle("Softpymes");
-                builder.setPositiveButton("Si", (dialog, which) -> removeItem(currentPosition));
-                builder.setNegativeButton("No", (dialog, which) ->
-                        Toast.makeText(v.getContext(),
-                                "Operación cancelada",
-                                Toast.LENGTH_SHORT).show());
-                AlertDialog dialog = builder.create();
-                dialog.show(); // Mostrar la Alerta
+                AppUtils.alertConfirmar(v.getContext(), "Softpymes",
+                        "¿Está seguro de eliminar este registro?", "Sí", "No",
+                        () -> removeItem(currentPosition));
             }
         });
     }

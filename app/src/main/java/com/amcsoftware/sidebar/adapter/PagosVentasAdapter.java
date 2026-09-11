@@ -7,16 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amcsoftware.sidebar.Entidades.Pagos_Ventas;
 import com.amcsoftware.sidebar.R;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -29,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class PagosVentasAdapter extends RecyclerView.Adapter<PagosVentasAdapter.PagosVentasViewHolder> implements View.OnClickListener {
 
@@ -119,8 +119,7 @@ public class PagosVentasAdapter extends RecyclerView.Adapter<PagosVentasAdapter.
                 txtvalor,txtvcuota,txtsaldo,txtfechac;
         ImageButton  btpagos, bteliminar;
         JSONObject   jsonObject = null;
-        // Declarar la ProgressBar
-        ProgressBar progressBar;
+        SweetAlertDialog dialogCargando;
         RequestQueue requestQueue;
         String perfil;
 
@@ -139,7 +138,6 @@ public class PagosVentasAdapter extends RecyclerView.Adapter<PagosVentasAdapter.
             txtsaldo    = itemView.findViewById(R.id.txtsaldo);
             btpagos     = itemView.findViewById(R.id.btpagos);
             bteliminar  = itemView.findViewById(R.id.bteliminar);
-            progressBar = itemView.findViewById(R.id.progressBar);
             requestQueue = Volley.newRequestQueue(context);//Respuesta de las peticiones metódo POST
             //Consultar el perfil de usuario
             SharedPreferences sp = itemView.getContext().getSharedPreferences("sesion",0);
@@ -149,18 +147,12 @@ public class PagosVentasAdapter extends RecyclerView.Adapter<PagosVentasAdapter.
                 bteliminar.setVisibility(View.VISIBLE);
             }
 
-            bteliminar.setOnClickListener(v->{
-                final String idfv    =  String.valueOf(txtidfv.getText());
-                final String idpago  =  String.valueOf(txtidpago.getText());
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);//Alert de confirmación
-                builder.setMessage("¿Está seguro de eliminar el pago N° "+idpago+"?").setTitle("Softpymes");
-                builder.setPositiveButton("Si", (dialog, which) -> eliminarPagos(idfv, idpago, v));
-                builder.setNegativeButton("No", (dialog, which) ->
-                        Toast.makeText(context,
-                                "Eliminación cancelada",
-                                Toast.LENGTH_SHORT).show());
-                AlertDialog dialog = builder.create();
-                dialog.show();//Mostrar el Alert
+            bteliminar.setOnClickListener(v-> {
+                final String idfv = String.valueOf(txtidfv.getText());
+                final String idpago = String.valueOf(txtidpago.getText());
+                AppUtils.alertConfirmar(context, "Softpymes",
+                        "¿Está seguro de eliminar el pago N° " + idpago + "?", "Sí", "No",
+                        () -> eliminarPagos(idfv, idpago, v));
             });
             btpagos.setOnClickListener(v->{
             });
@@ -169,23 +161,33 @@ public class PagosVentasAdapter extends RecyclerView.Adapter<PagosVentasAdapter.
 
         private void eliminarPagos(String idfv, String idpago, View v) {
             String url = "https://www.wmcsoftware.net/apps/softpymes/eliminarPago.php";
+            dialogCargando = AppUtils.mostrarCargando(context, "Eliminando...", "Por favor espera.");
             // Crear la solicitud POST
             StringRequest stringRequest =  new StringRequest(
                     Request.Method.POST,
                     url,
                     response -> {
-                        // Manejar la respuesta del servidor
+                        AppUtils.cerrarCargando(dialogCargando);
+                        String msj = "Pago eliminado.";
+                        boolean ok = true;
                         try {
                             jsonObject = new JSONObject(response);
+                            msj = jsonObject.optString("mensaje", msj);
+                            ok = jsonObject.optBoolean("success", true);
                         } catch (JSONException e) {
-                            Toast.makeText((context),"Error al eliminar!",Toast.LENGTH_SHORT).show();
+                            ok = false;
+                            msj = "No se pudo procesar la respuesta del servidor.";
                         }
-                        Toast.makeText(context, jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                        if (ok) {
+                            AppUtils.alertExito(context, "Éxito", msj);
+                        } else {
+                            AppUtils.alertError(context, "Atención", msj);
+                        }
                         Navigation.findNavController(v).navigate(R.id.recargarConsultaP);//Refrescar el fragment
                     },
                     error -> {
-                        // Manejar errores
-                        Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                        AppUtils.cerrarCargando(dialogCargando);
+                        AppUtils.alertError(context, "Error de red", "No se pudo eliminar el pago.");
                     }) {
                 @Override
                 protected Map<String, String> getParams() {

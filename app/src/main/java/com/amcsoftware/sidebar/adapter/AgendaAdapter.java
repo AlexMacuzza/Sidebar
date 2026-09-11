@@ -8,14 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amcsoftware.sidebar.Entidades.Agenda;
 import com.amcsoftware.sidebar.R;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -155,17 +154,11 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
             bteliminar  = itemView.findViewById(R.id.bteliminar);
             requestQueue = Volley.newRequestQueue(context);
 
-            bteliminar.setOnClickListener(v->{
-                final String idt =  String.valueOf(txtid.getText());
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);//Alert de confirmación
-                builder.setMessage("¿Está seguro de eliminar tarea N° "+idt+"?").setTitle("Softpymes");
-                builder.setPositiveButton("Si", (dialog, which) -> eliminarDatos(idt,v));
-                builder.setNegativeButton("No", (dialog, which) ->
-                        Toast.makeText(context,
-                                "Eliminación cancelada",
-                                Toast.LENGTH_SHORT).show());
-                AlertDialog dialog = builder.create();
-                dialog.show();//Mostrar el Alert
+            bteliminar.setOnClickListener(v-> {
+                final String idt = String.valueOf(txtid.getText());
+                AppUtils.alertConfirmar(context, "Softpymes",
+                        "¿Está seguro de eliminar la tarea N° " + idt + "?", "Sí", "No",
+                        () -> eliminarDatos(idt, v));
             });
         }
 
@@ -177,18 +170,24 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
                     url,
                     response -> {
                         // Manejar la respuesta del servidor
+                        String msj = "Tarea eliminada.";
+                        boolean ok = true;
                         try {
                             jsonObject = new JSONObject(response);
+                            msj = jsonObject.optString("mensaje", msj);
+                            ok = jsonObject.optBoolean("success", true);
                         } catch (JSONException e) {
-                            Toast.makeText((context),"Error al eliminar!",Toast.LENGTH_SHORT).show();
+                            ok = false;
+                            msj = "No se pudo procesar la respuesta del servidor.";
                         }
-                        Toast.makeText(context, jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                        if (ok) {
+                            AppUtils.alertExito(context, "Éxito", msj);
+                        } else {
+                            AppUtils.alertError(context, "Atención", msj);
+                        }
                         Navigation.findNavController(v).navigate(R.id.recargarConsultaT);//Refrescar el fragment
                     },
-                    error -> {
-                        // Manejar errores
-                        Toast.makeText(context, "Error al eliminar!", Toast.LENGTH_LONG).show();
-                    }) {
+                    error -> AppUtils.alertError(context, "Error de red", "No se pudo eliminar la tarea.")) {
                 @Override
                 protected Map<String, String> getParams() {
                     // Enviar los parámetros al servidor

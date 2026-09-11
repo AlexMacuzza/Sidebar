@@ -6,15 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amcsoftware.sidebar.Entidades.Factura_Compras;
 import com.amcsoftware.sidebar.R;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -26,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class FacturaComprasAdapter extends RecyclerView.Adapter<FacturaComprasAdapter.FacturaComprasViewHolder> implements View.OnClickListener {
 
@@ -103,8 +103,7 @@ public class FacturaComprasAdapter extends RecyclerView.Adapter<FacturaComprasAd
         TextView txtidfc,txtfecha,txtproveedor,txtcobrador,txtdesc,txtmonto,txtsaldo;
         ImageButton bteliminar;
         JSONObject jsonObject = null;
-        // Declarar la ProgressBar
-        ProgressBar progressBar;
+        SweetAlertDialog dialogCargando;
         RequestQueue requestQueue;
 
         public FacturaComprasViewHolder(@NonNull View itemView) {
@@ -117,47 +116,46 @@ public class FacturaComprasAdapter extends RecyclerView.Adapter<FacturaComprasAd
             txtmonto    = itemView.findViewById(R.id.txtmonto);
             txtsaldo    = itemView.findViewById(R.id.txtsaldo);
             bteliminar  = itemView.findViewById(R.id.bteliminar);
-            progressBar = itemView.findViewById(R.id.progressBar);
             requestQueue = Volley.newRequestQueue(context);//Respuesta de las peticiones metódo POST
 
-            bteliminar.setOnClickListener(v->{
-                final String idfc =  String.valueOf(txtidfc.getText());
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);//Alert de confirmación
-                builder.setMessage("¿Está seguro de eliminar la compra N° "+idfc+"?").setTitle("Softpymes");
-
-                builder.setPositiveButton("Si", (dialog, which) -> eliminarDatos(idfc,v));
-
-                builder.setNegativeButton("No", (dialog, which) ->
-                        Toast.makeText(context,
-                                "Eliminación cancelada",
-                                Toast.LENGTH_SHORT).show());
-
-                AlertDialog dialog = builder.create();
-                dialog.show();//Mostrar el Alert
-
+            bteliminar.setOnClickListener(v-> {
+                final String idfc = String.valueOf(txtidfc.getText());
+                AppUtils.alertConfirmar(context, "Softpymes",
+                        "¿Está seguro de eliminar la compra N° " + idfc + "?", "Sí", "No",
+                        () -> eliminarDatos(idfc, v));
             });
 
         }
 
         private void eliminarDatos(String idfc,View v) {
             String url = "https://www.wmcsoftware.net/apps/softpymes/eliminarCompra.php";
+            dialogCargando = AppUtils.mostrarCargando(context, "Eliminando...", "Por favor espera.");
             // Crear la solicitud POST
             StringRequest stringRequest =  new StringRequest(
                     Request.Method.POST,
                     url,
                     response -> {
-                        // Manejar la respuesta del servidor
+                        AppUtils.cerrarCargando(dialogCargando);
+                        String msj = "Compra eliminada.";
+                        boolean ok = true;
                         try {
                             jsonObject = new JSONObject(response);
+                            msj = jsonObject.optString("mensaje", msj);
+                            ok = jsonObject.optBoolean("success", true);
                         } catch (JSONException e) {
-                            Toast.makeText((context),"Error al eliminar!",Toast.LENGTH_SHORT).show();
+                            ok = false;
+                            msj = "No se pudo procesar la respuesta del servidor.";
                         }
-                        Toast.makeText(context, jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                        if (ok) {
+                            AppUtils.alertExito(context, "Éxito", msj);
+                        } else {
+                            AppUtils.alertError(context, "Atención", msj);
+                        }
                         Navigation.findNavController(v).navigate(R.id.recargarConsultaC);//Refrescar el fragment
                     },
                     error -> {
-                        // Manejar errores
-                        Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                        AppUtils.cerrarCargando(dialogCargando);
+                        AppUtils.alertError(context, "Error de red", "No se pudo eliminar la compra.");
                     }) {
                 @Override
                 protected Map<String, String> getParams() {

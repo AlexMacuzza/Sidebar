@@ -3,16 +3,14 @@ package com.amcsoftware.sidebar;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -25,6 +23,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class EditarClienteFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener {
     //Variables locales
@@ -32,8 +32,7 @@ public class EditarClienteFragment extends Fragment implements Response.Listener
     ImageButton btactualizar,bteliminar;
     JSONObject jsonObject = null;
     TextView idcl;
-    // Declarar la ProgressBar
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request, requestQueue;
 
 
@@ -59,8 +58,6 @@ public class EditarClienteFragment extends Fragment implements Response.Listener
         btactualizar  =  vista.findViewById(R.id.bteditar);
         bteliminar    =  vista.findViewById(R.id.bteliminar);
 
-        progressBar     =  vista.findViewById(R.id.progressBar);
-
         request      = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
         requestQueue = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
 
@@ -78,26 +75,15 @@ public class EditarClienteFragment extends Fragment implements Response.Listener
         //Evento click
         btactualizar.setOnClickListener(v -> actualizarDatos());
 
-        bteliminar.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());//Alert de confirmación
-            builder.setMessage("Está seguro de eliminar este cliente?").setTitle("Softpymes");
-
-            builder.setPositiveButton("Si", (dialog, which) -> eliminarDatos());
-
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Eliminación cancelada",
-                            Toast.LENGTH_SHORT).show());
-
-        AlertDialog dialog = builder.create();
-        dialog.show();//Mostrar el Alert
-        });
+        bteliminar.setOnClickListener(v ->
+                AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                        "¿Está seguro de eliminar este cliente?", "Sí", "No",
+                        this::eliminarDatos));
 
         //Controlar botón atrás
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
 
@@ -113,33 +99,38 @@ public class EditarClienteFragment extends Fragment implements Response.Listener
         final String idcl1 = idcl.getText().toString().trim();
         // Validar que los campos no estén vacíos
         if (idcl1.isEmpty() ) {
-            Toast.makeText(getContext(), "El id no puede estar vacío.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Dato requerido", "El id no puede estar vacío.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Eliminando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar la respuesta del servidor
+                    String msj = "Cliente eliminado.";
+                    boolean ok = true;
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                        ok = false;
+                        msj = "No se pudo procesar la respuesta del servidor.";
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    limpiar();
-
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                        limpiar();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo eliminar el cliente.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -167,31 +158,38 @@ public class EditarClienteFragment extends Fragment implements Response.Listener
 
             // Validar que los campos no estén vacíos
             if (idcl1.isEmpty() || nombre1.isEmpty() || dir1.isEmpty()|| celular1.isEmpty() || codeudor1.isEmpty() || celularcode1.isEmpty()) {
-                Toast.makeText(getContext(), "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                        "Por favor, complete todos los campos.");
                 return;
             }
-            // Mostrar la ProgressBar
-            progressBar.setVisibility(View.VISIBLE);
+            // Mostrar el diálogo de carga
+            dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
             // Crear la solicitud POST
             StringRequest stringRequest =  new StringRequest(
                     Request.Method.POST,
                     url,
                     response -> {
-                        // Ocultar ProgressBar
-                        progressBar.setVisibility(View.GONE);
+                        AppUtils.cerrarCargando(dialogCargando);
                         // Manejar la respuesta del servidor
+                        String msj = "Cliente actualizado.";
+                        boolean ok = true;
                         try {
                             jsonObject = new JSONObject(response);
+                            msj = jsonObject.optString("mensaje", msj);
+                            ok = jsonObject.optBoolean("success", true);
                         } catch (JSONException e) {
-                            Toast.makeText(getContext(),"mensaje 1:"+e, Toast.LENGTH_SHORT).show();
+                            ok = false;
+                            msj = "No se pudo procesar la respuesta del servidor.";
                         }
-                        Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                        if (ok) {
+                            AppUtils.alertExito(requireContext(), "Éxito", msj);
+                        } else {
+                            AppUtils.alertError(requireContext(), "Atención", msj);
+                        }
                     },
                     error -> {
-                        // Ocultar ProgressBar
-                        progressBar.setVisibility(View.GONE);
-                        // Manejar errores
-                        Toast.makeText(getContext(), "mensaje 2:"+error.toString(), Toast.LENGTH_LONG).show();
+                        AppUtils.cerrarCargando(dialogCargando);
+                        AppUtils.alertError(requireContext(), "Error de red", "No se pudo actualizar el cliente.");
                     }) {
                 @Override
                 protected Map<String, String> getParams() {
@@ -227,27 +225,22 @@ public class EditarClienteFragment extends Fragment implements Response.Listener
 
     @Override
     public void onResponse(JSONObject response) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
+        AppUtils.cerrarCargando(dialogCargando);
         JSONArray json = response.optJSONArray("reponse");
         try {
             JSONObject jsonObject;
             assert json != null;
             jsonObject = json.getJSONObject(0);
             final String rta = jsonObject.optString("mensaje");
-            Toast.makeText((getContext()),rta,Toast.LENGTH_SHORT).show();
+            AppUtils.alertExito(requireContext(), "Éxito", rta);
         } catch (JSONException e) {
-            Toast.makeText((getContext()),"No se pudo actualizar!",Toast.LENGTH_SHORT).show();
+            AppUtils.alertError(requireContext(), "Error", "No se pudo actualizar el cliente.");
         }
-
-
     }
-        @Override
+    @Override
     public void onErrorResponse(VolleyError error) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
-            // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo actualizar. "+error.toString(),Toast.LENGTH_SHORT).show();
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo actualizar el cliente.");
     }
 
 

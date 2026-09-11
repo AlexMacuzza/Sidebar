@@ -10,8 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,13 +23,15 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class ClientesFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener {
     //Variables locales
     EditText txtcliente,txtid,txtcelular,txtdir,txtcodeudor,txtcelcodeudor,txtobservacion;
     ImageButton btregistrar;
     JSONObject jsonObject = null;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request, requestQueue;
 
     public ClientesFragment() {
@@ -51,7 +52,6 @@ public class ClientesFragment extends Fragment implements Response.Listener<JSON
         txtcelcodeudor  =  vista.findViewById(R.id.txtcelcodeudor);
         txtobservacion  =  vista.findViewById(R.id.txtobservacion);
         btregistrar     =  vista.findViewById(R.id.btregistrar);
-        progressBar     =  vista.findViewById(R.id.progressBar);
 
         request      = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
         requestQueue = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
@@ -65,7 +65,6 @@ public class ClientesFragment extends Fragment implements Response.Listener<JSON
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
 
@@ -89,34 +88,43 @@ public class ClientesFragment extends Fragment implements Response.Listener<JSON
 
         // Validar que los campos no estén vacíos
         if (id.isEmpty() || nombre.isEmpty() || direccion.isEmpty()|| celular.isEmpty() || codeudor.isEmpty() || celularcode.isEmpty()) {
-            Toast.makeText(getContext(), "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                    "Por favor, complete todos los campos.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    // Ocultar el diálogo de carga
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar la respuesta del servidor
+                    String mensaje = "Se ha registrado exitosamente!";
+                    boolean ok = true;
                     try {
                         jsonObject = new JSONObject(response);
+                        mensaje = jsonObject.optString("mensaje", mensaje);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    limpiar();
-
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", mensaje);
+                        limpiar();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", mensaje);
+                    }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    // Ocultar el diálogo de carga
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar errores
                     Log.e("VOLLEY", "Error: " + error.getMessage());
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.alertError(requireContext(), "Error",
+                            "No se pudo registrar el cliente. Intenta de nuevo.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -150,25 +158,17 @@ public class ClientesFragment extends Fragment implements Response.Listener<JSON
 
     @Override
     public void onResponse(JSONObject response) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
-        Toast.makeText((getContext()),"Se ha registrado exitosamente!",Toast.LENGTH_SHORT).show();
-        txtid.setText("");
-        txtcliente.setText("");
-        txtcelular.setText("");
-        txtdir.setText("");
-        txtcodeudor.setText("");
-        txtcelcodeudor.setText("");
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertExito(requireContext(), "Éxito", "Se ha registrado exitosamente!");
+        limpiar();
         btregistrar.setEnabled(true);
-
     }
+
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
-        // Manejar la respuesta
-        Toast.makeText((getContext()),"No se pudo registrar "+error.toString(),Toast.LENGTH_SHORT).show();
-        Log.i("ERROR",error.toString());
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo registrar el cliente.");
+        Log.i("ERROR", error.toString());
         btregistrar.setEnabled(true);
     }
 

@@ -11,11 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amcsoftware.sidebar.Entidades.Cliente;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,13 +26,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class BuscarClientesFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener {
 
     EditText txtcedula;
     TextView lblcliente,lblcelular;
     Button btbuscar;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
@@ -59,7 +60,6 @@ public class BuscarClientesFragment extends Fragment implements Response.Listene
         lblcliente      =  vista.findViewById(R.id.lblcliente);
         lblcelular      =  vista.findViewById(R.id.lblcelular);
         btbuscar        =  vista.findViewById(R.id.btbuscar);
-        progressBar     =  vista.findViewById(R.id.progressBar);
         request      = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
 
         btbuscar.setOnClickListener(v -> cargarWebService());
@@ -68,7 +68,6 @@ public class BuscarClientesFragment extends Fragment implements Response.Listene
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
 
@@ -82,13 +81,13 @@ public class BuscarClientesFragment extends Fragment implements Response.Listene
         final String id  = txtcedula.getText().toString().trim();
         // Validar que los campos no estén vacíos
         if (id.isEmpty() ) {
-            Toast.makeText(getContext(), "Por favor, ingrese la cedula.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Dato requerido", "Por favor, ingrese la cédula.");
             return;
         }
         //desactivar botón guardar
         btbuscar.setEnabled(false);
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Consultando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/consultarCliente.php?id="+id;
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -96,34 +95,38 @@ public class BuscarClientesFragment extends Fragment implements Response.Listene
 
     @Override
     public void onResponse(JSONObject response) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
-        Toast.makeText((getContext()),"Mensaje: ",Toast.LENGTH_LONG).show();
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
 
         Cliente miCliente = new Cliente();//Clase donde estan los campos de la tabla clientes
 
         JSONArray  json        = response.optJSONArray("cliente");
         JSONObject jsonObject;
 
-        try {
-            assert json != null;
-            jsonObject = json.getJSONObject(0);//Recorrer el array
-            miCliente.setNombre(jsonObject.optString("nombre"));
-            miCliente.setCelular(jsonObject.optString("celular"));
-        } catch (JSONException e) {
-            //throw new RuntimeException(e);
+        if (json != null && json.length() > 0) {
+            try {
+                jsonObject = json.getJSONObject(0);//Recorrer el array
+                miCliente.setNombre(jsonObject.optString("nombre"));
+                miCliente.setCelular(jsonObject.optString("celular"));
+            } catch (JSONException e) {
+                Log.i("ERROR", e.toString());
+            }
+            lblcliente.setText(miCliente.getNombre());
+            lblcelular.setText(miCliente.getCelular());
+        } else {
+            lblcliente.setText("");
+            lblcelular.setText("");
+            AppUtils.alertError(requireContext(), "Sin resultados",
+                    "No se encontró un cliente con esa cédula.");
         }
-
-        lblcliente.setText(miCliente.getNombre());
-        lblcelular.setText(miCliente.getCelular());
         btbuscar.setEnabled(true);
     }
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
         // Manejar la respuesta
-        Toast.makeText((getContext()),"No se pudo consultar "+error.toString(),Toast.LENGTH_SHORT).show();
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar el cliente. Intenta de nuevo.");
         Log.i("ERROR",error.toString());
         lblcliente.setText("");
         lblcelular.setText("");

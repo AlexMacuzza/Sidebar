@@ -27,14 +27,6 @@
             android:hint="@string/txtid"
             android:maxLength="10"
             android:inputType="number" />
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-
         <TextView
             android:id="@+id/lblcliente"
             android:layout_width="match_parent"

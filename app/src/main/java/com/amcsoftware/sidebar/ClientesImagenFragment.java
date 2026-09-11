@@ -30,13 +30,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.amcsoftware.sidebar.Entidades.Cliente;
 import com.amcsoftware.sidebar.api.ApiService;
 import com.amcsoftware.sidebar.api.RetrofitClient;
 import com.amcsoftware.sidebar.model.ResponseModel;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.StringRequest; // Para enviar datos de imagen
@@ -55,6 +55,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class ClientesImagenFragment extends Fragment {
     // Variables locales
@@ -62,7 +64,7 @@ public class ClientesImagenFragment extends Fragment {
     ImageButton btregistrar, btfoto, btbuscarcl;
     ImageView foto;
     JSONObject jsonResponse = null;
-    private ProgressBar progressBar;
+    private SweetAlertDialog dialogCargando;
     RequestQueue request, requestQueue;
     private Bitmap bitmap;
     private String nombre,id,direccion,celular,codeudor,celularcode,
@@ -96,7 +98,7 @@ public class ClientesImagenFragment extends Fragment {
                             bitmap = ImageDecoder.decodeBitmap(source);
                             foto.setImageBitmap(bitmap);
                         }catch (IOException e){
-                            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                            AppUtils.alertError(requireContext(), "Error", "No se pudo abrir la imagen seleccionada.");
                         }
                         Log.d("ClientesImagenFragment", "Imagen de galería seleccionada: " + imageUri);
                         Toast.makeText(getContext(), "¡Imagen de galería seleccionada!", Toast.LENGTH_SHORT).show();
@@ -120,7 +122,7 @@ public class ClientesImagenFragment extends Fragment {
                             bitmap =  ImageDecoder.decodeBitmap(source);
                             foto.setImageBitmap(bitmap);
                         }catch (IOException e){
-                            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                            AppUtils.alertError(requireContext(), "Error", "No se pudo abrir la foto tomada.");
                         }
                         Log.d("ClientesImagenFragment", "Foto tomada y guardada en: " + currentCameraPhotoUri);
                         Toast.makeText(getContext(), "¡Foto tomada y guardada!", Toast.LENGTH_SHORT).show();
@@ -147,7 +149,8 @@ public class ClientesImagenFragment extends Fragment {
                 if (allGranted) {
                     Toast.makeText(requireContext(), "Permisos concedidos.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(requireContext(), "Permisos denegados. La funcionalidad de la cámara puede no estar disponible.", Toast.LENGTH_LONG).show();
+                    AppUtils.alertAdvertencia(requireContext(), "Permisos denegados",
+                            "La funcionalidad de la cámara puede no estar disponible.");
                 }
             }
     );
@@ -206,7 +209,6 @@ public class ClientesImagenFragment extends Fragment {
         btfoto      = vista.findViewById(R.id.btfotocl);
         btbuscarcl  = vista.findViewById(R.id.btbuscarcl);
         foto   = vista.findViewById(R.id.imgFoto);
-        progressBar = vista.findViewById(R.id.progressBar);
         //Inicializar
         request      = Volley.newRequestQueue(requireContext());
         requestQueue = Volley.newRequestQueue(requireContext());
@@ -218,11 +220,7 @@ public class ClientesImagenFragment extends Fragment {
             requestPermissions();
         }
         //Buscar cliente
-        btbuscarcl.setOnClickListener(v-> {
-            //mensaje = "Buscar cliente";
-            //msgBox(mensaje);
-            cargarWebService();
-        });
+        btbuscarcl.setOnClickListener(v-> cargarWebService());
         //Guardar el cliente
         btregistrar.setOnClickListener(v -> {
             // Obtener los valores ingresados
@@ -236,22 +234,18 @@ public class ClientesImagenFragment extends Fragment {
             // Validar que los campos no estén vacíos
             if (id.isEmpty() || nombre.isEmpty() || direccion.isEmpty()|| celular.isEmpty()
                     || codeudor.isEmpty() || celularcode.isEmpty() || observacion.isEmpty()) {
-                Toast.makeText(getContext(), "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                        "Por favor, complete todos los campos.");
                 return;
             }else if (selectedImageUri == null || bitmap == null){
-                Toast.makeText(getContext(), "Por favor, selecciona o toma una foto.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Falta la foto",
+                        "Por favor, selecciona o toma una foto.");
                 return;
             }
             //Alert de confirmación
-            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
-            builder.setMessage("¿Está seguro de realizar esta operación?").setTitle("Softpymes");
-            builder.setPositiveButton("Si", (dialog, which) -> guardarClienteConFoto());
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Operación cancelada",
-                            Toast.LENGTH_SHORT).show());
-            androidx.appcompat.app.AlertDialog dialog = builder.create();
-            dialog.show();//Mostrar el Alert
+            AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                    "¿Está seguro de realizar esta operación?", "Sí", "No",
+                    this::guardarClienteConFoto);
         });
         //Capturar imagen
         btfoto.setOnClickListener(v -> mostrarDialogOpciones());
@@ -260,7 +254,6 @@ public class ClientesImagenFragment extends Fragment {
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
@@ -270,18 +263,18 @@ public class ClientesImagenFragment extends Fragment {
     private void cargarWebService() {
         final String id = txtid.getText().toString().trim();
         if (id.isEmpty()) {
-            Toast.makeText(getContext(), "Por favor, ingrese la cedula.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Dato requerido", "Por favor, ingrese la cédula.");
             return;
         }
         btbuscarcl.setEnabled(false);
         btbuscarcl.setImageResource(R.drawable.buscarcliente1);
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Consultando...", "Por favor espera.");
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         Call<ResponseModel> call = apiService.getCliente(id);
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<ResponseModel> call, @NonNull Response<ResponseModel> response) {
-                progressBar.setVisibility(View.GONE);
+                AppUtils.cerrarCargando(dialogCargando);
                 if (response.isSuccessful() && response.body() != null) {
                     ResponseModel data = response.body();
                     if (data.isSuccess()) {
@@ -310,16 +303,16 @@ public class ClientesImagenFragment extends Fragment {
                             msgBox(mensaje);
                         } else {
                             clearEditext();
-                            Toast.makeText(getContext(), data.getMensaje(), Toast.LENGTH_SHORT).show();
+                            AppUtils.alertError(requireContext(), "Atención", data.getMensaje());
                         }
 
                     } else {
-                        Toast.makeText(getContext(), data.getMensaje(), Toast.LENGTH_SHORT).show();
+                        AppUtils.alertError(requireContext(), "Atención", data.getMensaje());
                         clearEditext();
                     }
 
                 } else {
-                    Toast.makeText(getContext(), "Error en la respuesta", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertError(requireContext(), "Error", "Error en la respuesta del servidor.");
                 }
                 btbuscarcl.setEnabled(true);
                 btbuscarcl.setImageResource(R.drawable.buscarcliente);
@@ -327,8 +320,9 @@ public class ClientesImagenFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ResponseModel> call, @NonNull Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                AppUtils.cerrarCargando(dialogCargando);
+                AppUtils.alertError(requireContext(), "Error de red",
+                        "No se pudo consultar el cliente.\n" + t.getMessage());
                 clearEditext();
                 btbuscarcl.setEnabled(true);
                 btbuscarcl.setImageResource(R.drawable.buscarcliente);
@@ -338,11 +332,11 @@ public class ClientesImagenFragment extends Fragment {
      //Guardar Cliente con Retrofit
     private void guardarClienteConFoto() {
         if(bitmap == null){
-            Toast.makeText(getContext(),"Debe seleccionar una foto",Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Falta la foto", "Debe seleccionar una foto.");
             return;
         }
         String fotoBase64 = convertirImagenBase64(bitmap);
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
         ApiService api = RetrofitClient.getClient().create(ApiService.class);
         api.guardarCliente(
                 id,
@@ -356,44 +350,52 @@ public class ClientesImagenFragment extends Fragment {
         ).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<ResponseModel> call, @NonNull Response<ResponseModel> response) {
-                progressBar.setVisibility(View.GONE);
+                AppUtils.cerrarCargando(dialogCargando);
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Cliente guardado", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertExito(requireContext(), "Éxito", "Cliente guardado.");
                     limpiar();
                 } else {
-                    Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertError(requireContext(), "Error", "No se pudo guardar el cliente.");
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ResponseModel> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                AppUtils.cerrarCargando(dialogCargando);
+                AppUtils.alertError(requireContext(), "Error de red",
+                        "No se pudo guardar el cliente.\n" + t.getMessage());
             }
         });
     }
     //Guardar Cliente con libreria Volley
     private void guardarRegistro() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/guardarClienteImagen.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
         //Petición POST
         StringRequest stringRequest = new StringRequest(
                 com.android.volley.Request.Method.POST,
                 url,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
+                    boolean ok = false;
+                    String msj = "No se pudo procesar la respuesta del servidor.";
                     try {
                         jsonResponse = new JSONObject(response);
+                        msj = jsonResponse.optString("mensaje", msj);
+                        ok = jsonResponse.optBoolean("success");
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), "Error de respuesta del servidor.", Toast.LENGTH_LONG).show();
+                        Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonResponse.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    if (jsonResponse.optBoolean("success")) {
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
                         limpiar(); // limpiar después de una operación exitosa
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Error de red: ", Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo conectar al servidor.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -460,10 +462,7 @@ public class ClientesImagenFragment extends Fragment {
     }
 
     private void msgBox(String mensaje) {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
-        builder.setMessage(mensaje).setTitle("Softpymes");
-        androidx.appcompat.app.AlertDialog dialog = builder.create();
-        dialog.show();//Mostrar el Alert
+        AppUtils.alertExito(requireContext(), "Softpymes", mensaje);
     }
 
     private String convertirImagenBase64(Bitmap bitmap) {
@@ -509,10 +508,12 @@ public class ClientesImagenFragment extends Fragment {
                     cameraLauncher.launch(currentCameraPhotoUri);
                 }
             } catch (Exception ex) {
-                Toast.makeText(requireContext(), "Error al preparar la imagen: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                AppUtils.alertError(requireContext(), "Error",
+                        "No se pudo preparar la imagen: " + ex.getMessage());
             }
         } else {
-            Toast.makeText(requireContext(), "Por favor, concede los permisos necesarios para usar la cámara.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Permisos requeridos",
+                    "Por favor, concede los permisos necesarios para usar la cámara.");
             requestPermissions(); // Vuelve a solicitar si no se concedieron
         }
 

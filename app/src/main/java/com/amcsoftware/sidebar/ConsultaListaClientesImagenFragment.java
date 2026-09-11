@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,11 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Cliente;
 import com.amcsoftware.sidebar.adapter.ClientesImagenAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -36,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class ConsultaListaClientesImagenFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener,
         SearchView.OnQueryTextListener {
@@ -44,7 +44,7 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
     ArrayList<Cliente> listaClientes;
     ImageButton btncliente,btruta, btrefresh;
     RecyclerView recyclerClientes;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     JSONObject jsonObject = null;
     JsonObjectRequest jsonObjectRequest;
     RequestQueue requestQueue,request;
@@ -80,7 +80,6 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
         recyclerClientes.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerClientes.setHasFixedSize(true);
         adapter         = new ClientesImagenAdapter(listaClientes);
-        progressBar     = vista.findViewById(R.id.progressBar);
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
         requestQueue    = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
         idcl            = new StringBuilder();
@@ -118,17 +117,14 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaClientesImagen.php?idcb="+idcb;
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
     private void msgBox(String mensaje) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setMessage(mensaje).setTitle("Softpymes");
-        AlertDialog dialog = builder.create();
-        dialog.show();//Mostrar el Alert
+        AppUtils.alertExito(requireContext(), "Softpymes", mensaje);
     }
 
     private void showClientsAndPositions() {
@@ -141,51 +137,49 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
                 }
             }
             //Alert de confirmación
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setMessage("¿Está seguro de realizar esta operación?").setTitle("Softpymes");
-            builder.setPositiveButton("Si", (dialog, which) -> reordenarLista());
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Reordenamiento cancelado",
-                            Toast.LENGTH_SHORT).show());
-            AlertDialog dialog = builder.create();
-            dialog.show();//Mostrar el Alert
+            AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                    "¿Está seguro de realizar esta operación?", "Sí", "No",
+                    this::reordenarLista);
 
         } else {
             // Mensaje si la lista está vacía
-            Toast.makeText(getContext(), "El RecyclerView está vacío.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Sin datos", "No hay clientes para reordenar.");
         }
     }
 
     private void reordenarLista() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/ordenarListaClientes.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Reordenando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar la respuesta del servidor
+                    boolean ok = false;
+                    String msj = "No se pudo procesar la respuesta del servidor.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success");
                     } catch (JSONException e) {
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
                     idcl.setLength(0);
-                    if(jsonObject.optBoolean("success")) {
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
                         listaClientes.clear();
                         cargarWebService();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
                     }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar errores
-                    String errorMessage = "Error desconocido al guardar cliente.";
+                    String errorMessage = "Error desconocido al reordenar la lista.";
                     if (error.networkResponse != null) {
                         int statusCode = error.networkResponse.statusCode;
                         String responseData = new String(error.networkResponse.data, StandardCharsets.UTF_8);
@@ -207,7 +201,7 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
                     } else {
                         errorMessage += error.getMessage(); // Mensaje genérico de Volley
                     }
-                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    AppUtils.alertError(requireContext(), "Error", errorMessage);
                     Log.e("OrdernarListaClientes", "Error: " + errorMessage, error); // Para ver el stack trace completo
                 }) {
             @Override
@@ -235,17 +229,14 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Manejar la respuesta
-        progressBar.setVisibility(View.GONE); // Asegurar que la barra de progreso se oculte en caso de error
-        // Capturar cualquier otra excepción inesperada
-        Toast.makeText(getContext(), "Error inesperado!!" , Toast.LENGTH_LONG).show();
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar la lista de clientes.");
         Log.e("ClienteFragment", "Error inesperado en onResponse: " + error.getMessage());
     }
 
     @Override
     public void onResponse(JSONObject response) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
+        AppUtils.cerrarCargando(dialogCargando);
         Cliente cliente;
         JSONArray json = response.optJSONArray("cliente");
         try {
@@ -300,18 +291,16 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
                     }
                 });
                 recyclerClientes.setAdapter(adapter);
-                Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
             }
             else {
-            Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
-            listaClientes.clear(); // Limpiar la lista en caso de error
-        }
+                listaClientes.clear(); // Limpiar la lista en caso de error
+                AppUtils.alertError(requireContext(), "Atención",
+                        mensaje.isEmpty() ? "No se encontraron clientes." : mensaje);
+            }
 
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
-            // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            AppUtils.cerrarCargando(dialogCargando);
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar la lista de clientes.");
         }
 
     }

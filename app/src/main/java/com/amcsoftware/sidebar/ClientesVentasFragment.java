@@ -11,11 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Cliente;
 import com.amcsoftware.sidebar.adapter.ClientesVentasAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,17 +26,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class ClientesVentasFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener,SearchView.OnQueryTextListener {
     //Variables locales
     ClientesVentasAdapter adapter;
     ArrayList<Cliente> listaClientes;
     RecyclerView recyclerClientes;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request;
     SearchView txtbuscar;
     JsonObjectRequest jsonObjectRequest;
     ImageButton btncliente;
-    
+
     public ClientesVentasFragment() {
         // Required empty public constructor
     }
@@ -55,7 +56,6 @@ public class ClientesVentasFragment extends Fragment implements Response.Listene
         recyclerClientes.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerClientes.setHasFixedSize(true);
         adapter         = new ClientesVentasAdapter(listaClientes);
-        progressBar     = vista.findViewById(R.id.progressBar);
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
 
         cargarWebService();
@@ -69,7 +69,6 @@ public class ClientesVentasFragment extends Fragment implements Response.Listene
            OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
                @Override
                public void handleOnBackPressed() {
-                   //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
                }
            };
 
@@ -80,8 +79,8 @@ public class ClientesVentasFragment extends Fragment implements Response.Listene
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaClientes.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -100,10 +99,10 @@ public class ClientesVentasFragment extends Fragment implements Response.Listene
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
         // Manejar la respuesta
-        Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar la lista de clientes.");
     }
 
     @Override
@@ -126,8 +125,8 @@ public class ClientesVentasFragment extends Fragment implements Response.Listene
                 cliente.setObservacion(jsonObject.optString("observacion"));
                 listaClientes.add(cliente);
             }
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             adapter = new ClientesVentasAdapter(listaClientes);
 
             adapter.setOnClickListener(v -> {
@@ -142,10 +141,10 @@ public class ClientesVentasFragment extends Fragment implements Response.Listene
 
             recyclerClientes.setAdapter(adapter);
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar la lista de clientes.");
         }
 
     }

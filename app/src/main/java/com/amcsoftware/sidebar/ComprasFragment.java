@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +16,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,6 +27,7 @@ import com.amcsoftware.sidebar.adapter.ProveedoresAdapter;
 import com.amcsoftware.sidebar.adapter.MercanciasVentasAdapter;
 import com.amcsoftware.sidebar.adapter.VentasAdapter;
 import com.amcsoftware.sidebar.listener.OnSubtotalChangeListener;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -51,6 +50,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class ComprasFragment extends Fragment implements Response.Listener<JSONObject>,
         Response.ErrorListener, AdapterView.OnItemSelectedListener, OnSubtotalChangeListener {
     //Variables locales para instanciar objetos
@@ -68,7 +69,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
     int n;
     private MercanciasVentasAdapter adapter1;
     private RecyclerView recyclerProveedores;
-    private ProgressBar progressBar;
+    private SweetAlertDialog dialogCargando;
     private RequestQueue requestQueue,request;
     private Spinner spnrfpago;
     private String idfc1,cliente, idcl, fpago, saldo1, total1, vpagado1, nit1, rsocial1, tel1,
@@ -103,7 +104,6 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         txttotal   = vista.findViewById(R.id.txtventat); // Asegúrate que este es el EditText para el total de la venta
         txtsaldo      = vista.findViewById(R.id.txtsaldo);
         txtvpagado    = vista.findViewById(R.id.txtvpagado);
-        progressBar   =  vista.findViewById(R.id.progressBar);
         RecyclerView recyclerVentasM = vista.findViewById(R.id.idRecycler);
         //Inicializar objetos
         builder = new android.app.AlertDialog.Builder(requireContext());
@@ -137,19 +137,14 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
             idfc1       = txtidfc.getText().toString().trim();
             // Validar que los campos no estén vacíos
             if (idcl.isEmpty() || total1.isEmpty() || idfc1.isEmpty() || vpagado1.isEmpty()) {
-                Toast.makeText(getContext(), "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                        "Por favor, complete todos los campos.");
                 return;
             }
             //Alert de confirmación
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setMessage("¿Está seguro de realizar esta operación?").setTitle("Softpymes");
-            builder.setPositiveButton("Si", (dialog, which) -> guardarCompra());
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Compra cancelada",
-                            Toast.LENGTH_SHORT).show());
-            AlertDialog dialog = builder.create();
-            dialog.show();//Mostrar el Alert
+            AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                    "¿Está seguro de realizar esta operación?", "Sí", "No",
+                    this::guardarCompra);
         });
         //limpiar objetos de los EditText de pagos/saldos (manteniendo el total de la venta)
         btborrar.setOnClickListener(v->{
@@ -170,7 +165,8 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
                 } catch (NumberFormatException e) {
                     txtvpagado.setText(""); // Limpiar si no es un número
                     txtsaldo.setText("");
-                    Toast.makeText(getContext(), "Ingrese un valor numérico para el valor pagado", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertAdvertencia(requireContext(), "Valor inválido",
+                            "Ingrese un valor numérico para el valor pagado.");
                 }
             }
             return false;
@@ -262,7 +258,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
             List<Mercancia> selectedItems = adapter1.getSelectedDataOnly();
             //Validar items
             if (selectedItems.isEmpty()) {
-                Toast.makeText((getContext()),"Ninguno seleccionado",Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Sin selección", "No seleccionó ninguna mercancía.");
             } else {
                 n   = selectedItems.size();
                 //Recorrer 'Items Seleccionados'
@@ -371,12 +367,11 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
             if (nit.getText().toString().isEmpty() || rsocial.getText().toString().isEmpty() ||
                     tel.getText().toString().isEmpty() || cel.getText().toString().isEmpty() || ciudad.getText().toString().isEmpty() ||
                     dir.getText().toString().isEmpty()){
-                Toast.makeText(getContext(), "Debe completar todos los campos!", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos", "Debe completar todos los campos.");
             }else{
                 //Confirmar operación
-                android.app.AlertDialog.Builder builder1 = new android.app.AlertDialog.Builder(requireContext());
-                builder1.setMessage("¿Está seguro de registrar este proveedor?").setTitle("Softpymes");
-                builder1.setPositiveButton("Si", (dialog1, which1) -> {
+                AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                        "¿Está seguro de registrar este proveedor?", "Sí", "No", () -> {
                     nit1        = nit.getText().toString().trim();
                     rsocial1    = rsocial.getText().toString().trim();
                     tel1        = tel.getText().toString().trim();
@@ -386,12 +381,6 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
                     guardarRegistro();
                     alertDialog.dismiss();
                 });
-                builder1.setNegativeButton("No", (dialog1, which1) ->
-                        Toast.makeText(getContext(),
-                                "Operación cancelada",
-                                Toast.LENGTH_SHORT).show());
-                android.app.AlertDialog dialog1 = builder1.create();
-                dialog1.show();//Mostrar
             }
         });
 
@@ -404,45 +393,48 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
     
     private void buscarProveedores() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaProveedores.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
 
     private void buscarMercancia() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaMercancia.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
 
     private void guardarRegistro() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/guardarProveedor.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    boolean ok = false;
+                    String msj = "No se pudo procesar la respuesta del servidor.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success");
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo guardar el proveedor.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -493,30 +485,33 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
 
     private void guardarCompra() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/guardarCompra.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    boolean ok = false;
+                    String msj = "No se pudo procesar la respuesta del servidor.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success");
                     } catch (JSONException e) {
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    if (jsonObject.optBoolean("success")) {
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
                         limpiar(); // limpiar después de una operación exitosa
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
                     }
 
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar errores
                     String errorMessage = "Error desconocido al guardar compra.";
                     if (error.networkResponse != null) {
@@ -541,7 +536,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
                         errorMessage += error.getMessage(); // Mensaje genérico de Volley
                     }
 
-                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    AppUtils.alertError(requireContext(), "Error", errorMessage);
                     Log.e("GuardarCompra", "Error: " + errorMessage, error); // Para ver el stack trace completo
 
                 }) {
@@ -616,9 +611,9 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Manejar la respuesta
-        progressBar.setVisibility(View.GONE); // Asegurar que la barra de progreso se oculte en caso de error
-        Toast.makeText((getContext()),"No se pudo consultar: " + error.getMessage(),Toast.LENGTH_LONG).show();
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar el servidor.");
     }
 
     @Override
@@ -639,7 +634,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
                     listaMercancia.add(mercancia);
                 }
             } catch (JSONException e) {
-                Toast.makeText((getContext()),"Error al procesar mercancía: " + e.getMessage(),Toast.LENGTH_SHORT).show();
+                AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la mercancía.");
             }
         }
         /*-- Lista de proveedores --*/
@@ -663,12 +658,13 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
                     listaProveedores.add(proveedor);
                 }
             } catch (JSONException e) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText((getContext()),"Error al procesar proveedores: " + e.getMessage(),Toast.LENGTH_SHORT).show();
+                AppUtils.cerrarCargando(dialogCargando);
+                AppUtils.alertError(requireContext(), "Error", "No se pudo procesar los proveedores.");
             }
             listaProveedores(getContext());
         }
-        progressBar.setVisibility(View.GONE); // Ocultar ProgressBar una vez que ambas cargas han terminado
+        // Ocultar el diálogo de carga una vez que ambas cargas han terminado
+        AppUtils.cerrarCargando(dialogCargando);
     }
 
     @Override

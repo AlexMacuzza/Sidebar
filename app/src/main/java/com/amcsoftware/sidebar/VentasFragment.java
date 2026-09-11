@@ -17,7 +17,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -34,6 +33,7 @@ import com.amcsoftware.sidebar.adapter.MercanciasVentasAdapter;
 // Interface para el subtotal al eliminar mercancía
 import com.amcsoftware.sidebar.listener.OnSubtotalChangeListener;
 import com.amcsoftware.sidebar.adapter.VentasAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -55,6 +55,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 // MODIFICACIÓN CLAVE 1: Implementar la interfaz OnSubtotalChangeListener
 public class VentasFragment extends Fragment implements Response.Listener<JSONObject>,
         Response.ErrorListener, AdapterView.OnItemSelectedListener, OnSubtotalChangeListener {
@@ -77,7 +79,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
     JsonObjectRequest jsonObjectRequest;
     MercanciasVentasAdapter adapter1;
     RecyclerView recyclerClientes, recyclerMercancia, recyclerVentasM;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue requestQueue,request;
     Spinner spnrfpago;
     String codvd,vendedor, cliente,idcl, fechacobro, fechav, 
@@ -119,7 +121,6 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
         txtncuotas    = vista.findViewById(R.id.txtnctas);
         txtfechav     = vista.findViewById(R.id.txtfechav);
         txtobs        = vista.findViewById(R.id.txtobs);
-        progressBar   =  vista.findViewById(R.id.progressBar);
         recyclerVentasM =  vista.findViewById(R.id.idRecycler);
         //Inicializar objetos
         builder = new android.app.AlertDialog.Builder(requireContext());
@@ -161,19 +162,14 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
             fechav      = txtfechav.getText().toString().trim();
             // Validar que los campos no estén vacíos
             if (idcl.isEmpty() || fechacobro.isEmpty() || total1.isEmpty() || cuota2.isEmpty() || fpago.isEmpty()) {
-                Toast.makeText(getContext(), "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                        "Por favor, complete todos los campos.");
                 return;
             }
             //Alert de confirmación
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setMessage("¿Está seguro de realizar esta operación?").setTitle("Softpymes");
-            builder.setPositiveButton("Si", (dialog, which) -> guardarRegistro());
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Venta cancelada",
-                            Toast.LENGTH_SHORT).show());
-            AlertDialog dialog = builder.create();
-            dialog.show();//Mostrar el Alert
+            AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                    "¿Está seguro de realizar esta operación?", "Sí", "No",
+                    this::guardarRegistro);
         });
         //limpiar objetos de los EditText de pagos/saldos (manteniendo el total de la venta)
         btborrar.setOnClickListener(v->{
@@ -218,7 +214,8 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                 }catch (NumberFormatException e) {
                 txttotal.setText(""); // Limpiar si no es un número
                 txtsaldo.setText("");
-                Toast.makeText(getContext(), "Ingrese un valor numérico para el valor total", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Valor inválido",
+                        "Ingrese un valor numérico para el valor total.");
             }
             }
             return false;
@@ -235,7 +232,8 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                 } catch (NumberFormatException e) {
                     txtvpagado.setText(""); // Limpiar si no es un número
                     txtsaldo.setText("");
-                    Toast.makeText(getContext(), "Ingrese un valor numérico para el valor pagado", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertAdvertencia(requireContext(), "Valor inválido",
+                            "Ingrese un valor numérico para el valor pagado.");
                 }
             }
             return false;
@@ -278,7 +276,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                             txtfechav.setText(fechaVencimiento.toString());
                         } catch (DateTimeParseException e) {
                             // Manejo de errores
-                            Toast.makeText(requireContext(), "Error al procesar la fecha.", Toast.LENGTH_SHORT).show();
+                            AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la fecha.");
                         }
 
                     }else{
@@ -287,7 +285,8 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                     btguardar.requestFocus();
                 } catch (NumberFormatException e) {
                     txtctnorm.setText("");
-                    Toast.makeText(getContext(), "Ingrese un valor numérico para la cuota normal", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertAdvertencia(requireContext(), "Valor inválido",
+                            "Ingrese un valor numérico para la cuota normal.");
                 }
             }
             return false;
@@ -318,10 +317,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
     }
 
     private void msgBox(String mensaje) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setMessage(mensaje).setTitle("Softpymes");
-        AlertDialog dialog = builder.create();
-        dialog.show();//Mostrar el Alert
+        AppUtils.alertExito(requireContext(), "Softpymes", mensaje);
     }
 
     private void listaClientes(Context context) {
@@ -403,7 +399,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
             List<Mercancia> selectedItems = adapter1.getSelectedDataOnly();
             //Validar items
             if (selectedItems.isEmpty()) {
-                Toast.makeText((getContext()),"Ninguno seleccionado",Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Sin selección", "No seleccionó ninguna mercancía.");
             } else {
                 n   = selectedItems.size();
                 //Recorrer 'Items Seleccionados'
@@ -481,16 +477,16 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
 
     private void buscarCliente() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaClientesImagen.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
 
     private void buscarMercancia() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaMercancia.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
@@ -541,12 +537,12 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
 
         String url = "https://www.wmcsoftware.net/apps/softpymes/verificarVentaCliente.php?idc=" + cedula;
 
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Verificando...", "Por favor espera.");
 
         JsonObjectRequest req = new JsonObjectRequest(
                 com.android.volley.Request.Method.GET, url, null,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     boolean tieneVenta = response.optBoolean("tiene_venta", false);
 
                     if (tieneVenta) {
@@ -588,7 +584,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Si el endpoint no existe aún, asignamos el cliente
                     // sin validación para no bloquear el flujo.
                     txtidcl.setText(cedula);
@@ -603,30 +599,35 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
 
     private void guardarRegistro() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/guardarVenta.php";
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    boolean ok = false;
+                    String msj = "No se pudo procesar la respuesta del servidor.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success");
                     } catch (JSONException e) {
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    limpiar(); // Llamar a limpiar después de una operación exitosa
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                        limpiar(); // Llamar a limpiar después de una operación exitosa
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
 
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar errores
-                    String errorMessage = "Error desconocido al guardar cliente.";
+                    String errorMessage = "Error desconocido al guardar la venta.";
                     if (error.networkResponse != null) {
                         int statusCode = error.networkResponse.statusCode;
                         String responseData = new String(error.networkResponse.data, StandardCharsets.UTF_8);
@@ -649,8 +650,8 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                         errorMessage += error.getMessage(); // Mensaje genérico de Volley
                     }
 
-                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
-                    Log.e("GuardarCliente", "Error: " + errorMessage, error); // Para ver el stack trace completo
+                    AppUtils.alertError(requireContext(), "Error", errorMessage);
+                    Log.e("GuardarVenta", "Error: " + errorMessage, error); // Para ver el stack trace completo
 
                 }) {
             @Override
@@ -739,9 +740,9 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Manejar la respuesta
-        progressBar.setVisibility(View.GONE); // Asegurar que la barra de progreso se oculte en caso de error
-        Toast.makeText((getContext()),"No se pudo consultar: " + error.getMessage(),Toast.LENGTH_LONG).show();
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar el servidor.");
     }
 
     @Override
@@ -762,7 +763,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                     listaMercancia.add(mercancia);
                 }
             } catch (JSONException e) {
-                Toast.makeText((getContext()),"Error al procesar mercancía: " + e.getMessage(),Toast.LENGTH_SHORT).show();
+                AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la mercancía.");
             }
         }
         /*-- Lista de clientes --*/
@@ -781,14 +782,15 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                     listaClientes.add(clienteObj);
                 }
             } catch (JSONException e) {
-                // Ocultar la ProgressBar solo si el error ocurre en la carga de clientes,
+                // Ocultar el diálogo de carga solo si el error ocurre en la carga de clientes,
                 // asumiendo que es el último paso de carga inicial.
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText((getContext()),"Error al procesar clientes: " + e.getMessage(),Toast.LENGTH_SHORT).show();
+                AppUtils.cerrarCargando(dialogCargando);
+                AppUtils.alertError(requireContext(), "Error", "No se pudo procesar los clientes.");
             }
             listaClientes(getContext());
         }
-        progressBar.setVisibility(View.GONE); // Ocultar ProgressBar una vez que ambas cargas han terminado
+        // Ocultar el diálogo de carga una vez que ambas cargas han terminado
+        AppUtils.cerrarCargando(dialogCargando);
     }
 
     @Override

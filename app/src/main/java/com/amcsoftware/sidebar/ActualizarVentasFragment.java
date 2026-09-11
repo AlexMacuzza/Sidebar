@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +49,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * ActualizarVentasFragment
  * Permite buscar una factura existente por su id_fv, cargar el cliente
@@ -63,7 +63,7 @@ public class ActualizarVentasFragment extends Fragment
     EditText      txtNumVenta, txtctnorm, txtfechacobro,
             txttotal, txtsaldo, txtvpagado, txtncuotas, txtfechav, txtobs;
     ImageButton   btnBuscarVenta, btmerc, btguardar, btborrar;
-    ProgressBar   progressBar;
+    SweetAlertDialog dialogCargando;
     RecyclerView  recyclerMercancia, recyclerVentasM;
     Spinner       spnrfpago;
     TextView      lblobs, txtidcl, txtcliente, lblvd;
@@ -124,7 +124,6 @@ public class ActualizarVentasFragment extends Fragment
         txtfechav     = vista.findViewById(R.id.txtfechav);
         txtfechacobro = vista.findViewById(R.id.txtfechacobro);
         txtobs        = vista.findViewById(R.id.txtobs);
-        progressBar   = vista.findViewById(R.id.progressBar);
         recyclerVentasM = vista.findViewById(R.id.idRecycler);
         // ── Inicializar ───────────────────────────────────────────────
         builder      = new android.app.AlertDialog.Builder(requireContext());
@@ -152,7 +151,7 @@ public class ActualizarVentasFragment extends Fragment
         btnBuscarVenta.setOnClickListener(v -> {
             String numVenta = txtNumVenta.getText().toString().trim();
             if (numVenta.isEmpty()) {
-                Toast.makeText(getContext(), "Ingrese el número de venta.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Dato requerido", "Ingrese el número de venta.");
                 return;
             }
             if (!AppUtils.hayConectividad(requireContext())) {
@@ -174,8 +173,7 @@ public class ActualizarVentasFragment extends Fragment
         // ── Botón agregar mercancías ──────────────────────────────────
         btmerc.setOnClickListener(v -> {
             if (idFvActual == null || idFvActual.isEmpty()) {
-                Toast.makeText(getContext(),
-                        "Primero busque una venta válida.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Atención", "Primero busque una venta válida.");
                 return;
             }
             mostrarDialogoInput(getContext());
@@ -184,8 +182,7 @@ public class ActualizarVentasFragment extends Fragment
         // ── Botón guardar actualización ───────────────────────────────
         btguardar.setOnClickListener(v -> {
             if (idFvActual == null || idFvActual.isEmpty()) {
-                Toast.makeText(getContext(),
-                        "No hay venta cargada para actualizar.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Atención", "No hay venta cargada para actualizar.");
                 return;
             }
 
@@ -206,25 +203,20 @@ public class ActualizarVentasFragment extends Fragment
             // Validar campos obligatorios
             if (fechacobro.isEmpty() || total1.isEmpty() ||
                     cuota2.isEmpty() || fpago == null || fpago.isEmpty()) {
-                Toast.makeText(getContext(),
-                        "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                        "Por favor, complete todos los campos.");
                 return;
             }
 
             // Confirmación
-            AlertDialog.Builder confirm = new AlertDialog.Builder(requireContext());
-            confirm.setMessage("¿Confirma actualizar la venta N° " + idFvActual + "?")
-                    .setTitle("Softpymes");
-            confirm.setPositiveButton("Sí", (dialog, which) -> {
+            AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                    "¿Confirma actualizar la venta N° " + idFvActual + "?", "Sí", "No", () -> {
                 if (!AppUtils.hayConectividad(requireContext())) {
                     AppUtils.alertSinInternet(requireContext());
                     return;
                 }
                 actualizarRegistro();
             });
-            confirm.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(), "Operación cancelada", Toast.LENGTH_SHORT).show());
-            confirm.create().show();
         });
 
         // ── Botón borrar (limpiar pagos / saldos) ────────────────────
@@ -264,8 +256,7 @@ public class ActualizarVentasFragment extends Fragment
                 } catch (NumberFormatException e) {
                     txttotal.setText("");
                     txtsaldo.setText("");
-                    Toast.makeText(getContext(),
-                            "Ingrese un valor numérico.", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertAdvertencia(requireContext(), "Valor inválido", "Ingrese un valor numérico.");
                 }
             }
             return false;
@@ -283,8 +274,7 @@ public class ActualizarVentasFragment extends Fragment
                 } catch (NumberFormatException e) {
                     txtvpagado.setText("");
                     txtsaldo.setText("");
-                    Toast.makeText(getContext(),
-                            "Ingrese un valor numérico.", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertAdvertencia(requireContext(), "Valor inválido", "Ingrese un valor numérico.");
                 }
             }
             return false;
@@ -324,8 +314,7 @@ public class ActualizarVentasFragment extends Fragment
                             LocalDate fechaVencimiento = LocalDate.now().plusDays(plazod);
                             txtfechav.setText(fechaVencimiento.toString());
                         } catch (DateTimeParseException e) {
-                            Toast.makeText(requireContext(),
-                                    "Error al procesar la fecha.", Toast.LENGTH_SHORT).show();
+                            AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la fecha.");
                         }
                     } else {
                         txtncuotas.setText("");
@@ -333,8 +322,8 @@ public class ActualizarVentasFragment extends Fragment
                     btguardar.requestFocus();
                 } catch (NumberFormatException e) {
                     txtctnorm.setText("");
-                    Toast.makeText(getContext(),
-                            "Ingrese un valor numérico para la cuota.", Toast.LENGTH_SHORT).show();
+                    AppUtils.alertAdvertencia(requireContext(), "Valor inválido",
+                            "Ingrese un valor numérico para la cuota.");
                 }
             }
             return false;
@@ -354,11 +343,11 @@ public class ActualizarVentasFragment extends Fragment
     // ── Buscar factura en el servidor ─────────────────────────────────
     private void buscarFactura(String numVenta) {
         String url = BASE_URL + "listaClientesImagen.php?id_fv=" + numVenta;
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Consultando...", "Por favor espera.");
         jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     boolean success = response.optBoolean("success", false);
                     if (success) {
                         JSONArray clientes = response.optJSONArray("data");
@@ -375,31 +364,25 @@ public class ActualizarVentasFragment extends Fragment
                                 resetAcumulados();
                                 txttotal.setText(auxtotal);
                                 txtsaldo.setText("0");
-                                Toast.makeText(getContext(),
-                                        "Venta N° " + idFvActual + " cargada. Cliente: " + nombre,
-                                        Toast.LENGTH_SHORT).show();
+                                AppUtils.alertExito(requireContext(), "Éxito",
+                                        "Venta N° " + idFvActual + " cargada. Cliente: " + nombre);
                             } catch (JSONException e) {
-                                Toast.makeText(getContext(),
-                                        "Error al leer datos de la venta.", Toast.LENGTH_SHORT).show();
+                                AppUtils.alertError(requireContext(), "Error", "Error al leer datos de la venta.");
                             }
                         } else {
                             limpiarCliente();
-                            Toast.makeText(getContext(),
-                                    "No se encontró la venta N° " + numVenta + ".",
-                                    Toast.LENGTH_LONG).show();
+                            AppUtils.alertError(requireContext(), "Atención",
+                                    "No se encontró la venta N° " + numVenta + ".");
                         }
                     } else {
                         limpiarCliente();
-                        Toast.makeText(getContext(),
-                                response.optString("mensaje", "Error al buscar la venta."),
-                                Toast.LENGTH_LONG).show();
+                        AppUtils.alertError(requireContext(), "Atención",
+                                response.optString("mensaje", "Error al buscar la venta."));
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(),
-                            "Error de red al buscar la venta: " + error.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo buscar la venta.");
                 }
         );
         request.add(jsonObjectRequest);
@@ -408,11 +391,11 @@ public class ActualizarVentasFragment extends Fragment
     // ── Cargar lista de mercancías disponibles ────────────────────────
     private void buscarMercancia() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaMercancia.php";
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     JSONArray jsonMercancia = response.optJSONArray("mercancia");
                     if (jsonMercancia != null) {
                         try {
@@ -428,16 +411,13 @@ public class ActualizarVentasFragment extends Fragment
                                 listaMercancia.add(m);
                             }
                         } catch (JSONException e) {
-                            Toast.makeText(getContext(),
-                                    "Error al procesar mercancía: " + e.getMessage(),
-                                    Toast.LENGTH_SHORT).show();
+                            AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la mercancía.");
                         }
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(),
-                            "No se pudo cargar mercancía.", Toast.LENGTH_SHORT).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error", "No se pudo cargar la mercancía.");
                 }
         );
         request.add(jsonObjectRequest);
@@ -461,7 +441,7 @@ public class ActualizarVentasFragment extends Fragment
         admp.setOnClickListener(v -> {
             List<Mercancia> selected = adapter1.getSelectedDataOnly();
             if (selected.isEmpty()) {
-                Toast.makeText(context, "Ninguno seleccionado", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(context, "Sin selección", "No seleccionó ninguna mercancía.");
             } else {
                 n = selected.size();
                 for (int i = 0; i < n; i++) {
@@ -520,27 +500,31 @@ public class ActualizarVentasFragment extends Fragment
     // ── Enviar actualización al servidor ──────────────────────────────
     private void actualizarRegistro() {
         String url = BASE_URL + "actualizarVentaXCliente.php";
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST, url,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     try {
                         JSONObject json = new JSONObject(response);
-                        Toast.makeText(getContext(),
-                                json.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                        if (json.optBoolean("success", false)) {
+                        boolean ok = json.optBoolean("success", false);
+                        String msj = json.optString("mensaje", "Operación realizada.");
+                        if (ok) {
+                            AppUtils.alertExito(requireContext(), "Éxito", msj);
                             limpiar();
+                        } else {
+                            AppUtils.alertError(requireContext(), "Atención", msj);
                         }
                     } catch (JSONException e) {
                         Log.e("ActualizarVentas", "JSON parse error: " + e.getMessage());
+                        AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la respuesta del servidor.");
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     String errorMessage = resolverErrorVolley(error);
-                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    AppUtils.alertError(requireContext(), "Error", errorMessage);
                     Log.e("ActualizarVentas", "Error: " + errorMessage, error);
                 }
         ) {
@@ -636,9 +620,7 @@ public class ActualizarVentasFragment extends Fragment
     }
 
     private void msgBox(String mensaje) {
-        new AlertDialog.Builder(requireContext())
-                .setMessage(mensaje).setTitle("Softpymes")
-                .create().show();
+        AppUtils.alertExito(requireContext(), "Softpymes", mensaje);
     }
 
     private String resolverErrorVolley(VolleyError error) {

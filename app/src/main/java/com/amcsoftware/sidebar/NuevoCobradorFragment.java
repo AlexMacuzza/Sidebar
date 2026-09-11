@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 
 import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
@@ -21,10 +20,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class NuevoCobradorFragment extends Fragment {
     EditText txtcobrador, txtcedcob, txtcelcob, txtdircob;
     ImageButton btguardar;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue requestQueue;
 
     public NuevoCobradorFragment() {
@@ -40,7 +41,6 @@ public class NuevoCobradorFragment extends Fragment {
         txtcelcob    = vista.findViewById(R.id.txtcelcob);
         txtdircob    = vista.findViewById(R.id.txtdircob);
         btguardar    = vista.findViewById(R.id.btregistrar);
-        progressBar  = vista.findViewById(R.id.progressBar);
 
         requestQueue = Volley.newRequestQueue(requireContext());
 
@@ -89,13 +89,13 @@ public class NuevoCobradorFragment extends Fragment {
 
     private void enviarRegistro(String nombre, String cedula, String celular, String direccion) {
         String url = "https://www.wmcsoftware.net/apps/softpymes/registrarCobrador.php";
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Guardando...", "Por favor espera.");
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         boolean success = jsonObject.optBoolean("success", false);
@@ -112,7 +112,7 @@ public class NuevoCobradorFragment extends Fragment {
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     AppUtils.alertError(requireContext(), "Error de conexión",
                             "No se pudo comunicar con el servidor. Intenta de nuevo.");
                 }) {

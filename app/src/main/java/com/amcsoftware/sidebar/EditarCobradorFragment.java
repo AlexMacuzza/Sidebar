@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amcsoftware.sidebar.utils.AppUtils;
@@ -24,14 +23,15 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class EditarCobradorFragment extends Fragment {
     // Variables locales
     EditText nombre, cedula, celular, dir;
     ImageButton btactualizar, bteliminar;
     TextView idcob;
-    // Declarar la ProgressBar
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue requestQueue;
 
 
@@ -51,7 +51,6 @@ public class EditarCobradorFragment extends Fragment {
         dir          = vista.findViewById(R.id.txtdircob);
         btactualizar = vista.findViewById(R.id.bteditar);
         bteliminar   = vista.findViewById(R.id.bteliminar);
-        progressBar  = vista.findViewById(R.id.progressBar);
         requestQueue = Volley.newRequestQueue(requireContext());
 
         assert getArguments() != null;
@@ -107,12 +106,12 @@ public class EditarCobradorFragment extends Fragment {
         String url = "https://www.wmcsoftware.net/apps/softpymes/eliminarCobrador.php";
         final String idcob1 = idcob.getText().toString().trim();
 
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Eliminando...", "Por favor espera.");
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         boolean success = jsonObject.optBoolean("success", false);
@@ -128,7 +127,7 @@ public class EditarCobradorFragment extends Fragment {
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     AppUtils.alertError(requireContext(), "Error de conexión",
                             "No se pudo comunicar con el servidor. Intenta de nuevo.");
                 }) {
@@ -186,12 +185,12 @@ public class EditarCobradorFragment extends Fragment {
         final String dir1      = dir.getText().toString().trim();
         final String celular1  = celular.getText().toString().trim();
 
-        progressBar.setVisibility(View.VISIBLE);
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         boolean success = jsonObject.optBoolean("success", false);
@@ -207,7 +206,7 @@ public class EditarCobradorFragment extends Fragment {
                     }
                 },
                 error -> {
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     AppUtils.alertError(requireContext(), "Error de conexión",
                             "No se pudo comunicar con el servidor. Intenta de nuevo.");
                 }) {

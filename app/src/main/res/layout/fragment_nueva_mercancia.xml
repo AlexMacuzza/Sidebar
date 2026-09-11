@@ -63,13 +63,6 @@
         android:gravity="center"
         android:scaleType="centerCrop"
         android:src="@drawable/aceptar" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
     </RelativeLayout>
 
 </LinearLayout>

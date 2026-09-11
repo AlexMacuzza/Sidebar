@@ -29,12 +29,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Mercancia;
 import com.amcsoftware.sidebar.adapter.InventarioAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -55,13 +54,15 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class InventarioFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener,SearchView.OnQueryTextListener {
     ArrayList<Mercancia> listaMercancia;
     JSONObject jsonObject = null;
     JsonObjectRequest jsonObjectRequest;
     ImageButton btpdf;
     InventarioAdapter adapter;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RecyclerView recyclerMercancia;
     RequestQueue request, requestQueue;
     SearchView txtbuscar;//buscador
@@ -84,7 +85,6 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
         recyclerMercancia.setHasFixedSize(true);
 
         adapter         = new InventarioAdapter(listaMercancia);
-        progressBar     = vista.findViewById(R.id.progressBar);
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
         requestQueue    = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
 
@@ -181,13 +181,13 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
                 }
                 // Agregar la tabla al documento
                 document.add(table);
-                Toast.makeText((getContext()), "Reporte generado Exitosamente!", Toast.LENGTH_SHORT).show();
+                AppUtils.alertExito(requireContext(), "Éxito", "Reporte generado exitosamente.");
             }else{
-                Toast.makeText((getContext()), "No hay registros que mostrar!", Toast.LENGTH_SHORT).show();
+                AppUtils.alertAdvertencia(requireContext(), "Sin datos", "No hay registros que mostrar.");
             }
 
         } catch (Exception e) {
-            Toast.makeText((getContext()), "No se pudo generar el pdf!", Toast.LENGTH_SHORT).show();
+            AppUtils.alertError(requireContext(), "Error", "No se pudo generar el PDF.");
         } finally {
             document.close();
         }
@@ -195,8 +195,8 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/inventario.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -205,14 +205,10 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
         // Manejar la respuesta
-        //Toast.makeText((getContext()),"No se pudo consultar "+error.toString(),Toast.LENGTH_SHORT).show();
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(requireContext());//instanciar Alert
-        builder.setMessage(error.toString());
-        androidx.appcompat.app.AlertDialog dialog = builder.create();
-        dialog.show();//Mostrar el Alert
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar el inventario.");
     }
 
     @Override
@@ -230,8 +226,8 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
                 mercancia.setCantidad(jsonObject.optString("saldo"));
                 listaMercancia.add(mercancia);
             }
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             adapter = new InventarioAdapter(listaMercancia);
             //Mostrar inputbox para ajustar inventario
             adapter.setOnClickListener(v-> {
@@ -242,10 +238,10 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
             recyclerMercancia.setAdapter(adapter);
             txtbuscar.requestFocus();
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar el inventario.");
         }
 
     }
@@ -291,33 +287,32 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
         String url = "https://www.wmcsoftware.net/apps/softpymes/actualizarBodega.php";
         // Validar que los campos no estén vacíos
         if (saldo.isEmpty()) {
-            Toast.makeText(getContext(), "El saldo no puede estar vacio.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Dato requerido", "El saldo no puede estar vacío.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
+                    AppUtils.cerrarCargando(dialogCargando);
                     // Manejar la respuesta del servidor
+                    String msj = "Inventario actualizado.";
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
                     } catch (JSONException e) {
                         Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                    AppUtils.alertExito(requireContext(), "Éxito", msj);
                     listaMercancia.clear();
                     cargarWebService();
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo actualizar el inventario.");
                 }) {
             @Override
             protected Map<String, String> getParams() {

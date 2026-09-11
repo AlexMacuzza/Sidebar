@@ -3,7 +3,6 @@ package com.amcsoftware.sidebar;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,11 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Mercancia;
 import com.amcsoftware.sidebar.adapter.MercanciasVentasAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -29,6 +27,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class MercanciasVentasFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener,SearchView.OnQueryTextListener {
     ArrayList<Mercancia> listaMercancia;
     boolean bandera;
@@ -36,7 +36,7 @@ public class MercanciasVentasFragment extends Fragment implements Response.Liste
     int n;
     JsonObjectRequest jsonObjectRequest;
     RecyclerView recyclerMercancia;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request;
     SearchView txtbuscar;//buscador
     MercanciasVentasAdapter adapter;
@@ -59,17 +59,15 @@ public class MercanciasVentasFragment extends Fragment implements Response.Liste
         recyclerMercancia.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerMercancia.setHasFixedSize(true);
         adapter          = new MercanciasVentasAdapter(listaMercancia);
-        progressBar      = vista.findViewById(R.id.progressBar);
         request          = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
 
         cargarWebService();
 
 
-        btmerc.setOnClickListener(v->{
+        btmerc.setOnClickListener(v->
             //Alert de confirmación
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setMessage("¿Está seguro de la selección de estos productos ?").setTitle("Softpymes");
-            builder.setPositiveButton("Si", (dialog, which) -> {
+            AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                    "¿Está seguro de la selección de estos productos?", "Sí", "No", () -> {
                 List<Mercancia> selectedItems = adapter.getSelectedDataOnly();
                 //Recorrer 'Items Seleccionados'
                 StringBuilder message = new StringBuilder("Elementos seleccionados: ");
@@ -105,16 +103,8 @@ public class MercanciasVentasFragment extends Fragment implements Response.Liste
                     bundle.putString("n",String.valueOf(n));
                     getParentFragmentManager().setFragmentResult("mercancia", bundle);
                 }
-                //Toast.makeText(getContext(), message.toString(), Toast.LENGTH_LONG).show();
                 Navigation.findNavController(v).popBackStack();
-            });
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Selección cancelada!",
-                            Toast.LENGTH_SHORT).show());
-            AlertDialog dialog = builder.create();
-            dialog.show();//Mostrar el Alert
-        });
+            }));
 
 
         txtbuscar.setOnQueryTextListener(this);
@@ -134,8 +124,8 @@ public class MercanciasVentasFragment extends Fragment implements Response.Liste
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaMercancia.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -156,10 +146,10 @@ public class MercanciasVentasFragment extends Fragment implements Response.Liste
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
         // Manejar la respuesta
-        Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar la mercancía.");
     }
 
     @Override
@@ -178,8 +168,8 @@ public class MercanciasVentasFragment extends Fragment implements Response.Liste
                 mercancia.setCantidad(jsonObject.optString("cantidad_inicial"));
                 listaMercancia.add(mercancia);
             }
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             adapter = new MercanciasVentasAdapter(listaMercancia);
             //Retornar valores
             adapter.setOnClickListener(v -> {
@@ -187,10 +177,10 @@ public class MercanciasVentasFragment extends Fragment implements Response.Liste
             });
             recyclerMercancia.setAdapter(adapter);
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar la mercancía.");
         }
     }
 }

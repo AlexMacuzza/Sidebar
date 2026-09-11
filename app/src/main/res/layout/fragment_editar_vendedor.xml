@@ -53,12 +53,6 @@
         android:inputType="text"
         android:textColorHint="#546E7A"
         tools:ignore="Autofill,VisualLintTextFieldSize" />
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -10,11 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Vendedor;
 import com.amcsoftware.sidebar.adapter.VendedoresAdapter;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,11 +26,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class VendedoresFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener, SearchView.OnQueryTextListener {
     ArrayList<Vendedor> listaVendedores;
     JsonObjectRequest jsonObjectRequest;
     RecyclerView recyclerVendedores;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request;
     SearchView txtbuscar;//buscador
     ImageButton btnvendedor;
@@ -53,7 +54,6 @@ public class VendedoresFragment extends Fragment implements Response.Listener<JS
         recyclerVendedores.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerVendedores.setHasFixedSize(true);
         adapter         = new VendedoresAdapter(listaVendedores);
-        progressBar     = vista.findViewById(R.id.progressBar);
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
 
         cargarWebService();
@@ -79,8 +79,8 @@ public class VendedoresFragment extends Fragment implements Response.Listener<JS
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaVendedores.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -99,11 +99,10 @@ public class VendedoresFragment extends Fragment implements Response.Listener<JS
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
         // Manejar la respuesta
-        Toast.makeText((getContext()),"No se pudo consultar "+error.toString(),Toast.LENGTH_SHORT).show();
-
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar los vendedores.");
     }
 
     @Override
@@ -123,15 +122,15 @@ public class VendedoresFragment extends Fragment implements Response.Listener<JS
                 vendedor.setDireccion(jsonObject.optString("direccion"));
                 listaVendedores.add(vendedor);
             }
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             adapter = new VendedoresAdapter(listaVendedores);
             recyclerVendedores.setAdapter(adapter);
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar los vendedores.");
         }
 
     }

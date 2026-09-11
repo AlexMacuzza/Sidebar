@@ -2,16 +2,14 @@ package com.amcsoftware.sidebar;
 
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -21,14 +19,15 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class EditarVendedorFragment extends Fragment {
     //Variables locales
     EditText nombre,cedula,celular,dir;
     ImageButton btactualizar,bteliminar;
     JSONObject jsonObject = null;
     TextView idvd;
-    // Declarar la ProgressBar
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request, requestQueue;
 
     public EditarVendedorFragment() {
@@ -45,7 +44,6 @@ public class EditarVendedorFragment extends Fragment {
         dir      = vista.findViewById(R.id.txtdirvd1);
         btactualizar  =  vista.findViewById(R.id.bteditar);
         bteliminar    =  vista.findViewById(R.id.bteliminar);
-        progressBar     =  vista.findViewById(R.id.progressBar);
         request      = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
         requestQueue = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
 
@@ -58,26 +56,15 @@ public class EditarVendedorFragment extends Fragment {
 
         btactualizar.setOnClickListener(v -> actualizarDatos());
 
-        bteliminar.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());//Alert de confirmación
-            builder.setMessage("Está seguro de eliminar este vendedor?").setTitle("Softpymes");
-
-            builder.setPositiveButton("Si", (dialog, which) -> eliminarDatos());
-
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Eliminación cancelada",
-                            Toast.LENGTH_SHORT).show());
-
-            AlertDialog dialog = builder.create();
-            dialog.show();//Mostrar el Alert
-        });
+        bteliminar.setOnClickListener(v ->
+                AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                        "¿Está seguro de eliminar este vendedor?", "Sí", "No",
+                        this::eliminarDatos));
 
         //Controlar botón atrás
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
 
@@ -93,32 +80,37 @@ public class EditarVendedorFragment extends Fragment {
         final String idvd1 = idvd.getText().toString().trim();
         // Validar que los campos no estén vacíos
         if (idvd1.isEmpty() ) {
-            Toast.makeText(getContext(), "El id no puede estar vacío.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Dato requerido", "El id no puede estar vacío.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Eliminando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    String msj = "Vendedor eliminado.";
+                    boolean ok = true;
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                        ok = false;
+                        msj = "No se pudo procesar la respuesta del servidor.";
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    limpiar();
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                        limpiar();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo eliminar el vendedor.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -151,31 +143,37 @@ public class EditarVendedorFragment extends Fragment {
 
         // Validar que los campos no estén vacíos
         if (idvd1.isEmpty() || nombre1.isEmpty() || dir1.isEmpty()|| celular1.isEmpty()) {
-            Toast.makeText(getContext(), "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                    "Por favor, complete todos los campos.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    String msj = "Vendedor actualizado.";
+                    boolean ok = true;
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                        ok = false;
+                        msj = "No se pudo procesar la respuesta del servidor.";
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo actualizar el vendedor.");
                 }) {
             @Override
             protected Map<String, String> getParams() {

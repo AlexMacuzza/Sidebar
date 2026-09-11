@@ -3,8 +3,8 @@ package com.amcsoftware.sidebar;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,6 +26,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class EditarUsuarioFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener, AdapterView.OnItemSelectedListener {
     //Variables locales
     ArrayAdapter<String> adapter;
@@ -34,7 +35,7 @@ public class EditarUsuarioFragment extends Fragment implements Response.Listener
     ImageButton btactualizar,bteliminar;
     int position;
     JSONObject jsonObject = null;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue requestQueue;
     Spinner spnrperfil;//combobox
     String perfil;
@@ -55,7 +56,6 @@ public class EditarUsuarioFragment extends Fragment implements Response.Listener
         btactualizar  =  vista.findViewById(R.id.bteditar);
         spnrperfil   =  vista.findViewById(R.id.spnrperfil);
         bteliminar    =  vista.findViewById(R.id.bteliminar);
-        progressBar     =  vista.findViewById(R.id.progressBar);
         requestQueue = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
         // Obtener el adaptador del Spinner
         adapter = (ArrayAdapter<String>) spnrperfil.getAdapter();
@@ -73,26 +73,15 @@ public class EditarUsuarioFragment extends Fragment implements Response.Listener
 
         btactualizar.setOnClickListener(v -> actualizarDatos());
 
-        bteliminar.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());//Alert de confirmación
-            builder.setMessage("Está seguro de eliminar este usuario?").setTitle("Softpymes");
-
-            builder.setPositiveButton("Si", (dialog, which) -> eliminarDatos());
-
-            builder.setNegativeButton("No", (dialog, which) ->
-                    Toast.makeText(getContext(),
-                            "Eliminación cancelada",
-                            Toast.LENGTH_SHORT).show());
-
-            AlertDialog dialog = builder.create();
-            dialog.show();//Mostrar el Alert
-        });
+        bteliminar.setOnClickListener(v ->
+                AppUtils.alertConfirmar(requireContext(), "Softpymes",
+                        "¿Está seguro de eliminar este usuario?", "Sí", "No",
+                        this::eliminarDatos));
 
         //Controlar botón atrás
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
 
@@ -112,35 +101,40 @@ public class EditarUsuarioFragment extends Fragment implements Response.Listener
 
         // Validar que los campos no estén vacíos
         if (usuario1.isEmpty() || clave1.isEmpty() || clave2.isEmpty() || perfil1.isEmpty()) {
-            Toast.makeText(getContext(), "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Campos incompletos",
+                    "Por favor, complete todos los campos.");
             return;
         } else if (!clave1.equals(clave2)) {
-            Toast.makeText(getContext(), "Las claves no coinciden.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Atención", "Las claves no coinciden.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    String msj = "Usuario actualizado.";
+                    boolean ok = true;
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                        Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    limpiar();
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                        limpiar();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo actualizar el usuario.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -163,32 +157,36 @@ public class EditarUsuarioFragment extends Fragment implements Response.Listener
         final String iduser1 = iduser.getText().toString().trim();
         // Validar que los campos no estén vacíos
         if (iduser1.isEmpty() ) {
-            Toast.makeText(getContext(), "El id no puede estar vacío.", Toast.LENGTH_SHORT).show();
+            AppUtils.alertAdvertencia(requireContext(), "Dato requerido", "El id no puede estar vacío.");
             return;
         }
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Eliminando...", "Por favor espera.");
         // Crear la solicitud POST
         StringRequest stringRequest =  new StringRequest(
                 Request.Method.POST,
                 url,
                 response -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar la respuesta del servidor
+                    AppUtils.cerrarCargando(dialogCargando);
+                    String msj = "Usuario eliminado.";
+                    boolean ok = true;
                     try {
                         jsonObject = new JSONObject(response);
+                        msj = jsonObject.optString("mensaje", msj);
+                        ok = jsonObject.optBoolean("success", true);
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                        Log.e("VOLLEY", "Error: " + e.getMessage());
                     }
-                    Toast.makeText(getContext(), jsonObject.optString("mensaje"), Toast.LENGTH_SHORT).show();
-                    limpiar();
+                    if (ok) {
+                        AppUtils.alertExito(requireContext(), "Éxito", msj);
+                        limpiar();
+                    } else {
+                        AppUtils.alertError(requireContext(), "Atención", msj);
+                    }
                 },
                 error -> {
-                    // Ocultar ProgressBar
-                    progressBar.setVisibility(View.GONE);
-                    // Manejar errores
-                    Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    AppUtils.cerrarCargando(dialogCargando);
+                    AppUtils.alertError(requireContext(), "Error de red", "No se pudo eliminar el usuario.");
                 }) {
             @Override
             protected Map<String, String> getParams() {

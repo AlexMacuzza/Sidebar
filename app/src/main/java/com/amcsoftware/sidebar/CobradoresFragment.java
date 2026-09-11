@@ -11,9 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
+import com.amcsoftware.sidebar.utils.AppUtils;
 import com.amcsoftware.sidebar.Entidades.Cobrador;
 import com.amcsoftware.sidebar.adapter.CobradoresAdapter;
 import com.android.volley.Request;
@@ -27,11 +26,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class CobradoresFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener,SearchView.OnQueryTextListener {
     ArrayList<Cobrador> listaCobradores;
     JsonObjectRequest jsonObjectRequest;
     RecyclerView recyclerCobradores;
-    ProgressBar progressBar;
+    SweetAlertDialog dialogCargando;
     RequestQueue request;
     SearchView txtbuscar;//buscador
     ImageButton btncobrador;
@@ -52,7 +53,6 @@ public class CobradoresFragment extends Fragment implements Response.Listener<JS
         recyclerCobradores.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerCobradores.setHasFixedSize(true);
         adapter         = new CobradoresAdapter(listaCobradores);
-        progressBar     = vista.findViewById(R.id.progressBar);
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
 
         cargarWebService();
@@ -77,8 +77,8 @@ public class CobradoresFragment extends Fragment implements Response.Listener<JS
     }
 
     private void cargarWebService() {
-        // Mostrar la ProgressBar
-        progressBar.setVisibility(View.VISIBLE);
+        // Mostrar el diálogo de carga
+        dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaCobradores.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
@@ -96,10 +96,9 @@ public class CobradoresFragment extends Fragment implements Response.Listener<JS
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        // Ocultar la ProgressBar
-        progressBar.setVisibility(View.GONE);
-        // Manejar la respuesta
-        Toast.makeText((getContext()),"No se pudo consultar "+error.toString(),Toast.LENGTH_SHORT).show();
+        // Ocultar el diálogo de carga
+        AppUtils.cerrarCargando(dialogCargando);
+        AppUtils.alertError(requireContext(), "Error", "No se pudo consultar los cobradores.");
 
     }
 
@@ -119,15 +118,14 @@ public class CobradoresFragment extends Fragment implements Response.Listener<JS
                 cobrador.setDireccion(jsonObject.optString("direccion"));
                 listaCobradores.add(cobrador);
             }
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
             adapter = new CobradoresAdapter(listaCobradores);
             recyclerCobradores.setAdapter(adapter);
         } catch (JSONException e) {
-            // Ocultar la ProgressBar
-            progressBar.setVisibility(View.GONE);
-            // Manejar la respuesta
-            Toast.makeText((getContext()),"No se pudo consultar!",Toast.LENGTH_SHORT).show();
+            // Ocultar el diálogo de carga
+            AppUtils.cerrarCargando(dialogCargando);
+            AppUtils.alertError(requireContext(), "Error", "No se pudo consultar los cobradores.");
         }
 
     }

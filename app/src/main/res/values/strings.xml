@@ -330,6 +330,54 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <!-- Etiquetas cards Ventas -->
+    <string name="lblidventa">Id Venta: </string>
+    <string name="lblvence">Vence: </string>
+    <string name="lblvendedor">Vendedor: </string>
+    <string name="lblmonto">Monto: </string>
+    <string name="lblmora">Mora: </string>
+    <string name="lblcuotasp">Cuotas P.: </string>
+    <string name="lblscore">Score: </string>
+    <string name="lblcuota">Cuota: </string>
+    <!-- Etiquetas cards Compras -->
+    <string name="lblfacturacompra">Factura Compra: </string>
+    <string name="lblproveedor">Proveedor: </string>
+    <string name="lblfechacobro">Fecha Cobro: </string>
+    <string name="lblfechainicial">Fecha Inicial: </string>
+    <!-- Etiquetas cards Pagos -->
+    <string name="lblidpago">Id Pago: </string>
+    <string name="lblreferencia">Referencia: </string>
+    <string name="lblvalorcuota">Valor Cuota: </string>
+    <string name="lblultimopago">Último Pago: </string>
+    <string name="lblvalorpagado">Valor Pagado: </string>
+    <!-- Etiquetas cards Proveedores -->
+    <string name="lblidproveedor">Id Proveedor: </string>
+    <string name="lblnit">Nit: </string>
+    <string name="lblrsocial">Razón Social: </string>
+    <string name="lbltelefono">Teléfono: </string>
+    <string name="lblciudad">Ciudad: </string>
+    <!-- Etiquetas cards Usuarios -->
+    <string name="lblcodperfil">Cod. Perfil: </string>
+    <!-- Card clientes con foto: acciones -->
+    <string name="lblcomentario">Comentario Cliente</string>
+    <string name="lblmoveprincipio">Mover al Principio</string>
+    <string name="lblmovearriba">Mover Arriba</string>
+    <string name="lblmoveabajo">Mover Abajo</string>
+    <string name="lblmovefinal">Mover al Final</string>
+    <!-- Card carrito de venta (mercancia_ventas_list) -->
+    <string name="lblcolid">Id</string>
+    <string name="lblcolproducto">Producto</string>
+    <string name="lblcolprecio">Precio</string>
+    <string name="lblcolcant">Cant.</string>
+    <string name="lblcolsubt">Subtotal</string>
+    <!-- Hints de búsqueda (pill de SearchView) -->
+    <string name="hint_buscar_tarea">Buscar tarea...</string>
+    <string name="hint_buscar_cliente">Buscar por nombre...</string>
+    <string name="hint_buscar_cobrador">Buscar cobrador...</string>
+    <string name="hint_buscar_proveedor">Buscar proveedor...</string>
+    <string name="hint_buscar_vendedor">Buscar vendedor...</string>
+    <string name="hint_buscar_usuario">Buscar usuario...</string>
+    <string name="hint_buscar_mercancia">Buscar mercancía...</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

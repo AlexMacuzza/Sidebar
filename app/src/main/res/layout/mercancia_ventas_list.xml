@@ -1,52 +1,77 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mercancia_ventas_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="3dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="?attr/colorSurface">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <TextView
-        android:id="@+id/lblidp"
-        android:layout_width="30dp"
-        android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:text="Id" />
-    <TextView
-        android:id="@+id/lbldesc"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:text="Producto" />
-    <TextView
-        android:id="@+id/lblprecio"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:text="Precio" />
-    <TextView
-        android:id="@+id/lblcant"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:textAlignment="center"
-        android:text="Cant." />
-    <TextView
-        android:id="@+id/lblsubt"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:text="Subtotal" />
-    <ImageButton
-        android:id="@+id/bteliminar"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        android:src="@drawable/delete"
-        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp">
+
+        <TextView
+            android:id="@+id/lblidp"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="@string/lblcolid" />
+        <TextView
+            android:id="@+id/lbldesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:textSize="13sp"
+            android:textColor="?attr/colorOnSurface"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@string/lblcolproducto" />
+        <TextView
+            android:id="@+id/lblprecio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="@string/lblcolprecio" />
+        <TextView
+            android:id="@+id/lblcant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textSize="12sp"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="@string/lblcolcant" />
+        <TextView
+            android:id="@+id/lblsubt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:text="@string/lblcolsubt" />
+        <ImageButton
+            android:id="@+id/bteliminar"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="4dp"
+            android:background="@null"
+            android:contentDescription="@string/bteliminar"
+            android:scaleType="centerInside"
+            android:src="@drawable/delete" />
     </LinearLayout>
-</LinearLayout>
+
+</androidx.cardview.widget.CardView>

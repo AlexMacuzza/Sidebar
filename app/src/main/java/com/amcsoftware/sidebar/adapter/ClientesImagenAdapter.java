@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.Navigation;
@@ -72,97 +71,77 @@ public class ClientesImagenAdapter extends RecyclerView.Adapter<ClientesImagenAd
         holder.txtscore.setText(listaClientes.get(position).getScore());
         holder.btnUp.setEnabled(position > 0);
         holder.btnDown.setEnabled(position < listaClientes.size() - 1);
-        //IMAGEN BLOB
-        if (listaClientes.get(position).getFoto()!=null){
-            holder.imagen.setImageBitmap(listaClientes.get(position).getFoto());
-        }else{
-            holder.imagen.setImageResource(R.drawable.clientes);
-        }
-        //IMAGEN A TRAVES DE URL
-        //URL BASE DE TU SERVIDOR
-        String BASE_URL = "https://www.wmcsoftware.net/";
+        //FOTO DE PERFIL: BLOB local, URL remota o placeholder, siempre recortada en círculo
+        com.bumptech.glide.request.RequestOptions circular =
+                new com.bumptech.glide.request.RequestOptions()
+                        .circleCrop()
+                        .placeholder(R.drawable.clientes)
+                        .error(R.drawable.clientes);
+        android.graphics.Bitmap foto = listaClientes.get(position).getFoto();
         String rutaImagen = listaClientes.get(position).getRfoto();
-        if (rutaImagen != null && !rutaImagen.isEmpty()) {
-            String urlCompleta = BASE_URL + rutaImagen;
+        if (foto != null) {
             com.bumptech.glide.Glide.with(holder.itemView.getContext())
-                    .load(urlCompleta)
-                    .placeholder(R.drawable.clientes) // mientras carga
-                    .error(R.drawable.clientes)       // si falla
-                    .into(holder.imagen);
+                    .load(foto).apply(circular).into(holder.imagen);
+        } else if (rutaImagen != null && !rutaImagen.isEmpty()) {
+            //URL BASE DE TU SERVIDOR
+            String BASE_URL = "https://www.wmcsoftware.net/";
+            com.bumptech.glide.Glide.with(holder.itemView.getContext())
+                    .load(BASE_URL + rutaImagen).apply(circular).into(holder.imagen);
         } else {
-            holder.imagen.setImageResource(R.drawable.clientes);
+            com.bumptech.glide.Glide.with(holder.itemView.getContext())
+                    .load(R.drawable.clientes).apply(circular).into(holder.imagen);
         }
         //////////////////////////////////////////////////////////////////
+        // Reordenar en la ruta: mover una posición arriba/abajo
         holder.btnUp.setOnClickListener(v -> {
-            // Lógica para mover hacia arriba
-            // Deberás mover el elemento en la 'posición' un lugar hacia arriba
-            // Llama a un método en tu adaptador o pasa un callback a la actividad/fragmento
             if (position > 0) {
-                // Intercambia elementos en tu lista de datos
                 Collections.swap(listaClientes, position, position - 1);
                 notifyItemMoved(position, position - 1);
-                // Opcionalmente, si necesitas volver a enlazar las vistas debido a cambios de índice:
                 notifyItemChanged(position);
                 notifyItemChanged(position - 1);
             }
         });
 
         holder.btnDown.setOnClickListener(v -> {
-            // Lógica para mover hacia abajo
-            // Deberás mover el elemento en la 'posición' un lugar hacia abajo
-            // Llama a un método en tu adaptador o pasa un callback a la actividad/fragmento
             if (position < listaClientes.size() - 1) {
-                // Intercambia elementos en tu lista de datos
                 Collections.swap(listaClientes, position, position + 1);
                 notifyItemMoved(position, position + 1);
-                // Opcionalmente, si necesitas volver a enlazar las vistas debido a cambios de índice:
                 notifyItemChanged(position);
                 notifyItemChanged(position + 1);
             }
         });
-        // --- Lógica del botón "Mover al Principio" ---
-        if (holder.btnMoveToStart != null) { // Asegúrate de que el botón exista en tu ViewHolder
-            holder.btnMoveToStart.setOnClickListener(v -> {
-                int currentPosition = holder.getBindingAdapterPosition();
-                moveItemToStart(currentPosition); // Llama al método actualizado
-            });
-        }
 
-        // --- Lógica del botón "Mover al Final" ---
-        if (holder.btnMoveToEnd != null) { // Asegúrate de que el botón exista en tu ViewHolder
-            holder.btnMoveToEnd.setOnClickListener(v -> {
-                int currentPosition = holder.getBindingAdapterPosition();
-                moveItemToEnd(currentPosition); // Llama al método actualizado
-            });
+        // Mover al principio / al final de la ruta
+        if (holder.btnMoveToStart != null) {
+            holder.btnMoveToStart.setOnClickListener(v ->
+                    moveItemToStart(holder.getBindingAdapterPosition()));
+        }
+        if (holder.btnMoveToEnd != null) {
+            holder.btnMoveToEnd.setOnClickListener(v ->
+                    moveItemToEnd(holder.getBindingAdapterPosition()));
         }
 
     }
 
-    // --- Método para Mover un ítem al Principio de la Lista ---
+    // Mueve un ítem al principio de la lista
     public void moveItemToStart(int currentPosition) {
         if (currentPosition > 0 && currentPosition < listaClientes.size()) {
             Cliente itemToMove = listaClientes.remove(currentPosition);
             notifyItemRemoved(currentPosition);
-
             listaClientes.add(0, itemToMove);
             notifyItemInserted(0);
-
-            // Si necesitas asegurar que las vistas se re-dibujen correctamente
-            notifyItemRangeChanged(0, currentPosition + 1); // Notifica un rango afectado
+            notifyItemRangeChanged(0, currentPosition + 1);
         }
     }
 
-    // --- Método para Mover un ítem al Final de la Lista ---
+    // Mueve un ítem al final de la lista
     public void moveItemToEnd(int currentPosition) {
         if (currentPosition >= 0 && currentPosition < listaClientes.size() - 1) {
             Cliente itemToMove = listaClientes.remove(currentPosition);
             notifyItemRemoved(currentPosition);
-
             listaClientes.add(itemToMove);
             notifyItemInserted(listaClientes.size() - 1);
-
-            // Si necesitas asegurar que las vistas se re-dibujen correctamente
-            notifyItemRangeChanged(currentPosition, listaClientes.size() - currentPosition); // Notifica un rango afectado
+            notifyItemRangeChanged(currentPosition, listaClientes.size() - currentPosition);
         }
     }
     
@@ -250,24 +229,10 @@ public class ClientesImagenAdapter extends RecyclerView.Adapter<ClientesImagenAd
                 btncoment.setVisibility(View.GONE);
             }
 
-            btncoment.setOnClickListener(v->{
-                final String idc =  String.valueOf(txtidcl.getText());
-                AlertDialogRButtons(idc,v);
-                /*AlertDialog.Builder builder = new AlertDialog.Builder(context);//Alert de confirmación
-                builder.setMessage("¿Desea este comentario para N° "+txtcliente.getText()+ "?").setTitle("Softpymes");
-
-                builder.setPositiveButton("Si", (dialog, which) -> agregarComentario(idc,v,"Excelente"));
-
-                builder.setNegativeButton("No", (dialog, which) ->
-                        Toast.makeText(context,
-                                "Operación cancelada",
-                                Toast.LENGTH_SHORT).show());
-
-                AlertDialog dialog = builder.create();
-                dialog.show();//Mostrar el Alert*/
+            btncoment.setOnClickListener(v -> {
+                final String idc = String.valueOf(txtidcl.getText());
+                AlertDialogRButtons(idc, v);
             });
-
-
         }
 
         public void AlertDialogRButtons(String idc, View v) {

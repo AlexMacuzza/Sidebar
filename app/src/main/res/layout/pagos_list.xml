@@ -1,260 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pagos_list"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pagos_list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginEnd="10dp"
-        android:background="@color/black" />
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="5dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="?attr/colorSurface">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Encabezado: cliente + celular -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="Id Pago:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText"
-            android:visibility="gone"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/txtcliente"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cliente"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/txtcelular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Celular"
+                android:textSize="13sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <!-- Id Pago / Id Venta (uso interno) -->
         <TextView
             android:id="@+id/txtidpago"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".8"
             android:text="Id Pago"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText"
-            android:visibility="gone"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="Id Venta:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
         <TextView
             android:id="@+id/txtidfv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".8"
             android:text="Id Venta"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText"
-            android:visibility="gone"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Cliente:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-        <TextView
-            android:id="@+id/txtcliente"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="Cliente"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Celular:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-        <TextView
-            android:id="@+id/txtcelular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="Celular"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Fecha Cobro:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-        <TextView
-            android:id="@+id/txtfechac"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="Fecha Cobro"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Referencia:"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtdesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="Observación:"
-            android:textSize="17sp" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Valor Cuota:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-        <TextView
-            android:id="@+id/txtvcuota"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="Valor Cuota"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Último Pago:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-        <TextView
-            android:id="@+id/txtfecha"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="Último Pago:"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Valor Pagado:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-        <TextView
-            android:id="@+id/txtvalor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".9"
-            android:text="Valor Pagado"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="  Saldo:"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-        <TextView
-            android:id="@+id/txtsaldo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".9"
-            android:text="Saldo"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/btpagos"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="51dp"
-            android:background="@null"
-            android:gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pesos"
             android:visibility="gone"
             tools:ignore="HardcodedText" />
-        <ImageButton
-            android:id="@+id/bteliminar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="118dp"
-            android:background="@null"
-            android:contentDescription="Eliminar"
-            android:gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/eliminar"
-            android:visibility="gone"
-            tools:ignore="HardcodedText" />
-    </RelativeLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginEnd="10dp"
-        android:background="@color/black" />
-</LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Fecha Cobro / Valor Cuota -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblfechacobro"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView
+                    android:id="@+id/txtfechac"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Fecha Cobro"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorOnSurface"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblvalorcuota"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView
+                    android:id="@+id/txtvcuota"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Valor Cuota"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorOnSurface"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Referencia -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblreferencia"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtdesc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Observación"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Último Pago / Valor Pagado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblultimopago"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView
+                    android:id="@+id/txtfecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Último Pago"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorOnSurface"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblvalorpagado"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView
+                    android:id="@+id/txtvalor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Valor Pagado"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorOnSurface"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Saldo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblsaldo"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtsaldo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Saldo"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <!-- Pie: acciones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+            <ImageButton
+                android:id="@+id/btpagos"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/pagos"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/pesos"
+                android:visibility="gone" />
+            <ImageButton
+                android:id="@+id/bteliminar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/bteliminar"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/eliminar"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

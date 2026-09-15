@@ -1,178 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/buscar_clientes_list_image"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="5dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="?attr/colorSurface">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="185dp"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <ImageView
-            android:id="@+id/idfoto"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/clientes" />
-        <ImageButton
-            android:id="@+id/btnscore"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@null"
-            android:contentDescription="Comentario Cliente"
-            android:gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/comments"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtidcl1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/lblidcl1"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/txtid1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/lblced2" />
-
-            <TextView
-                android:id="@+id/txtcliente1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/lblcl2" />
-
-            <TextView
-                android:id="@+id/txtcelular1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/lblcel2"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/txtdir1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/lbldir2" />
-
-            <TextView
-                android:id="@+id/txtcodeudor1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/lblcode2"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/txtcelcodeudor1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/lblcel2"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/txtobservacion1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
-                android:text="@string/lblobs2" />
-
-            <TextView
-                android:id="@+id/txtscore1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
-                android:text="Score"
-                android:visibility="gone" />
-        </LinearLayout>
-        <!-- Enrutar Clientes-->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:orientation="vertical"
-            tools:ignore="RtlHardcoded">
-
-            <ImageButton
-                android:id="@+id/btn_up"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@null"
-                android:contentDescription="Mover Arriba"
-                android:gravity="center"
-                android:scaleType="centerCrop"
-                android:src="@drawable/up"
-                tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
-
-            <ImageButton
-                android:id="@+id/btn_move_to_start"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@null"
-                android:contentDescription="Mover al Principio"
-                android:gravity="center"
-                android:scaleType="centerCrop"
-                android:src="@drawable/first"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <ImageButton
-                android:id="@+id/btn_down"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-                android:background="@null"
-                android:contentDescription="Mover Abajo"
-                android:gravity="center"
-                android:scaleType="centerCrop"
-                android:src="@drawable/download"
-                tools:ignore="HardcodedText,TouchTargetSizeCheck" />
-
-            <ImageButton
-                android:id="@+id/btn_move_to_end"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@null"
-                android:contentDescription="Mover al Final"
-                android:gravity="center"
-                android:scaleType="centerCrop"
-                android:src="@drawable/bottom"
-                tools:ignore="TouchTargetSizeCheck" />
-        </LinearLayout>
-    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"/>
-    <TextView
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/teal_700"/>
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Encabezado: avatar circular + nombre/cédula + calificar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/idfoto"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="12dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/lblcl1"
+                android:src="@drawable/clientes" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtidcl1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblidcl1"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtcliente1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lblcl2"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/txtid1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/lblced2"
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnscore"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/lblcomentario"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/comments" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Cuerpo: resto de campos del cliente -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblcel1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtcelular1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblcel2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lbldir1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtdir1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lbldir2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblcode1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtcodeudor1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblcode2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblcel1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtcelcodeudor1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblcel2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblobs1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtobservacion1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblobs2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtscore1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Score"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+
+        <!-- Pie: reordenar en la ruta -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <ImageButton
+                android:id="@+id/btn_move_to_start"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/lblmoveprincipio"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/first" />
+
+            <ImageButton
+                android:id="@+id/btn_up"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/lblmovearriba"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/up" />
+
+            <ImageButton
+                android:id="@+id/btn_down"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/lblmoveabajo"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/download" />
+
+            <ImageButton
+                android:id="@+id/btn_move_to_end"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/lblmovefinal"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/bottom" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

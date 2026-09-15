@@ -15,11 +15,11 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/compras"/>
+            android:src="@drawable/compras"
+            android:contentDescription="@string/desc_nueva_compra"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/layoutdatos"
@@ -29,7 +29,12 @@
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:queryHint="Proveedor"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/bg_search_pill"
+            android:iconifiedByDefault="false"
+            android:searchIcon="@drawable/ic_search_teal"
+            android:queryHint="@string/hint_buscar_proveedor"
             android:id="@+id/txtbuscarc"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/idRecycler"

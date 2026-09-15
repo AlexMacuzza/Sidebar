@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,7 @@ public class PagosVentasAdapter extends RecyclerView.Adapter<PagosVentasAdapter.
             listapagosventas.addAll(filteredData);
         }else{
             List<Pagos_Ventas> colletion = listapagosventas.stream().
-                    filter(i -> i.getCliente().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getCliente().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listapagosventas.clear();
             listapagosventas.addAll(colletion);

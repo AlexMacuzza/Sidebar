@@ -79,7 +79,7 @@ public class FacturaVentasAdapter extends RecyclerView.Adapter<FacturaVentasAdap
         holder.txtscore.setText(facturaActual.getScore());
         holder.txtncuotas.setText(facturaActual.getCuotas());
         holder.txtvcuotas.setText(facturaActual.getVcuotas());
-        // *** Lógica para colorear la fila ***
+        // Lógica para colorear la fila
         boolean fvencida = false;
         String fechaplazo = facturaActual.getPlazo(); // Asumiendo que es un String "YYYY-MM-DD"
         // Obtener la fecha actual
@@ -126,8 +126,8 @@ public class FacturaVentasAdapter extends RecyclerView.Adapter<FacturaVentasAdap
     @SuppressLint("NotifyDataSetChanged")
     private void aplicarFiltros(){
         List<Factura_Ventas> coleccion = filteredData.stream()
-                .filter(i -> i.getVendedor().toLowerCase().contains(filtroVendedor.toLowerCase())
-                        && i.getCliente().toLowerCase().contains(filtroCliente.toLowerCase()))
+                .filter(i -> i.getVendedor().toLowerCase(Locale.ROOT).contains(filtroVendedor.toLowerCase(Locale.ROOT))
+                        && i.getCliente().toLowerCase(Locale.ROOT).contains(filtroCliente.toLowerCase(Locale.ROOT)))
                 .collect(Collectors.toList());
         listafacturaventas.clear();
         listafacturaventas.addAll(coleccion);

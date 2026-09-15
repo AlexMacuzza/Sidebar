@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Vendedor"
+            android:text="@string/lblvendedor_titulo"
             android:textSize="20sp"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Número de Venta"
+            android:text="@string/lblnumventa_titulo"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:enabled="false"
-                android:hint="N° de venta"
+                android:hint="@string/hint_num_venta"
                 android:imeOptions="actionSearch"
                 android:inputType="number"
                 android:maxLength="10"
@@ -61,7 +61,7 @@
                 android:layout_height="38dp"
                 android:layout_marginStart="8dp"
                 android:background="@null"
-                android:contentDescription="Buscar venta"
+                android:contentDescription="@string/desc_buscar_venta"
                 android:scaleType="centerCrop"
                 android:src="@drawable/buscarcliente"
                 android:visibility="gone" />
@@ -77,7 +77,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cliente: "
+                android:text="@string/lblcliente_actventa"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -85,7 +85,7 @@
                 android:id="@+id/txtidcl"
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"
-                android:hint="Id"
+                android:hint="@string/hint_id_cliente"
                 android:enabled="false"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -95,7 +95,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="Nombre"
+                android:hint="@string/hint_nombre_cliente"
                 android:enabled="false"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -117,7 +117,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Agregar Productos"
+                android:text="@string/lblagregarproductos"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -129,7 +129,7 @@
                 android:background="@null"
                 android:scaleType="centerCrop"
                 android:src="@drawable/buscarmercancia"
-                android:contentDescription="Agregar mercancía" />
+                android:contentDescription="@string/desc_agregar_mercancia" />
         </LinearLayout>
 
         <!-- RecyclerView de productos de la venta -->
@@ -149,7 +149,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Subtotales"
+            android:text="@string/lblsubtotales"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -161,21 +161,24 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="       Total         "
+                android:labelFor="@id/txtventat"
+                android:text="@string/lbltotalventa"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="   Valor Pagado    "
+                android:labelFor="@id/txtvpagado"
+                android:text="@string/lblvalorpagadoventa"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="     Saldo    "
+                android:labelFor="@id/txtsaldo"
+                android:text="@string/lblsaldoventa"
                 android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -191,6 +194,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="false"
                 android:imeOptions="actionDone"
+                android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="10" />
 
@@ -221,7 +225,7 @@
                 android:background="@null"
                 android:scaleType="centerCrop"
                 android:src="@drawable/delete"
-                android:contentDescription="Limpiar"
+                android:contentDescription="@string/desc_limpiar"
                 tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
 
@@ -235,7 +239,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Cuotas y Fechas de Cobro"
+            android:text="@string/lblcuotasfechascobro"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -247,21 +251,24 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Forma de Pago       "
+                android:labelFor="@id/spnrfpago"
+                android:text="@string/lblformapago"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text=" Valor Cuota        "
+                android:labelFor="@id/txtctanormal"
+                android:text="@string/lblvalorcuota_form"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="   Cuotas            "
+                android:labelFor="@id/txtnctas"
+                android:text="@string/lblcuotasventa"
                 android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -283,6 +290,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
+                android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="10" />
 
@@ -291,6 +299,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:enabled="false"
+                android:importantForAutofill="no"
                 android:inputType="number" />
         </LinearLayout>
 
@@ -302,14 +311,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Vencimiento     "
+                android:labelFor="@id/txtfechav"
+                android:text="@string/lblvencimiento"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="   Fecha de Cobro    "
+                android:labelFor="@id/txtfechacobro"
+                android:text="@string/lblfechacobroventa"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -317,7 +328,8 @@
                 android:id="@+id/lblobs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="   Observaciones    "
+                android:labelFor="@id/txtobs"
+                android:text="@string/lblobservacionesventa"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -333,6 +345,7 @@
                 android:layout_width="120dp"
                 android:layout_height="48dp"
                 android:enabled="false"
+                android:importantForAutofill="no"
                 android:inputType="text" />
 
             <EditText
@@ -341,7 +354,9 @@
                 android:layout_height="48dp"
                 android:clickable="true"
                 android:focusable="false"
-                android:hint="Fecha cobro" />
+                android:importantForAutofill="no"
+                android:inputType="date"
+                android:hint="@string/hint_fecha_cobro" />
 
             <EditText
                 android:id="@+id/txtobs"
@@ -349,6 +364,7 @@
                 android:layout_height="48dp"
                 android:focusable="true"
                 android:imeOptions="actionDone"
+                android:importantForAutofill="no"
                 android:inputType="text"
                 android:visibility="gone" />
         </LinearLayout>
@@ -372,7 +388,7 @@
                 android:background="@null"
                 android:scaleType="centerCrop"
                 android:src="@drawable/aceptar"
-                android:contentDescription="Registrar actualización" />
+                android:contentDescription="@string/desc_registrar_actualizacion" />
         </LinearLayout>
 
     </LinearLayout>

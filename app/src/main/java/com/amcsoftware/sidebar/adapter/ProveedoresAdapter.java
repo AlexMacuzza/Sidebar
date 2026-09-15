@@ -12,6 +12,7 @@ import com.amcsoftware.sidebar.Entidades.Proveedores;
 import com.amcsoftware.sidebar.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class ProveedoresAdapter extends RecyclerView.Adapter<ProveedoresAdapter.ProveedoresHolder> implements View.OnClickListener {
@@ -60,7 +61,7 @@ public class ProveedoresAdapter extends RecyclerView.Adapter<ProveedoresAdapter.
             listaProveedores.addAll(filteredData);
         }else{
             List<Proveedores> collection = listaProveedores.stream().
-                    filter(i -> i.getRsocial().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getRsocial().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaProveedores.clear();
             listaProveedores.addAll(collection);

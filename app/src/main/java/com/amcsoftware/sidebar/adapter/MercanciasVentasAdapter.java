@@ -88,7 +88,7 @@ public class MercanciasVentasAdapter extends RecyclerView.Adapter<MercanciasVent
             listaMercancia.addAll(filteredData);
         }else{
             List<Mercancia> colletion = listaMercancia.stream().
-                    filter(i -> i.getDescripcion().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getDescripcion().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaMercancia.clear();
             listaMercancia.addAll(colletion);

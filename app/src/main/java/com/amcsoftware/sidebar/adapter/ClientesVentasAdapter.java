@@ -13,6 +13,7 @@ import com.amcsoftware.sidebar.Entidades.Cliente;
 import com.amcsoftware.sidebar.R;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class ClientesVentasAdapter extends RecyclerView.Adapter<ClientesVentasAdapter.ClientesVentasHolder>
@@ -59,8 +60,7 @@ public class ClientesVentasAdapter extends RecyclerView.Adapter<ClientesVentasAd
         }else{
             holder.imagen.setImageResource(R.drawable.clientes);
         }
-        //IMAGEN A TRAVES DE URL
-        //URL BASE DE TU SERVIDOR
+        // Imagen vía URL: URL base del servidor
         String BASE_URL = "https://www.wmcsoftware.net/";
         String rutaImagen = listaClientes.get(position).getRfoto();
         if (rutaImagen != null && !rutaImagen.isEmpty()) {
@@ -85,7 +85,7 @@ public class ClientesVentasAdapter extends RecyclerView.Adapter<ClientesVentasAd
             listaClientes.addAll(filteredData);
         }else{
             List<Cliente> colletion = listaClientes.stream().
-                    filter(i -> i.getNombre().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getNombre().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaClientes.clear();
             listaClientes.addAll(colletion);

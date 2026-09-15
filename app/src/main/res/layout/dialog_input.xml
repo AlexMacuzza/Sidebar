@@ -9,7 +9,8 @@
         android:id="@+id/editTextNombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre"
-        android:inputType="textPersonName" />
+        android:hint="@string/hint_nombre_generico"
+        android:inputType="textPersonName"
+        android:importantForAutofill="no" />
 
 </LinearLayout>

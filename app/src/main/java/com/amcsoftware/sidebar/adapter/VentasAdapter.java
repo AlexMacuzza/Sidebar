@@ -13,25 +13,17 @@ import com.amcsoftware.sidebar.R;
 import com.amcsoftware.sidebar.utils.AppUtils;
 import java.util.ArrayList;
 
-// Importamos nuestra interfaz personalizada para la comunicación.
 import com.amcsoftware.sidebar.listener.OnSubtotalChangeListener;
 
 public class VentasAdapter extends RecyclerView.Adapter<VentasAdapter.VentasViewHolder> {
 
     ArrayList<Ventas> listaventas;
-    // DECLARACIÓN DE LA INTERFAZ:
-    // Esta variable mantendrá una referencia al objeto (generalmente el Fragment)
-    // que ha implementado la interfaz OnSubtotalChangeListener.
-    // A través de esta referencia, el adaptador podrá llamar a los métodos definidos en la interfaz.
+    // Listener (el Fragment) que recibe los cambios de subtotal
     private final OnSubtotalChangeListener subtotalChangeListener;
 
-    // CONSTRUCTOR ACTUALIZADO:
-    // Ahora, el constructor del adaptador toma un segundo argumento: una instancia de nuestra interfaz.
-    // Esto permite que el Fragment (o cualquier clase que implemente la interfaz) se "registre"
-    // como el oyente de los cambios del subtotal.
     public VentasAdapter(ArrayList<Ventas> listaventas, OnSubtotalChangeListener listener) {
         this.listaventas = listaventas;
-        this.subtotalChangeListener = listener; // Asignamos el listener proporcionado.
+        this.subtotalChangeListener = listener;
     }
 
     @NonNull
@@ -53,8 +45,7 @@ public class VentasAdapter extends RecyclerView.Adapter<VentasAdapter.VentasView
         holder.lblsubt.setText(datos.getSubtotal());
         holder.btborrar.setOnClickListener(v->{
             int currentPosition = holder.getBindingAdapterPosition();
-            if (currentPosition != RecyclerView.NO_POSITION) { // Siempre verifica que la posición sea válida
-                // Alerta de confirmación antes de eliminar.
+            if (currentPosition != RecyclerView.NO_POSITION) {
                 AppUtils.alertConfirmar(v.getContext(), "Softpymes",
                         "¿Está seguro de eliminar este registro?", "Sí", "No",
                         () -> removeItem(currentPosition));
@@ -67,32 +58,20 @@ public class VentasAdapter extends RecyclerView.Adapter<VentasAdapter.VentasView
         return listaventas.size();
     }
 
-    /*-- Método para eliminar un elemento --*/
-    // Este método es crucial para la comunicación con el Fragment.
+    // Elimina un ítem y notifica al listener el subtotal restado (valor negativo)
     public void removeItem(int position) {
         if (position >= 0 && position < listaventas.size()) {
-            // PASO 1: Obtener el ítem ANTES de eliminarlo.
-            // Necesitamos el subtotal de este ítem para notificar al listener.
             Ventas removedItem = listaventas.get(position);
             double subtotalValue = 0.0;
             try {
-                // Intentamos parsear el subtotal de String a double.
                 subtotalValue = Double.parseDouble(removedItem.getSubtotal());
             } catch (NumberFormatException e) {
-                // Manejo de errores: Si el subtotal no es un número válido.
-                // Es importante manejar esta excepción para evitar un crasheo.
                 System.err.println("Error al parsear el subtotal para eliminar: " + e.getMessage());
-
             }
 
-            // PASO 2: Eliminar el ítem de la fuente de datos.
             listaventas.remove(position);
-            // PASO 3: Notificar al RecyclerView que un ítem ha sido eliminado.
             notifyItemRemoved(position);
 
-            // PASO 4: Notificar al listener (el Fragment) sobre el cambio en el subtotal.
-            // Verificamos que el listener no sea nulo para evitar NullPointerException.
-            // Pasamos un valor NEGATIVO porque este subtotal se está RESTANDO del total general.
             if (subtotalChangeListener != null) {
                 subtotalChangeListener.onSubtotalChanged(-subtotalValue,position);
             }
@@ -102,8 +81,7 @@ public class VentasAdapter extends RecyclerView.Adapter<VentasAdapter.VentasView
     public void clearData() {
         int size = listaventas.size();
         if (size > 0){
-            // Cuando se borran todos los datos, calculamos la suma total de los subtotales
-            // para enviar un único cambio al listener.
+            // Suma todos los subtotales para notificar un único cambio al listener
             double totalClearedSubtotal = 0.0;
             for (Ventas item : listaventas) {
                 try {
@@ -113,10 +91,9 @@ public class VentasAdapter extends RecyclerView.Adapter<VentasAdapter.VentasView
                 }
             }
 
-            listaventas.clear(); // Limpiamos la lista de ventas.
-            notifyItemRangeRemoved(0, size); // Notificamos al adaptador sobre la eliminación de un rango de ítems.
+            listaventas.clear();
+            notifyItemRangeRemoved(0, size);
 
-            // Notificamos al listener, pasando la suma total como un valor negativo.
             if (subtotalChangeListener != null) {
                 subtotalChangeListener.onSubtotalChanged(-totalClearedSubtotal,0);
             }
@@ -142,7 +119,5 @@ public class VentasAdapter extends RecyclerView.Adapter<VentasAdapter.VentasView
     public void addDatos(Ventas datos) {
         listaventas.add(datos);
         notifyDataSetChanged();
-        // Si necesitas actualizar el total cuando se AÑADE un item,
-        // deberías implementar una lógica similar aquí para llamar a subtotalChangeListener.onSubtotalChanged(addedSubtotal);
     }
 }

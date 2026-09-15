@@ -14,6 +14,7 @@ import com.amcsoftware.sidebar.Entidades.Cliente;
 import com.amcsoftware.sidebar.R;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class ClientesAdapter extends RecyclerView.Adapter<ClientesAdapter.ClientesHolder> implements View.OnClickListener
@@ -62,7 +63,7 @@ public class ClientesAdapter extends RecyclerView.Adapter<ClientesAdapter.Client
             listaClientes.addAll(filteredData);
         }else{
             List<Cliente> colletion = listaClientes.stream().
-                    filter(i -> i.getNombre().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getNombre().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaClientes.clear();
             listaClientes.addAll(colletion);
@@ -114,7 +115,6 @@ public class ClientesAdapter extends RecyclerView.Adapter<ClientesAdapter.Client
                 bundle.putString("codeudor", txtcodeudor.getText().toString());
                 bundle.putString("celcode", txtcelcodeudor.getText().toString());
                 bundle.putString("obs", txtobs.getText().toString());
-                //Navigation.findNavController(v).navigate(R.id.actualizarCliente,bundle);//Navegación dinámica
             });
         }
         @Override

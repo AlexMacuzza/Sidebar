@@ -59,7 +59,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class ActualizarVentasFragment extends Fragment
         implements AdapterView.OnItemSelectedListener, OnSubtotalChangeListener {
 
-    // ── Vistas ────────────────────────────────────────────────────────
     EditText      txtNumVenta, txtctnorm, txtfechacobro,
             txttotal, txtsaldo, txtvpagado, txtncuotas, txtfechav, txtobs;
     ImageButton   btnBuscarVenta, btmerc, btguardar, btborrar;
@@ -68,19 +67,16 @@ public class ActualizarVentasFragment extends Fragment
     Spinner       spnrfpago;
     TextView      lblobs, txtidcl, txtcliente, lblvd;
 
-    // ── Adaptadores y listas ──────────────────────────────────────────
     ArrayList<Mercancia> listaMercancia = new ArrayList<>();
     ArrayList<Ventas>    listaventas    = new ArrayList<>();
     MercanciasVentasAdapter adapter1;
     VentasAdapter           adapter;
 
-    // ── Volley ────────────────────────────────────────────────────────
     RequestQueue     requestQueue, request;
     JsonObjectRequest jsonObjectRequest;
     android.app.AlertDialog alertDialog;
     android.app.AlertDialog.Builder builder;
 
-    // ── Estado de la venta ────────────────────────────────────────────
     double   cantidad, cuota, ncuotas, subtotal, total, precio,
             res, saldo, vpagado, auxtl;
     int      n, plazod;
@@ -92,7 +88,6 @@ public class ActualizarVentasFragment extends Fragment
     StringBuilder codpv, descv, preciov, cantv, subtv, obsv,
             auxcodpv, auxdescv, auxpreciov, auxcantv, auxsubtv, auxobsv;
 
-    // ── Base URL ──────────────────────────────────────────────────────
     private static final String BASE_URL =
             "https://www.wmcsoftware.net/apps/softpymes/";
 
@@ -105,7 +100,6 @@ public class ActualizarVentasFragment extends Fragment
 
         View vista = inflater.inflate(R.layout.fragment_actualizarventas, container, false);
 
-        // ── Bind vistas ───────────────────────────────────────────────
         lblvd         = vista.findViewById(R.id.lblvd);
         txtNumVenta   = vista.findViewById(R.id.txtNumVenta);
         btnBuscarVenta= vista.findViewById(R.id.btnBuscarVenta);
@@ -125,7 +119,6 @@ public class ActualizarVentasFragment extends Fragment
         txtfechacobro = vista.findViewById(R.id.txtfechacobro);
         txtobs        = vista.findViewById(R.id.txtobs);
         recyclerVentasM = vista.findViewById(R.id.idRecycler);
-        // ── Inicializar ───────────────────────────────────────────────
         builder      = new android.app.AlertDialog.Builder(requireContext());
         requestQueue = Volley.newRequestQueue(requireContext());
         request      = Volley.newRequestQueue(requireContext());
@@ -136,7 +129,7 @@ public class ActualizarVentasFragment extends Fragment
         spnrfpago.setOnItemSelectedListener(this);
 
         loadData();
-        // ── Aplicar argumentos recibidos desde VentasFragment ──
+        // Aplicar argumentos recibidos desde VentasFragment
         if (idfv != null && !idfv.isEmpty()) {
             idFvActual = idfv;          // variable usada por el resto de la lógica
             idcl       = cedula;
@@ -145,9 +138,9 @@ public class ActualizarVentasFragment extends Fragment
             txtcliente.setText(nombre);
             resetAcumulados();
         }
-        // ── Cargar mercancías al abrir el fragment ────────────────────
+        // Cargar mercancías al abrir el fragment
         buscarMercancia();
-        // ── Buscar factura por número ─────────────────────────────────
+        // Buscar factura por número
         btnBuscarVenta.setOnClickListener(v -> {
             String numVenta = txtNumVenta.getText().toString().trim();
             if (numVenta.isEmpty()) {
@@ -170,7 +163,7 @@ public class ActualizarVentasFragment extends Fragment
             return false;
         });
 
-        // ── Botón agregar mercancías ──────────────────────────────────
+        // Botón agregar mercancías
         btmerc.setOnClickListener(v -> {
             if (idFvActual == null || idFvActual.isEmpty()) {
                 AppUtils.alertAdvertencia(requireContext(), "Atención", "Primero busque una venta válida.");
@@ -179,7 +172,7 @@ public class ActualizarVentasFragment extends Fragment
             mostrarDialogoInput(getContext());
         });
 
-        // ── Botón guardar actualización ───────────────────────────────
+        // Botón guardar actualización
         btguardar.setOnClickListener(v -> {
             if (idFvActual == null || idFvActual.isEmpty()) {
                 AppUtils.alertAdvertencia(requireContext(), "Atención", "No hay venta cargada para actualizar.");
@@ -219,7 +212,7 @@ public class ActualizarVentasFragment extends Fragment
             });
         });
 
-        // ── Botón borrar (limpiar pagos / saldos) ────────────────────
+        // Botón borrar (limpiar pagos / saldos)
         btborrar.setOnClickListener(v -> {
             txtvpagado.setText("");
             txtsaldo.setText("");
@@ -233,7 +226,7 @@ public class ActualizarVentasFragment extends Fragment
             txtvpagado.requestFocus();
         });
 
-        // ── Calendario fecha de cobro ─────────────────────────────────
+        // Calendario fecha de cobro
         txtfechacobro.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             new DatePickerDialog(requireContext(),
@@ -245,7 +238,7 @@ public class ActualizarVentasFragment extends Fragment
             ).show();
         });
 
-        // ── Total (solo Administrador) ────────────────────────────────
+        // Total (solo Administrador)
         txttotal.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
@@ -262,7 +255,7 @@ public class ActualizarVentasFragment extends Fragment
             return false;
         });
 
-        // ── Calcular saldo ────────────────────────────────────────────
+        // Calcular saldo
         txtvpagado.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
@@ -280,7 +273,7 @@ public class ActualizarVentasFragment extends Fragment
             return false;
         });
 
-        // ── Calcular cuotas ───────────────────────────────────────────
+        // Calcular cuotas
         txtctnorm.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
@@ -329,7 +322,7 @@ public class ActualizarVentasFragment extends Fragment
             return false;
         });
 
-        // ── Bloquear botón atrás (sin acción) ────────────────────────
+        // Bloquear botón atrás (sin acción)
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() { }
@@ -340,7 +333,7 @@ public class ActualizarVentasFragment extends Fragment
         return vista;
     }
 
-    // ── Buscar factura en el servidor ─────────────────────────────────
+    // Buscar factura en el servidor
     private void buscarFactura(String numVenta) {
         String url = BASE_URL + "listaClientesImagen.php?id_fv=" + numVenta;
         dialogCargando = AppUtils.mostrarCargando(requireContext(), "Consultando...", "Por favor espera.");
@@ -388,7 +381,7 @@ public class ActualizarVentasFragment extends Fragment
         request.add(jsonObjectRequest);
     }
 
-    // ── Cargar lista de mercancías disponibles ────────────────────────
+    // Cargar lista de mercancías disponibles
     private void buscarMercancia() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaMercancia.php";
         dialogCargando = AppUtils.mostrarCargando(requireContext(), "Cargando...", "Por favor espera.");
@@ -423,7 +416,7 @@ public class ActualizarVentasFragment extends Fragment
         request.add(jsonObjectRequest);
     }
 
-    // ── Diálogo para seleccionar mercancías ───────────────────────────
+    // Diálogo para seleccionar mercancías
     public void mostrarDialogoInput(Context context) {
         builder.setTitle("Agregar Producto:");
         View viewInflada = LayoutInflater.from(context)
@@ -497,7 +490,7 @@ public class ActualizarVentasFragment extends Fragment
         alertDialog.show();
     }
 
-    // ── Enviar actualización al servidor ──────────────────────────────
+    // Enviar actualización al servidor
     private void actualizarRegistro() {
         String url = BASE_URL + "actualizarVentaXCliente.php";
         dialogCargando = AppUtils.mostrarCargando(requireContext(), "Actualizando...", "Por favor espera.");
@@ -553,7 +546,6 @@ public class ActualizarVentasFragment extends Fragment
         requestQueue.add(stringRequest);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────
     private void loadData() {
         SharedPreferences sp = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
@@ -635,7 +627,6 @@ public class ActualizarVentasFragment extends Fragment
         return "Error desconocido: " + error.getMessage();
     }
 
-    // ── Spinner ───────────────────────────────────────────────────────
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         fpago = spnrfpago.getItemAtPosition(pos).toString();
@@ -643,7 +634,7 @@ public class ActualizarVentasFragment extends Fragment
     @Override
     public void onNothingSelected(AdapterView<?> parent) { fpago = ""; plazod = 0; }
 
-    // ── OnSubtotalChangeListener (eliminación de ítems en RecyclerView) ─
+    // Eliminación de ítems en el RecyclerView de mercancías
     @Override
     public void onSubtotalChanged(double subtotalChange, int position) {
         auxcodpv   = removeElementAtPosition(codpv,   position, separador);
@@ -671,7 +662,7 @@ public class ActualizarVentasFragment extends Fragment
         codpv = auxcodpv; descv = auxdescv; cantv = auxcantv;
         preciov = auxpreciov; subtv = auxsubtv; obsv = auxobsv;
     }
-    // ── Utilidad: eliminar elemento de StringBuilder por posición ─────
+    // Eliminar elemento de un StringBuilder acumulado por posición
     public static StringBuilder removeElementAtPosition(
             StringBuilder sb, int pos, String sep) {
         String[] arr = sb.toString().split(sep);
@@ -682,7 +673,6 @@ public class ActualizarVentasFragment extends Fragment
         for (String s : list) sb.append(s).append(sep);
         return sb;
     }
-    // ── Recibir resultado de navegación ────────────────────
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -690,7 +680,7 @@ public class ActualizarVentasFragment extends Fragment
                 "clientes", this, (key, bundle) -> {
                     // No aplica en este módulo: el cliente se resuelve desde la factura
                 });
-        //Recibir datos del fragment Ventas
+        // Recibir datos del fragment Ventas
         Bundle bundleArgs = getArguments();
         if (bundleArgs != null) {
             idfv     = bundleArgs.getString("id_fv", "");

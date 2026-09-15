@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ public class FacturaComprasAdapter extends RecyclerView.Adapter<FacturaComprasAd
             listafacturacompras.addAll(filteredData);
         }else{
             List<Factura_Compras> colletion = listafacturacompras.stream().
-                    filter(i -> i.getProveedor().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getProveedor().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listafacturacompras.clear();
             listafacturacompras.addAll(colletion);

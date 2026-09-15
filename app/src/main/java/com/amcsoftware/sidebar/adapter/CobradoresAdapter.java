@@ -15,6 +15,7 @@ import com.amcsoftware.sidebar.Entidades.Cobrador;
 import com.amcsoftware.sidebar.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class CobradoresAdapter extends RecyclerView.Adapter<CobradoresAdapter.CobradoresHolder> implements View.OnClickListener {
@@ -61,7 +62,7 @@ public class CobradoresAdapter extends RecyclerView.Adapter<CobradoresAdapter.Co
             listaCobradores.addAll(filteredData);
         }else{
             List<Cobrador> collection = listaCobradores.stream().
-                    filter(i -> i.getNombre().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getNombre().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaCobradores.clear();
             listaCobradores.addAll(collection);

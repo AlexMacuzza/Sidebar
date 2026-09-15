@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="Idp:"
+            android:text="@string/lblidp_titulo"
             android:textSize="17sp"
             android:textStyle="bold" />
         <TextView
@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Idp"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Saldo Anterior:"
+            android:text="@string/lblsaldo_anterior_titulo"
             android:textSize="17sp"
             android:textStyle="bold" />
 
@@ -41,8 +42,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight=".6"
-            android:hint="Saldo anterior"
+            android:hint="@string/hint_saldo_anterior"
             android:inputType="number"
+            android:importantForAutofill="no"
             tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
     <LinearLayout
@@ -53,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Saldo Actual:"
+            android:text="@string/lblsaldo_actual_titulo"
             android:textSize="17sp"
             android:textStyle="bold" />
 
@@ -62,8 +64,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight=".6"
-            android:hint="Saldo Actual"
+            android:hint="@string/hint_saldo_actual"
             android:inputType="number"
+            android:importantForAutofill="no"
             tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
 </LinearLayout>

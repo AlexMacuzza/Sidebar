@@ -73,7 +73,6 @@ public class ConsultaListaClientesFragment extends Fragment implements Response.
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
 

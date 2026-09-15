@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Actualizar Cliente"
+        android:text="@string/titulo4"
         android:gravity="center"
         android:textSize="20sp"
         android:textStyle="bold"/>
@@ -20,7 +20,8 @@
         android:text="IDC"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        tools:ignore="HardcodedText"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,11 +39,11 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/camara"/>
+            android:src="@drawable/camara"
+            android:contentDescription="@string/desc_tomar_foto_cliente"/>
     </LinearLayout>
     <EditText
         android:id="@+id/txtid"
@@ -100,7 +101,8 @@
         android:layout_width="150dp"
         android:layout_height="100dp"
         android:src="@drawable/clientesfoto"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:contentDescription="@string/desc_foto_cliente" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -115,20 +117,20 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/aceptar"/>
+            android:src="@drawable/aceptar"
+            android:contentDescription="@string/desc_aceptar"/>
         <ImageButton
             android:id="@+id/bteliminar"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/eliminar"/>
+            android:src="@drawable/eliminar"
+            android:contentDescription="@string/lbleliminar"/>
     </LinearLayout>
 </LinearLayout>

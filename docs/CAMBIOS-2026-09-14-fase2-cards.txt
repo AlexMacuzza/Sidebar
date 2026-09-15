@@ -86,3 +86,31 @@ PENDIENTE (fuera de este alcance)
 - Bug preexistente "InvalidSetHasFixedSize" en varios Fragments
   (setHasFixedSize(true) sobre RecyclerView dentro de contenedor
   wrap_content). Derivado como tarea separada.
+
+7. LIMPIEZA GLOBAL DE COMENTARIOS Y WARNINGS DE LINT (todo el proyecto)
+   Segunda pasada, a pedido del usuario, sobre TODO el proyecto (no solo
+   los archivos de Fase II):
+   - Comentarios largos/redundantes en Java acortados a una linea que
+     ubica el bloque (mismo estilo que ClientesImagenAdapter.java).
+     Se eliminaron varios bloques de codigo muerto comentado.
+   - Warnings de lint bajaron de 557 a 296. Categorias llevadas a 0:
+     HardcodedText, ContentDescription, RtlHardcoded, LabelFor,
+     ObsoleteLayoutParam, UselessParent, RedundantNamespace, UselessLeaf,
+     Autofill, DefaultLocale, Typos, InefficientWeight, TextFields,
+     TypographyEllipsis.
+   - Deliberadamente NO tocado (riesgo o fuera de alcance de "codigo"):
+     UnusedResources (164, riesgo de recursos referenciados dinamicamente
+     via getIdentifier), IconLocation/IconDuplicates/IconDuplicatesConfig/
+     IconLauncherShape/IconColors (60+, son assets de imagen, no codigo),
+     GradleDependency/UseTomlInstead/AndroidGradlePluginVersion/
+     OldTargetApi/ObsoleteSdkInt (decisiones de version, requieren
+     aprobacion aparte), UseCompoundDrawables/TextViewEdits (3, cambios
+     de layout no triviales, se dejaron para no arriesgar).
+   - Diccionario del IDE (.idea/dictionaries/alexm.xml) actualizado con
+     las palabras tecnicas en espanol nuevas usadas en comentarios/strings,
+     para evitar el aviso de "agregar al diccionario".
+   - Durante el proceso se corrigio un choque real: dos tandas de trabajo
+     en paralelo agregaron el mismo nombre de string (lblvalorcuota) y
+     rompian la compilacion; se renombro uno a lblvalorcuota_form.
+   - Verificado: compila limpio, sin ids de layout huerfanos respecto a
+     los usados en Java, app arranca sin crash en dispositivo fisico.

@@ -6,39 +6,31 @@
     android:orientation="vertical"
     android:id="@+id/nav_buscar_clientes_ventas"
     tools:context=".ClientesVentasFragment">
-    <LinearLayout
-        android:id="@+id/layoutdatos"
+    <ImageButton
+        android:id="@+id/btncliente"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="292dp"
+        android:background="@null"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/nuevocliente"
+        android:contentDescription="@string/desc_nuevo_cliente" />
+    <SearchView
+        android:id="@+id/txtbuscarcl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <ImageButton
-            android:id="@+id/btncliente"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="292dp"
-            android:background="@null"
-            android:gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/nuevocliente" />
-        <SearchView
-            android:id="@+id/txtbuscarcl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginVertical="8dp"
-            android:background="@drawable/bg_search_pill"
-            android:iconifiedByDefault="false"
-            android:searchIcon="@drawable/ic_search_teal"
-            android:queryHint="@string/hint_buscar_cliente" />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/idRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-    </LinearLayout>
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/bg_search_pill"
+        android:iconifiedByDefault="false"
+        android:searchIcon="@drawable/ic_search_teal"
+        android:queryHint="@string/hint_buscar_cliente" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/idRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 </LinearLayout>

@@ -7,42 +7,33 @@
     android:orientation="vertical"
     tools:context=".MercanciaFragment">
 
-    <LinearLayout
-        android:id="@+id/layoutdatos"
+    <ImageButton
+        android:id="@+id/btnproducto"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="292dp"
+        android:background="@null"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ventas"
+        android:contentDescription="@string/desc_nueva_mercancia_btn"
+        tools:ignore="SpeakableTextPresentCheck" />
+    <SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <ImageButton
-            android:id="@+id/btnproducto"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="292dp"
-            android:background="@null"
-            android:gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ventas"
-            tools:ignore="SpeakableTextPresentCheck" />
-        <SearchView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginVertical="8dp"
-            android:background="@drawable/bg_search_pill"
-            android:iconifiedByDefault="false"
-            android:searchIcon="@drawable/ic_search_teal"
-            android:queryHint="@string/hint_buscar_mercancia"
-            android:id="@+id/txtbuscar_mercancia"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/idRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-    </LinearLayout>
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/bg_search_pill"
+        android:iconifiedByDefault="false"
+        android:searchIcon="@drawable/ic_search_teal"
+        android:queryHint="@string/hint_buscar_mercancia"
+        android:id="@+id/txtbuscar_mercancia"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/idRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
 </LinearLayout>

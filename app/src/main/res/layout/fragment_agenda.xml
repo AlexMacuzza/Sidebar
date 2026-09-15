@@ -17,7 +17,8 @@
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/fondot" />
+            android:src="@drawable/fondot"
+            tools:ignore="ContentDescription" />
         <ImageButton
             android:id="@+id/btntarea"
             android:layout_width="50dp"
@@ -25,24 +26,26 @@
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/addevent" />
+            android:src="@drawable/addevent"
+            android:contentDescription="@string/desc_nueva_tarea" />
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/fondot" />
+            android:src="@drawable/fondot"
+            tools:ignore="ContentDescription" />
         <ImageButton
             android:id="@+id/btrefresh"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/refreshpage" />
+            android:src="@drawable/refreshpage"
+            android:contentDescription="@string/btactualizar" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

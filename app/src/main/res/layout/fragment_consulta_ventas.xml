@@ -16,7 +16,8 @@
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/fondot" />
+            android:src="@drawable/fondot"
+            tools:ignore="ContentDescription" />
         <ImageButton
             android:id="@+id/btfecha"
             android:layout_width="50dp"
@@ -34,7 +35,8 @@
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/fondot" />
+            android:src="@drawable/fondot"
+            tools:ignore="ContentDescription" />
         <ImageButton
             android:id="@+id/btpdf"
             android:layout_width="50dp"
@@ -52,7 +54,8 @@
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/fondot" />
+            android:src="@drawable/fondot"
+            tools:ignore="ContentDescription" />
         <ImageButton
             android:id="@+id/btrefresh"
             android:layout_width="50dp"

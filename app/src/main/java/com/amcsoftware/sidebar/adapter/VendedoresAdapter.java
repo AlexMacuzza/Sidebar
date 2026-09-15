@@ -18,6 +18,7 @@ import com.amcsoftware.sidebar.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class VendedoresAdapter extends RecyclerView.Adapter<VendedoresAdapter.VendedoresHolder> implements View.OnClickListener {
@@ -64,7 +65,7 @@ public class VendedoresAdapter extends RecyclerView.Adapter<VendedoresAdapter.Ve
             listaVendedores.addAll(filteredData);
         }else{
             List<Vendedor> collection = listaVendedores.stream().
-                    filter(i -> i.getNombre().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getNombre().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaVendedores.clear();
             listaVendedores.addAll(collection);

@@ -21,7 +21,6 @@ import com.amcsoftware.sidebar.Entidades.Agenda;
 import com.amcsoftware.sidebar.adapter.AgendaAdapter;
 import com.amcsoftware.sidebar.utils.AppUtils;
 
-// ── Volley ────────────────────────────────────────────────────────────────────
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -41,20 +40,16 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class fragment_agenda extends Fragment implements SearchView.OnQueryTextListener {
 
-    // ── URLs ─────────────────────────────────────────────────────────────────
     private static final String URL_GUARDAR = "https://www.wmcsoftware.net/apps/softpymes/guardarAgenda.php";
     private static final String URL_LISTA   = "https://www.wmcsoftware.net/apps/softpymes/listaAgenda.php";
 
     private RecyclerView recyclerView;
 
-    // ── Datos ─────────────────────────────────────────────────────────────────
     private AgendaAdapter adapter;
     private final List<Agenda> listaAgenda = new ArrayList<>();
 
-    // ── Volley queue (una sola instancia por fragmento) ───────────────────────
-    private RequestQueue requestQueue;
+    private RequestQueue requestQueue; // una sola instancia por fragmento
 
-    // ── Dialogs ───────────────────────────────────────────────────────────────
     private AlertDialog alertDialog;              // diálogo de entrada "nueva tarea"
     private SweetAlertDialog dialogCargando;      // spinner SweetAlert
 
@@ -68,7 +63,6 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
 
         View vista = inflater.inflate(R.layout.fragment_agenda, container, false);
 
-        // ── Vistas ────────────────────────────────────────────────────────────────
         ImageButton btntarea = vista.findViewById(R.id.btntarea);
         ImageButton btrefresh = vista.findViewById(R.id.btrefresh);
         recyclerView = vista.findViewById(R.id.idRecycler);
@@ -103,9 +97,7 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         return vista;
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  DIALOG – Nueva tarea
-    // ════════════════════════════════════════════════════════════════════════
+    // Dialog: nueva tarea
     @SuppressLint("DefaultLocale")
     private void mostrarDialogNuevaTarea() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -162,9 +154,7 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         alertDialog.show();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  VOLLEY – Guardar tarea (POST con parámetros form)
-    // ════════════════════════════════════════════════════════════════════════
+    // Volley: guardar tarea (POST con parámetros form)
     private void guardarTarea(String descripcion, String fecha, String prioridad) {
         mostrarCargando("Guardando...");
         // StringRequest permite enviar parámetros POST clásicos (application/x-www-form-urlencoded)
@@ -211,9 +201,7 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         requestQueue.add(request);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  VOLLEY – Cargar lista de tareas (GET → JSON)
-    // ════════════════════════════════════════════════════════════════════════
+    // Volley: cargar lista de tareas (GET -> JSON)
     private void cargarTareas() {
         mostrarCargando("Cargando tareas...");
         // JsonObjectRequest parsea el JSON automáticamente
@@ -256,9 +244,7 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         requestQueue.add(request);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  Helpers de carga (SweetAlert) — delegan en AppUtils
-    // ════════════════════════════════════════════════════════════════════════
+    // Helpers de carga (SweetAlert) — delegan en AppUtils
     private void mostrarCargando(String titulo) {
         if (getContext() == null) return;
         dialogCargando = AppUtils.mostrarCargando(requireContext(), titulo, "Por favor espera.");
@@ -268,9 +254,7 @@ public class fragment_agenda extends Fragment implements SearchView.OnQueryTextL
         AppUtils.cerrarCargando(dialogCargando);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  Ciclo de vida
-    // ════════════════════════════════════════════════════════════════════════
+    // Ciclo de vida
     @Override
     public void onStop() {
         super.onStop();

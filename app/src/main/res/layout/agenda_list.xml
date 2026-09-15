@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
@@ -30,7 +31,8 @@
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/addevent"
                 android:scaleType="centerCrop"
-                android:contentDescription="Tarea" />
+                android:contentDescription="Tarea"
+                tools:ignore="HardcodedText" />
             <!-- Descripción -->
             <TextView
                 android:id="@+id/txtdescagenda"
@@ -42,7 +44,8 @@
                 android:textColor="?attr/colorOnSurface"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:text="Descripción de la tarea" />
+                android:text="Descripción de la tarea"
+                tools:ignore="HardcodedText" />
             <!-- Chip de Prioridad -->
             <TextView
                 android:id="@+id/txtprioridadagenda"
@@ -55,7 +58,8 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:text="Alta" />
+                android:text="Alta"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
         <!-- Separador sutil -->
         <View
@@ -78,7 +82,8 @@
                 android:layout_marginEnd="6dp"
                 android:src="@android:drawable/ic_menu_my_calendar"
                 android:scaleType="centerCrop"
-                android:contentDescription="Fecha" />
+                android:contentDescription="Fecha"
+                tools:ignore="HardcodedText" />
 
             <!-- Fecha -->
             <TextView
@@ -87,7 +92,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:text="2026-01-01" />
+                android:text="2026-01-01"
+                tools:ignore="HardcodedText" />
 
             <!-- ID oculto (uso interno del adapter/click listener) -->
             <TextView
@@ -95,18 +101,19 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:visibility="gone"
-                android:text="0" />
+                android:text="0"
+                tools:ignore="HardcodedText" />
             <ImageButton
                 android:id="@+id/bteliminar"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_alignParentStart="true"
                 android:layout_marginStart="118dp"
                 android:background="@null"
                 android:contentDescription="Eliminar"
                 android:gravity="center"
                 android:scaleType="centerCrop"
-                android:src="@drawable/eliminar" />
+                android:src="@drawable/eliminar"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
     </LinearLayout>

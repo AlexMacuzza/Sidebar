@@ -124,6 +124,6 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:gravity="center|center_horizontal"
-            android:text="________________________________________"/>
+            android:text="@string/divisor_visual"/>
     </LinearLayout>
 </RelativeLayout>

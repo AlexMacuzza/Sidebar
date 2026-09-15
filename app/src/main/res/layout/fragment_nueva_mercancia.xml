@@ -62,7 +62,8 @@
         android:background="@null"
         android:gravity="center"
         android:scaleType="centerCrop"
-        android:src="@drawable/aceptar" />
+        android:src="@drawable/aceptar"
+        android:contentDescription="@string/desc_aceptar" />
     </RelativeLayout>
 
 </LinearLayout>

@@ -15,6 +15,7 @@ import com.amcsoftware.sidebar.Entidades.Mercancia;
 import com.amcsoftware.sidebar.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class MercanciaAdapter extends RecyclerView.Adapter<MercanciaAdapter.MercanciaHolder> implements View.OnClickListener {
@@ -59,7 +60,7 @@ public class MercanciaAdapter extends RecyclerView.Adapter<MercanciaAdapter.Merc
             listaMercancia.addAll(filteredData);
         }else{
             List<Mercancia> colletion = listaMercancia.stream().
-                    filter(i -> i.getReferencia().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getReferencia().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                             .collect(Collectors.toList());
             listaMercancia.clear();
             listaMercancia.addAll(colletion);

@@ -15,6 +15,7 @@ import com.amcsoftware.sidebar.Entidades.Usuario;
 import com.amcsoftware.sidebar.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.UsuariosHolder> implements View.OnClickListener {
@@ -59,7 +60,7 @@ public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.Usuari
             listaUsuarios.addAll(filteredData);
         }else{
             List<Usuario> collection = listaUsuarios.stream().
-                    filter(i -> i.getNombre().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getNombre().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaUsuarios.clear();
             listaUsuarios.addAll(collection);

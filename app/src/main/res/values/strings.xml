@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">SoftpymesApp 2.4</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -368,16 +368,16 @@
     <string name="lblcolid">Id</string>
     <string name="lblcolproducto">Producto</string>
     <string name="lblcolprecio">Precio</string>
-    <string name="lblcolcant">Cant.</string>
+    <string name="lblcolcant" tools:ignore="Typos">Cant.</string>
     <string name="lblcolsubt">Subtotal</string>
     <!-- Hints de búsqueda (pill de SearchView) -->
-    <string name="hint_buscar_tarea">Buscar tarea...</string>
-    <string name="hint_buscar_cliente">Buscar por nombre...</string>
-    <string name="hint_buscar_cobrador">Buscar cobrador...</string>
-    <string name="hint_buscar_proveedor">Buscar proveedor...</string>
-    <string name="hint_buscar_vendedor">Buscar vendedor...</string>
-    <string name="hint_buscar_usuario">Buscar usuario...</string>
-    <string name="hint_buscar_mercancia">Buscar mercancía...</string>
+    <string name="hint_buscar_tarea">Buscar tarea…</string>
+    <string name="hint_buscar_cliente">Buscar por nombre…</string>
+    <string name="hint_buscar_cobrador">Buscar cobrador…</string>
+    <string name="hint_buscar_proveedor">Buscar proveedor…</string>
+    <string name="hint_buscar_vendedor">Buscar vendedor…</string>
+    <string name="hint_buscar_usuario">Buscar usuario…</string>
+    <string name="hint_buscar_mercancia">Buscar mercancía…</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -387,4 +387,90 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <!-- fragment_ventas -->
+    <string name="lblcliente_titulo">Cliente</string>
+    <string name="hint_id_cliente">Id</string>
+    <string name="hint_nombre_cliente">Nombre</string>
+    <string name="lblsubtotales">Subtotales</string>
+    <string name="lbltotalventa">"       Total         "</string>
+    <string name="lblvalorpagadoventa">"   Valor Pagado    "</string>
+    <string name="lblsaldoventa">"     Saldo    "</string>
+    <string name="lblcuotasfechascobro">Cuotas y Fechas de Cobro</string>
+    <string name="lblformapago">" Forma de Pago       "</string>
+    <string name="lblvalorcuota_form">" Valor Cuota        "</string>
+    <string name="lblcuotasventa">"   Cuotas            "</string>
+    <string name="lblvencimiento">" Vencimiento     "</string>
+    <string name="lblfechacobroventa">"   Fecha de Cobro    "</string>
+    <string name="lblobservacionesventa">"   Observaciones    "</string>
+    <string name="desc_buscar_cliente">Buscar cliente</string>
+    <string name="desc_nuevo_cliente">Nuevo cliente</string>
+    <string name="desc_buscar_mercancia_venta">Buscar mercancía</string>
+    <string name="desc_borrar_item_venta">Borrar</string>
+    <string name="desc_registrar_venta">Registrar venta</string>
+    <!-- fragment_actualizarventas -->
+    <string name="lblvendedor_titulo">Vendedor</string>
+    <string name="lblnumventa_titulo">Número de Venta</string>
+    <string name="hint_num_venta">N° de venta</string>
+    <string name="desc_buscar_venta">Buscar venta</string>
+    <string name="lblcliente_actventa">Cliente: </string>
+    <string name="lblagregarproductos">Agregar Productos</string>
+    <string name="desc_agregar_mercancia">Agregar mercancía</string>
+    <string name="desc_limpiar">Limpiar</string>
+    <string name="hint_fecha_cobro">Fecha cobro</string>
+    <string name="desc_registrar_actualizacion">Registrar actualización</string>
+    <!-- fragment_compras -->
+    <string name="lblproveedor_titulo">Proveedor</string>
+    <string name="desc_buscar_proveedor_compra">Buscar proveedor</string>
+    <string name="desc_nuevo_proveedor_compra">Nuevo proveedor</string>
+    <string name="hint_nit_compra">Nit</string>
+    <string name="hint_razon_social_compra">Razón Social</string>
+    <string name="lblformapago_compra">"Forma de Pago       "</string>
+    <!-- dialog_input_proveedor -->
+    <string name="lbltitulo_nuevo_proveedor">Nuevo Proveedor</string>
+    <string name="desc_cerrar_dialogo">Cerrar</string>
+    <string name="desc_limpiar_form">Limpiar</string>
+    <string name="desc_guardar">Guardar</string>
+    <!-- dialog_combobox_trports / dialog_input_cobradores / dialog_input_vendedores -->
+    <string name="desc_aceptar">Aceptar</string>
+    <string name="titulo_tipo_reporte">Tipo de Reporte</string>
+    <string name="titulo_seleccionar_cobrador">Seleccionar Cobrador</string>
+    <string name="titulo_seleccionar_vendedor">Seleccionar Vendedor</string>
+    <!-- dialog_input_fechav -->
+    <string name="titulo_buscar_ventas">Buscar Ventas</string>
+    <!-- dialog_input_pagos -->
+    <string name="titulo_registrar_pago">Registrar Pago</string>
+    <string name="desc_seleccionar_fecha">Seleccionar fecha</string>
+    <string name="desc_registrar_pago">Registrar pago</string>
+    <!-- dialog_input -->
+    <string name="hint_nombre_generico">Nombre</string>
+    <!-- dialog_input_bodega -->
+    <string name="lblidp_titulo">Idp:</string>
+    <string name="lblsaldo_anterior_titulo">Saldo Anterior:</string>
+    <string name="hint_saldo_anterior">Saldo anterior</string>
+    <string name="lblsaldo_actual_titulo">Saldo Actual:</string>
+    <string name="hint_saldo_actual">Saldo Actual</string>
+    <!-- fragment_agenda -->
+    <string name="desc_nueva_tarea">Nueva tarea</string>
+    <!-- fragment_clientes_imagen -->
+    <string name="desc_tomar_foto_cliente">Tomar foto del cliente</string>
+    <string name="desc_foto_cliente">Foto del cliente</string>
+    <!-- fragment_mercancia -->
+    <string name="desc_nueva_mercancia_btn">Nueva mercancía</string>
+    <!-- app_bar_main -->
+    <string name="desc_fab_accion">Acción</string>
+    <!-- fragment_consulta_compras -->
+    <string name="desc_nueva_compra">Nueva compra</string>
+    <!-- fragment_consulta_lista_clientes_imagen -->
+    <string name="desc_ver_ruta">Ver ruta de clientes</string>
+    <!-- fragment_pagos -->
+    <string name="desc_buscar_por_fecha">Buscar por fecha</string>
+    <string name="desc_generar_pdf">Generar reporte PDF</string>
+    <string name="desc_fecha_cobro_btn">Fecha de cobro</string>
+    <string name="desc_enviar_whatsapp">Enviar por WhatsApp</string>
+    <!-- activity_inicio / activity_principal -->
+    <string name="divisor_visual">________________________________________</string>
+    <!-- activity_main_drawer -->
+    <string name="menu_nueva_venta">Nueva Venta</string>
+    <!-- fragment_nuevo_usuario -->
+    <string name="valor_sucursal_defecto">INPROASEO</string>
 </resources>

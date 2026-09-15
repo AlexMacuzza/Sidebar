@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -153,7 +154,7 @@ public class ClientesImagenAdapter extends RecyclerView.Adapter<ClientesImagenAd
             listaClientes.addAll(filteredData);
         }else{
             List<Cliente> collection = listaClientes.stream().
-                    filter(i -> i.getNombre().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getNombre().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaClientes.clear();
             listaClientes.addAll(collection);

@@ -57,7 +57,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-// MODIFICACIÓN CLAVE 1: Implementar la interfaz OnSubtotalChangeListener
+// Implementa OnSubtotalChangeListener para reaccionar a cambios del subtotal desde VentasAdapter
 public class VentasFragment extends Fragment implements Response.Listener<JSONObject>,
         Response.ErrorListener, AdapterView.OnItemSelectedListener, OnSubtotalChangeListener {
     //Variables locales para instanciar objetos
@@ -67,8 +67,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
     ArrayList<Mercancia> listaMercancia;
     ArrayList<Ventas>    listaventas;
     ClientesImagenAdapter adapter2;
-    // 'subtotal' ahora se usará como la variable que mantiene el total
-    // actual de los ítems en el RecyclerView.
+    // 'subtotal' mantiene el total actual de los ítems en el RecyclerView
     double cantidad, cuota, ncuotas, subtotal, total, precio,
             res, saldo, vpagado;
     EditText txtdesc,txtcant,txtctnorm,txtfechacobro,txttotal,
@@ -129,8 +128,8 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
         listaventas       = new ArrayList<>();
         recyclerVentasM.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerVentasM.setHasFixedSize(true);
-        // MODIFICACIÓN CLAVE 2: Pasar 'this' (el fragmento) como el listener a VentasAdapter.
-        adapter     = new VentasAdapter(listaventas, this); // 'this' se refiere a esta instancia de VentasFragment
+        // 'this' se pasa como listener de VentasAdapter (implementa OnSubtotalChangeListener)
+        adapter     = new VentasAdapter(listaventas, this);
         recyclerVentasM.setAdapter(adapter); // Establece el adaptador al RecyclerView
         requestQueue    = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
@@ -194,11 +193,10 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
             int month = c.get(Calendar.MONTH);
             int day   = c.get(Calendar.DAY_OF_MONTH);
             DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
-                    (view, year1, monthOfYear, dayOfMonth) -> { // Aquí empieza el onDateSetListener
-                        // Se obtiene la fecha seleccionada
+                    (view, year1, monthOfYear, dayOfMonth) -> {
                         String fechaSeleccionada = String.format("%04d-%02d-%02d", year1, monthOfYear + 1, dayOfMonth);
                         txtfechacobro.setText(fechaSeleccionada);
-                    }, // Aquí termina el onDateSetListener
+                    },
                     year, month, day);
 
             datePickerDialog.show();
@@ -342,11 +340,6 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
             // Verificar si el cliente ya tiene una venta activa (Pendiente)
             verificarVentaExistente(cedulaSel, nombreSel);
         });
-        /*adapter2.setOnClickListener(v->{
-            txtidcl.setText(listaClientes.get(recyclerClientes.getChildAdapterPosition(v)).getCedula());
-            txtcliente.setText(listaClientes.get(recyclerClientes.getChildAdapterPosition(v)).getNombre());
-            alertDialog.dismiss();
-        });*/
         //Configurar botones del dialogo
         builder.setNegativeButton("Cancelar", (dialog, which) -> {
             dialog.cancel();
@@ -376,7 +369,6 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
 
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
@@ -470,7 +462,6 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
 
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
@@ -504,9 +495,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
             txtobs.setVisibility(View.VISIBLE);
         }
         lblvd.setText(vendedor);
-        /*--------------------*/
-        // Inicialización de StringBuilders para evitar NullPointerException.
-        // Asegúrate de que se reinicien antes de cada nueva venta.
+        // Reinicia los StringBuilders antes de cada nueva venta
         auxcodpv   = new StringBuilder();
         auxdescv   = new StringBuilder();
         auxpreciov = new StringBuilder();
@@ -519,20 +508,18 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
         cantv   = new StringBuilder();
         subtv   = new StringBuilder();
         obsv    = new StringBuilder();
-        /*------------------*/
-        // Inicialización de variables numéricas para el estado inicial de la venta.
+        // Estado numérico inicial de la venta
         precio    = 0;
         cantidad  = 0;
-        subtotal  = 0; // El total acumulado de los ítems en el RecyclerView.
+        subtotal  = 0;
         vpagado   = 0;
         saldo     = 0;
-        total     = 0; // Esta variable 'total' puede ser redundante si 'subtotal' es el total de la venta.
-        // Mantendré 'subtotal' como el total de ítems y 'txttotal' como el EditText que lo muestra.
-        txttotal.setText("0"); // Asegurar que el campo de texto del total se inicialice en 0.
-        txtsaldo.setText("0"); // Asegurar que el campo de texto del saldo se inicialice en 0.
+        total     = 0;
+        txttotal.setText("0");
+        txtsaldo.setText("0");
     }
 
-    /*Verificar si el cliente esta asociado a una venta*/
+    // Verifica si el cliente ya tiene una venta pendiente
     private void verificarVentaExistente(String cedula, String nombre) {
 
         String url = "https://www.wmcsoftware.net/apps/softpymes/verificarVentaCliente.php?idc=" + cedula;
@@ -557,7 +544,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                                         "\n\n¿Desea ir al módulo Actualizar Venta?");
                         warn.setPositiveButton("Sí, actualizar", (dialog, which) -> {
                             alertDialog.dismiss();
-                            // ── Empaquetar datos para ActualizarVentasFragment ──
+                            // Empaquetar datos para ActualizarVentasFragment
                             Bundle args = new Bundle();
                             args.putString("id_fv",   idFv);
                             args.putString("cedula",  cedula);
@@ -585,8 +572,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                 },
                 error -> {
                     AppUtils.cerrarCargando(dialogCargando);
-                    // Si el endpoint no existe aún, asignamos el cliente
-                    // sin validación para no bloquear el flujo.
+                    // Si el endpoint no existe aún, asigna el cliente sin validación para no bloquear el flujo
                     txtidcl.setText(cedula);
                     txtcliente.setText(nombre);
                     alertDialog.dismiss();
@@ -626,7 +612,6 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                 },
                 error -> {
                     AppUtils.cerrarCargando(dialogCargando);
-                    // Manejar errores
                     String errorMessage = "Error desconocido al guardar la venta.";
                     if (error.networkResponse != null) {
                         int statusCode = error.networkResponse.statusCode;
@@ -694,7 +679,6 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
         txtctnorm.setText("");
         txtobs.setText("");
         spnrfpago.setSelection(0);
-        /*--------------------*/
         // Limpiar los StringBuilders para la próxima venta
         auxcodpv.setLength(0);
         auxdescv.setLength(0);
@@ -708,20 +692,16 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
         cantv.setLength(0);
         subtv.setLength(0);
         obsv.setLength(0);
-        /*------------------*/
         // Resetear las variables numéricas
         precio    = 0;
         cantidad  = 0;
-        subtotal  = 0; // Reiniciar la variable del total acumulado en el fragmento
+        subtotal  = 0;
         vpagado   = 0;
         saldo     = 0;
         total     = 0;
         ncuotas   = 0;
         plazod    = 0;
-        /*------------------*/
-        // Limpiar el RecyclerView de las ventas.
-        // Esto también notificará a este fragmento a través de onSubtotalChanged
-        // que el subtotal ha cambiado a 0 (si estaba lleno).
+        // Limpiar el RecyclerView; dispara onSubtotalChanged con el subtotal en 0
         adapter.clearData();
         txttotal.requestFocus();
     }
@@ -747,7 +727,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
 
     @Override
     public void onResponse(JSONObject response) {
-        /*-- Lista de mercancías --*/
+        // Lista de mercancías
         JSONArray jsonMercancia = response.optJSONArray("mercancia");
         if (jsonMercancia != null) {
             try {
@@ -766,7 +746,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                 AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la mercancía.");
             }
         }
-        /*-- Lista de clientes --*/
+        // Lista de clientes
         JSONArray jsonClientes = response.optJSONArray("cliente");
         if (jsonClientes != null) {
             try {
@@ -782,8 +762,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
                     listaClientes.add(clienteObj);
                 }
             } catch (JSONException e) {
-                // Ocultar el diálogo de carga solo si el error ocurre en la carga de clientes,
-                // asumiendo que es el último paso de carga inicial.
+                // Error en la carga de clientes (último paso de la carga inicial)
                 AppUtils.cerrarCargando(dialogCargando);
                 AppUtils.alertError(requireContext(), "Error", "No se pudo procesar los clientes.");
             }
@@ -804,7 +783,7 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
         plazod = 0;
     }
 
-    // MODIFICACIÓN CLAVE 3: Implementación del método de la interfaz OnSubtotalChangeListener
+    // Implementación de OnSubtotalChangeListener
     @Override
     public void onSubtotalChanged(double subtotalChange,int position) {
         auxcodpv = new StringBuilder(codpv);
@@ -820,22 +799,13 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
         auxpreciov = removeElementAtPosition(preciov,position,separador);
         auxsubtv = removeElementAtPosition(subtv,position,separador);
         auxobsv = removeElementAtPosition(obsv,position,";");
-        // Este método es invocado por el VentasAdapter cada vez que el subtotal de la lista cambia
-        // (específicamente, cuando un ítem es eliminado, el 'subtotalChange' será negativo).
-        // Actualiza la variable 'subtotal' del fragmento con el cambio recibido.
+        // Invocado por VentasAdapter cuando cambia el subtotal (negativo si se elimina un ítem)
         subtotal += subtotalChange;
-
-        // Asegúrate de que el subtotal no sea negativo (si por alguna razón llega a serlo, lo fijamos en 0).
         if (subtotal < 0) {
             subtotal = 0;
         }
-
-        // Actualiza el EditText que muestra el total de la venta.
         txttotal.setText(String.format(Locale.US, "%.0f", subtotal));
-
-        // También, recalcula y actualiza el saldo, ya que el total de la venta ha cambiado.
-        // Aquí asumimos que 'vpagado' tiene el valor actual ingresado por el usuario.
-        // Si no se ha ingresado nada, o si txtvpagado está vacío, se asume 0 para el cálculo.
+        // Recalcula el saldo con el valor pagado actual (0 si el campo está vacío)
         double valorPagadoActual = 0;
         try {
             if (!txtvpagado.getText().toString().isEmpty()) {
@@ -843,7 +813,6 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
             }
         } catch (NumberFormatException e) {
             Log.e("VentasFragment", "Error al parsear vpagado en onSubtotalChanged: " + e.getMessage());
-            // No es necesario mostrar un Toast aquí, ya que el usuario no está interactuando activamente con el campo.
         }
         saldo = subtotal - valorPagadoActual;
         txtsaldo.setText(String.format(Locale.US, "%.0f", saldo));
@@ -856,21 +825,17 @@ public class VentasFragment extends Fragment implements Response.Listener<JSONOb
     }
 
 
+    // Elimina el elemento en 'positionToRemove' de un StringBuilder separado por 'separator'
     public static StringBuilder removeElementAtPosition(StringBuilder sb, int positionToRemove, String separator) {
-        // 1. Dividir el StringBuilder en sus elementos lógicos
         String fullString = sb.toString();
         String[] elementsArray = fullString.split(separator);
-        // 2. Validar la posición
         if (positionToRemove < 0 || positionToRemove >= elementsArray.length) {
             System.out.println("Error: Posición " + positionToRemove + " fuera de rango. No se realizó ninguna eliminación.");
             return sb;
         }
-        // 3. Crear una lista mutable para eliminar el elemento fácilmente
         List<String> elementsList = new ArrayList<>(Arrays.asList(elementsArray));
-        // 4. Eliminar el elemento en la posición especificada
         elementsList.remove(positionToRemove);
-        // 5. Reconstruir el StringBuilder a partir de la lista modificada
-        sb.setLength(0); // Vaciar el StringBuilder existente
+        sb.setLength(0);
         for (int i = 0; i < elementsList.size(); i++) {
             sb.append(elementsList.get(i));
             sb.append(separator);

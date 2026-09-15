@@ -108,7 +108,6 @@ public class ConsultaListaClientesImagenFragment extends Fragment implements Res
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);

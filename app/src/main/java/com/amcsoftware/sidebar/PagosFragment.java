@@ -267,12 +267,7 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
         JSONArray json1 = response.optJSONArray("cobrador");
         final String mensajeResp = response.optString("mensaje","");
         try {
-            // Esta respuesta SÍ es de una consulta de pagos (aunque haya
-            // devuelto cero resultados) solo cuando la clave "pagosVentas"
-            // está presente en el JSON. Se limpia la lista ANTES de
-            // repoblarla: así, si la búsqueda (ej. por rango de fechas) no
-            // encuentra nada, la vista queda vacía en vez de conservar los
-            // datos de la consulta anterior.
+            // Repoblar solo si la respuesta trae la clave "pagosVentas" (aunque venga vacía)
             if (json != null) {
                 listaPagos.clear();
                 for (int i = 0; i < json.length(); i++) {
@@ -293,13 +288,9 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
                     listaPagos.add(pagosVentas);
                 }
                 adapter = new PagosVentasAdapter(listaPagos);
-                /*Evento al tocar una fila del recyclerView*/
+                // Evento al tocar una fila del recyclerView
                 adapter.setOnClickListener(v -> {
-                    // Si la lista está vacía (ej. el filtro de búsqueda por
-                    // fechas no devolvió pagos en ese intervalo) no hay ningún
-                    // dato real detrás de la fila tocada: no se realiza ninguna
-                    // acción, para evitar un error al intentar leer un ítem que
-                    // no existe.
+                    // Lista vacía (sin resultados en el filtro): no hay fila real que leer
                     if (listaPagos.isEmpty()) {
                         return;
                     }
@@ -320,12 +311,7 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
                 recyclerPagos.setAdapter(adapter);
                 txtbuscar.requestFocus();
 
-                // La clave "pagosVentas" solo viene en la respuesta de la
-                // consulta de pagos (cobradores usa otra clave y comparte
-                // este mismo onResponse). Si la consulta fue exitosa pero
-                // no trajo filas, avisar con el mismo SweetAlert que usamos
-                // para éxito/error, en vez de dejar la lista vacía sin
-                // explicación. Mismo criterio que ConsultaVentasFragment.
+                // Consulta exitosa pero sin filas: avisar en vez de dejar la lista vacía sin explicación
                 if (json.length() == 0 && getContext() != null) {
                     AppUtils.alertAdvertencia(getContext(), "Sin resultados",
                             mensajeResp.isEmpty() ? "No se encontraron pagos." : mensajeResp);
@@ -586,7 +572,6 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
         });
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
@@ -597,15 +582,12 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         } catch (Exception e) {
-            // Si WhatsApp no está instalado, puedes mostrar un mensaje al usuario
-            // Por ejemplo, un Toast
+            // WhatsApp no está instalado
             Toast.makeText(getContext(), "WhatsApp no está instalado." + e, Toast.LENGTH_SHORT).show();
-            //e.printStackTrace();
         }
     }
 
     public void generarPdf() {
-        //Fecha y hora para el nombre del archivo
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String fechahora = "Fecha y hora de impresión: " + new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(new Date());
         if (fechai.isEmpty()){
@@ -621,97 +603,79 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
             titulo    = "RECAUDO POR COBRADOR: " + parts[1] ;
             subtitulo = "FECHA DE COBRO: " + fechai + " HASTA " + fechaf;
         }
-        // Definir la ruta donde se guardará el archivo
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + nfile + timeStamp +".pdf";
-        // Crear el documento
         Document document = new Document();
         try {
             PdfWriter.getInstance(document, new FileOutputStream(path));
             document.open();
-            // Obtener la imagen y ajustar su tamaño
+            // Logo del negocio en la parte superior
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_negocio1);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             Image logo = Image.getInstance(stream.toByteArray());
-            logo.scaleToFit(250, 250); // Redimensionar el logo a 50x50 puntos
-            // Posicionar el logo en la esquina superior izquierda
+            logo.scaleToFit(250, 250);
             logo.setAbsolutePosition(20, 740);
             document.add(logo);
-            // Definir una fuente para el título
+            // Título, subtítulo del rango/cobrador y fecha de impresión
             Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 16, BaseColor.BLACK);
-            // Crear el párrafo del título y centrarlo
             Paragraph title = new Paragraph(titulo, titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
-            // Agregar un título al documento
             document.add(title);
-            document.add(new Paragraph("\n")); // Salto de línea
-            // Definir una fuente para el subtítulo1
+            document.add(new Paragraph("\n"));
             Font subtitleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 14, BaseColor.BLACK);
-            // Crear el párrafo del título y centrarlo
             Paragraph subtitle1 = new Paragraph(subtitulo, subtitleFont);
             subtitle1.setAlignment(Element.ALIGN_CENTER);
-            // Agregar un subtítulo1 al documento
             document.add(subtitle1);
-            document.add(new Paragraph("\n")); // Salto de línea
-            // Definir una fuente para el subtítulo2
+            document.add(new Paragraph("\n"));
             Font subtitleFont2 = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
-            // Crear el párrafo del título y alinearlo
             Paragraph subtitle = new Paragraph(fechahora, subtitleFont2);
             subtitle.setAlignment(Element.ALIGN_LEFT);
-            // Agregar un subtítulo2 al documento
             document.add(subtitle);
-            document.add(new Paragraph("\n")); // Salto de línea
-            // Definir anchos relativos para 3 columnas (por ejemplo, 10% para la primera, 45% para las otras dos)
+            document.add(new Paragraph("\n"));
+            // Tabla con encabezados VENTA N°/CLIENTE/VALOR PAGADO/SALDO
             float[] columnWidths = {1f, 4.5f, 2f, 2f};
             PdfPTable table = new PdfPTable(columnWidths);
-            //table.setWidthPercentage(100); // Ocupa el 100% del ancho de la página
-            // Definir una fuente para los encabezados
             Font headerFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 10, BaseColor.WHITE);
-            // Definir un color de fondo para las celdas de encabezado
-            BaseColor headerColor = new BaseColor(0, 169, 143); // Un color verde
-            // Definir los encabezados de la tabla
+            BaseColor headerColor = new BaseColor(0, 169, 143);
             String[] headers = {"VENTA N°", "CLIENTE", "VALOR PAGADO", "SALDO"};
             for (String header : headers) {
                 PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
                 cell.setBackgroundColor(headerColor);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER); // Alinear el texto al centro
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alinear verticalmente al centro
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 table.addCell(cell);
             }
-            // Llenar la tabla con datos
+            // Llenar la tabla y acumular los totales de cuota/saldo
             tsaldo = 0;
             tcuota = 0;
             if (adapter != null && adapter.getItemCount() > 0) {
                 for (int i = 0; i < adapter.getItemCount(); i++) {
                     Pagos_Ventas pagosVentas1= adapter.getItemAtPosition(i);
                     if (pagosVentas1 != null) {
-                        //calcular el saldo de la cartera
                         tsaldo += Double.parseDouble(pagosVentas1.getSaldo());
                         tcuota += Double.parseDouble(pagosVentas1.getValor());
-                        // Las celdas alineadas
                         PdfPCell idCell = new PdfPCell(new Phrase(pagosVentas1.getIdfv(),subtitleFont2));
                         idCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(idCell); // ID venta
+                        table.addCell(idCell);
                         PdfPCell clienteCell = new PdfPCell(new Phrase(pagosVentas1.getCliente(),subtitleFont2));
                         clienteCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        table.addCell(clienteCell); // CLIENTE
+                        table.addCell(clienteCell);
                         PdfPCell cuotaCell = new PdfPCell(new Phrase(pagosVentas1.getValor(),subtitleFont2));
                         cuotaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(cuotaCell); // CUOTA
+                        table.addCell(cuotaCell);
                         PdfPCell saldoCell = new PdfPCell(new Phrase(pagosVentas1.getSaldo(),subtitleFont2));
                         saldoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(saldoCell); // SALDO
+                        table.addCell(saldoCell);
                     }
                 }
-                // Agregar la tabla al documento
                 document.add(table);
-                //Resumen Recaudo
+                // Resumen del recaudo (totales)
                 Font vcuotaFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                Paragraph subtcuota = new Paragraph("TOTAL COBRO:"+ String.format(Locale.US,"%.0f",tcuota), vcuotaFont);//Subtítulo
+                Paragraph subtcuota = new Paragraph("TOTAL COBRO:"+ String.format(Locale.US,"%.0f",tcuota), vcuotaFont);
                 title.setAlignment(Element.ALIGN_LEFT);
                 document.add(subtcuota);
                 Font saldoFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                Paragraph subtsaldo = new Paragraph("TOTAL RECAUDO:"+ String.format(Locale.US,"%.0f",tsaldo), saldoFont);//Subtítulo
+                Paragraph subtsaldo = new Paragraph("TOTAL RECAUDO:"+ String.format(Locale.US,"%.0f",tsaldo), saldoFont);
                 title.setAlignment(Element.ALIGN_LEFT);
                 document.add(subtsaldo);
                 Toast.makeText((getContext()), "Reporte generado Exitosamente!", Toast.LENGTH_SHORT).show();

@@ -90,6 +90,34 @@
             android:textColor="?attr/colorOnSurface"
             android:textColorHint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
+    <!-- Campo: Hora del recordatorio -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/hora_recordatorio"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/txthora"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="@string/hint_hora"
+            android:importantForAutofill="no"
+            android:inputType="time"
+            android:minHeight="48dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
     <!-- Campo: Prioridad -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -111,6 +139,56 @@
             android:layout_weight="2"
             android:entries="@array/options_prioridad"
             android:minHeight="48dp" />
+    </LinearLayout>
+    <!-- Campo: Repetir (recordatorio recurrente tipo alarma) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/repetir"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+        <Spinner
+            android:id="@+id/spnrepetir"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:entries="@array/options_repetir"
+            android:minHeight="48dp" />
+    </LinearLayout>
+    <!-- Campo: Intervalo en días (solo visible con Repetir = Personalizado) -->
+    <LinearLayout
+        android:id="@+id/rowintervalo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cada_dias"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/txtintervalodias"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:hint="@string/hint_dias"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
     <!-- Separador -->

@@ -31,9 +31,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Mercancia;
 import com.amcsoftware.sidebar.adapter.InventarioAdapter;
 import com.amcsoftware.sidebar.utils.AppUtils;
+import com.amcsoftware.sidebar.utils.ReportePdfUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -46,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -108,64 +111,32 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
 
     private void generarPdf() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String fechahora = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(new Date());
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/Inventario_"+timeStamp+".pdf";
 
         Document document = new Document();
+        boolean exito = false;
 
         try {
             PdfWriter.getInstance(document, new FileOutputStream(path));
             document.open();
-            // Logo del negocio en la parte superior
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_negocio1);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            Image logo = Image.getInstance(stream.toByteArray());
-            logo.scaleToFit(250, 250);
-            logo.setAbsolutePosition(20, 740);
-            document.add(logo);
-            // Título y subtítulo (fecha) del reporte
-            Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 20, BaseColor.BLACK);
-            Paragraph title = new Paragraph("INVENTARIO", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
-            document.add(new Paragraph("\n"));
-            Font subtitleFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
-            Paragraph subtitle = new Paragraph(fechahora, subtitleFont);
-            subtitle.setAlignment(Element.ALIGN_LEFT);
-            document.add(subtitle);
-            document.add(new Paragraph("\n"));
+            ReportePdfUtils.agregarEncabezado(document, requireContext(), "INVENTARIO", null);
+
             // Tabla con encabezados ID/DETALLE/CANTIDAD
             float[] columnWidths = {1f, 4.5f, 2f};
-            PdfPTable table = new PdfPTable(columnWidths);
-            Font headerFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 10, BaseColor.WHITE);
-            BaseColor headerColor = new BaseColor(0, 169, 143);
-            String[] headers = {"ID", "DETALLE", "CANTIDAD"};
-            for (String header : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-                cell.setBackgroundColor(headerColor);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                table.addCell(cell);
-            }
+            PdfPTable table = ReportePdfUtils.crearTabla(columnWidths);
+            ReportePdfUtils.agregarEncabezadosTabla(table, new String[]{"ID", "DETALLE", "CANTIDAD"});
             // Llenar la tabla con los datos del inventario
             if (adapter != null && adapter.getItemCount() > 0) {
                 for (int i = 0; i < adapter.getItemCount(); i++) {
                     Mercancia mercancia1= adapter.getItemAtPosition(i);
                     if (mercancia1 != null) {
-                        PdfPCell idCell = new PdfPCell(new Phrase(mercancia1.getIdp(),subtitleFont));
-                        idCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(idCell);
-                        PdfPCell detalle = new PdfPCell(new Phrase(mercancia1.getDescripcion(),subtitleFont));
-                        detalle.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        table.addCell(detalle);
-                        PdfPCell qtyCell = new PdfPCell(new Phrase(mercancia1.getCantidad(),subtitleFont));
-                        qtyCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(qtyCell);
+                        table.addCell(ReportePdfUtils.celda(mercancia1.getIdp(), Element.ALIGN_CENTER, i));
+                        table.addCell(ReportePdfUtils.celda(mercancia1.getDescripcion(), Element.ALIGN_LEFT, i));
+                        table.addCell(ReportePdfUtils.celda(mercancia1.getCantidad(), Element.ALIGN_CENTER, i));
                     }
                 }
                 document.add(table);
-                AppUtils.alertExito(requireContext(), "Éxito", "Reporte generado exitosamente.");
+                exito = true;
             }else{
                 AppUtils.alertAdvertencia(requireContext(), "Sin datos", "No hay registros que mostrar.");
             }
@@ -174,6 +145,10 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
             AppUtils.alertError(requireContext(), "Error", "No se pudo generar el PDF.");
         } finally {
             document.close();
+            if (exito && getContext() != null) {
+                Toast.makeText(getContext(), "Reporte generado exitosamente!", Toast.LENGTH_SHORT).show();
+                AppUtils.abrirPdf(getContext(), new File(path));
+            }
         }
 
     }

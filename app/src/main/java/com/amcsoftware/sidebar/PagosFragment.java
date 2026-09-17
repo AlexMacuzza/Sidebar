@@ -33,6 +33,7 @@ import com.amcsoftware.sidebar.Entidades.Cobrador;
 import com.amcsoftware.sidebar.Entidades.Pagos_Ventas;
 import com.amcsoftware.sidebar.adapter.PagosVentasAdapter;
 import com.amcsoftware.sidebar.utils.AppUtils;
+import com.amcsoftware.sidebar.utils.ReportePdfUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -55,6 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -589,11 +591,10 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
 
     public void generarPdf() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String fechahora = "Fecha y hora de impresión: " + new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(new Date());
         if (fechai.isEmpty()){
             nfile     = "/Recaudo_General_";
             titulo    = "RECAUDO GENERAL";
-            subtitulo = "";
+            subtitulo = null;
         }else if (fechaf.isEmpty() || fechai.equals(fechaf)){
             nfile     = "/RecaudoxCobrador_";
             titulo    = "RECAUDO POR COBRADOR: " + parts[1] ;
@@ -605,46 +606,16 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
         }
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + nfile + timeStamp +".pdf";
         Document document = new Document();
+        boolean exito = false;
         try {
             PdfWriter.getInstance(document, new FileOutputStream(path));
             document.open();
-            // Logo del negocio en la parte superior
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_negocio1);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            Image logo = Image.getInstance(stream.toByteArray());
-            logo.scaleToFit(250, 250);
-            logo.setAbsolutePosition(20, 740);
-            document.add(logo);
-            // Título, subtítulo del rango/cobrador y fecha de impresión
-            Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 16, BaseColor.BLACK);
-            Paragraph title = new Paragraph(titulo, titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
-            document.add(new Paragraph("\n"));
-            Font subtitleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 14, BaseColor.BLACK);
-            Paragraph subtitle1 = new Paragraph(subtitulo, subtitleFont);
-            subtitle1.setAlignment(Element.ALIGN_CENTER);
-            document.add(subtitle1);
-            document.add(new Paragraph("\n"));
-            Font subtitleFont2 = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
-            Paragraph subtitle = new Paragraph(fechahora, subtitleFont2);
-            subtitle.setAlignment(Element.ALIGN_LEFT);
-            document.add(subtitle);
-            document.add(new Paragraph("\n"));
+            ReportePdfUtils.agregarEncabezado(document, requireContext(), titulo, subtitulo);
+
             // Tabla con encabezados VENTA N°/CLIENTE/VALOR PAGADO/SALDO
             float[] columnWidths = {1f, 4.5f, 2f, 2f};
-            PdfPTable table = new PdfPTable(columnWidths);
-            Font headerFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 10, BaseColor.WHITE);
-            BaseColor headerColor = new BaseColor(0, 169, 143);
-            String[] headers = {"VENTA N°", "CLIENTE", "VALOR PAGADO", "SALDO"};
-            for (String header : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-                cell.setBackgroundColor(headerColor);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                table.addCell(cell);
-            }
+            PdfPTable table = ReportePdfUtils.crearTabla(columnWidths);
+            ReportePdfUtils.agregarEncabezadosTabla(table, new String[]{"VENTA N°", "CLIENTE", "VALOR PAGADO", "SALDO"});
             // Llenar la tabla y acumular los totales de cuota/saldo
             tsaldo = 0;
             tcuota = 0;
@@ -654,31 +625,17 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
                     if (pagosVentas1 != null) {
                         tsaldo += Double.parseDouble(pagosVentas1.getSaldo());
                         tcuota += Double.parseDouble(pagosVentas1.getValor());
-                        PdfPCell idCell = new PdfPCell(new Phrase(pagosVentas1.getIdfv(),subtitleFont2));
-                        idCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(idCell);
-                        PdfPCell clienteCell = new PdfPCell(new Phrase(pagosVentas1.getCliente(),subtitleFont2));
-                        clienteCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        table.addCell(clienteCell);
-                        PdfPCell cuotaCell = new PdfPCell(new Phrase(pagosVentas1.getValor(),subtitleFont2));
-                        cuotaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(cuotaCell);
-                        PdfPCell saldoCell = new PdfPCell(new Phrase(pagosVentas1.getSaldo(),subtitleFont2));
-                        saldoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(saldoCell);
+                        table.addCell(ReportePdfUtils.celda(pagosVentas1.getIdfv(), Element.ALIGN_CENTER, i));
+                        table.addCell(ReportePdfUtils.celda(pagosVentas1.getCliente(), Element.ALIGN_LEFT, i));
+                        table.addCell(ReportePdfUtils.celda(pagosVentas1.getValor(), Element.ALIGN_CENTER, i));
+                        table.addCell(ReportePdfUtils.celda(pagosVentas1.getSaldo(), Element.ALIGN_CENTER, i));
                     }
                 }
                 document.add(table);
                 // Resumen del recaudo (totales)
-                Font vcuotaFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                Paragraph subtcuota = new Paragraph("TOTAL COBRO:"+ String.format(Locale.US,"%.0f",tcuota), vcuotaFont);
-                title.setAlignment(Element.ALIGN_LEFT);
-                document.add(subtcuota);
-                Font saldoFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                Paragraph subtsaldo = new Paragraph("TOTAL RECAUDO:"+ String.format(Locale.US,"%.0f",tsaldo), saldoFont);
-                title.setAlignment(Element.ALIGN_LEFT);
-                document.add(subtsaldo);
-                Toast.makeText((getContext()), "Reporte generado Exitosamente!", Toast.LENGTH_SHORT).show();
+                document.add(ReportePdfUtils.filaTotal("TOTAL COBRO", String.format(Locale.US, "%.0f", tcuota)));
+                document.add(ReportePdfUtils.filaTotal("TOTAL RECAUDO", String.format(Locale.US, "%.0f", tsaldo)));
+                exito = true;
             }else{
                 Toast.makeText((getContext()), "No hay registros que mostrar!", Toast.LENGTH_SHORT).show();
             }
@@ -687,6 +644,10 @@ public class PagosFragment extends Fragment implements Response.Listener<JSONObj
             Toast.makeText((getContext()), "No se pudo generar el pdf!", Toast.LENGTH_SHORT).show();
         } finally {
             document.close();
+            if (exito && getContext() != null) {
+                Toast.makeText(getContext(), "Reporte generado exitosamente!", Toast.LENGTH_SHORT).show();
+                AppUtils.abrirPdf(getContext(), new File(path));
+            }
         }
     }
     private void fechaje(String codpago, String idfv, Double nuevosaldo, String fechacobro,String ref) {

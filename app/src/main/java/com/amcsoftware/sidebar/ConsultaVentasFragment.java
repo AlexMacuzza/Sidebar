@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import com.amcsoftware.sidebar.Entidades.Cobrador;
 import com.amcsoftware.sidebar.Entidades.Factura_Ventas;
@@ -33,6 +34,7 @@ import com.amcsoftware.sidebar.adapter.CobradoresAdapter;
 import com.amcsoftware.sidebar.adapter.FacturaVentasAdapter;
 import com.amcsoftware.sidebar.adapter.VendedoresAdapter;
 import com.amcsoftware.sidebar.utils.AppUtils;
+import com.amcsoftware.sidebar.utils.ReportePdfUtils;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -56,6 +58,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -503,6 +506,8 @@ public class ConsultaVentasFragment extends Fragment implements Response.Listene
                 factura_ventas.setPlazo(formattedDate);
                 factura_ventas.setCuotas(jsonObject.optString("cuotas"));
                 factura_ventas.setVcuotas(jsonObject.optString("vcuota"));
+                String ultimopago = jsonObject.optString("ultimopago");
+                factura_ventas.setUltimopago(ultimopago.isEmpty() || ultimopago.equals("0") ? "-" : ultimopago);
                 listafacturaventas.add(factura_ventas);
             }
             //Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
@@ -616,7 +621,6 @@ public class ConsultaVentasFragment extends Fragment implements Response.Listene
     private void generarPdf(String tipo) {
         //Fecha y hora para el nombre del archivo
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String fechahora = "Fecha y hora de impresión: " + new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(new Date());
         switch (tipo) {
             case "Cartera":
                 nfile = "/Cartera_Cobrador_" + ncobrador;
@@ -653,54 +657,28 @@ public class ConsultaVentasFragment extends Fragment implements Response.Listene
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + nfile + timeStamp +".pdf";
         // Crear el documento
         Document document = new Document();
+        boolean exito = false;
         try {
             PdfWriter.getInstance(document, new FileOutputStream(path));
             document.open();
-            // Obtener la imagen y ajustar su tamaño
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_negocio1);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            Image logo = Image.getInstance(stream.toByteArray());
-            logo.scaleToFit(250, 250); // Redimensionar el logo a 50x50 puntos
-            // Posicionar el logo en la esquina superior izquierda
-            logo.setAbsolutePosition(20, 740);
-            document.add(logo);
-            // Definir una fuente para el título
-            Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 16, BaseColor.BLACK);
-            // Crear el párrafo del título y centrarlo
-            Paragraph title = new Paragraph(titulo, titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            // Agregar un título al documento
-            document.add(title);
-            document.add(new Paragraph("\n")); // Salto de línea
-            // Definir una fuente para el subtítulo2
-            Font subtitleFont2 = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
-            // Crear el párrafo del título y alinearlo
-            Paragraph subtitle = new Paragraph(fechahora, subtitleFont2);
-            subtitle.setAlignment(Element.ALIGN_LEFT);
-            // Agregar un subtítulo2 al documento
-            document.add(subtitle);
-            document.add(new Paragraph("\n")); // Salto de línea
+            ReportePdfUtils.agregarEncabezado(document, requireContext(), titulo, null);
+
+            if (tipo.equals("Cartera")) {
+                exito = generarCartera(document);
+                if (!exito) {
+                    mostrarAlerta(false, "No hay registros que mostrar!");
+                }
+                return;
+            }
+
             // Definir anchos relativos para 3 columnas (por ejemplo, 10% para la primera, 45% para las otras dos)
             if (tipo.equals("Cuotas")) {
                 columnWidths = new float[]{1.2f, 1.9f, 2.3f, 1.1f, 1.2f, 1.2f, 1.1f};
             } else {
                 columnWidths = new float[]{1.5f, 3.5f, 2f, 1.5f, 1.5f};
             }
-            PdfPTable table = new PdfPTable(columnWidths);
-            //table.setWidthPercentage(100); // Ocupa el 100% del ancho de la página
-            // Definir una fuente para los encabezados
-            Font headerFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 10, BaseColor.WHITE);
-            // Definir un color de fondo para las celdas de encabezado
-            BaseColor headerColor = new BaseColor(0, 169, 143); // Un color verde
-            // Definir los encabezados de la tabla
-            for (String header : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-                cell.setBackgroundColor(headerColor);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER); // Alinear el texto al centro
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alinear verticalmente al centro
-                table.addCell(cell);
-            }
+            PdfPTable table = ReportePdfUtils.crearTabla(columnWidths);
+            ReportePdfUtils.agregarEncabezadosTabla(table, headers);
             // Llenar la tabla con datos
             tsaldo = 0;
             tmora  = 0;
@@ -709,94 +687,46 @@ public class ConsultaVentasFragment extends Fragment implements Response.Listene
                     Factura_Ventas facturaVentas1= adapter.getItemAtPosition(i);
                     if (facturaVentas1 != null) {
                         // Las celdas alineadas y communes
-                        PdfPCell idCell = new PdfPCell(new Phrase(facturaVentas1.getIdfv(), subtitleFont2));
-                        idCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(idCell); // ID venta
-
-                        PdfPCell clienteCell = new PdfPCell(new Phrase(facturaVentas1.getCliente(), subtitleFont2));
-                        clienteCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        table.addCell(clienteCell); // CLIENTE
+                        table.addCell(ReportePdfUtils.celda(facturaVentas1.getIdfv(), Element.ALIGN_CENTER, i)); // ID venta
+                        table.addCell(ReportePdfUtils.celda(facturaVentas1.getCliente(), Element.ALIGN_LEFT, i)); // CLIENTE
                         switch (tipo) {
                             case "Cartera": {
                                 //calcular el monto y saldo de la cartera
                                 tsaldo += Double.parseDouble(facturaVentas1.getSaldo());
                                 tmora += Double.parseDouble(facturaVentas1.getVmora());
 
-                                PdfPCell fechaCell = new PdfPCell(new Phrase(facturaVentas1.getFecha(), subtitleFont2));
-                                fechaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(fechaCell); // FECHA
-
-                                PdfPCell cuotaCell = new PdfPCell(new Phrase(facturaVentas1.getVmora(), subtitleFont2));
-                                cuotaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(cuotaCell); // MORA
-
-                                PdfPCell saldoCell = new PdfPCell(new Phrase(facturaVentas1.getSaldo(), subtitleFont2));
-                                saldoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(saldoCell); // SALDO
-
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getFecha(), Element.ALIGN_CENTER, i)); // FECHA
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getVmora(), Element.ALIGN_CENTER, i)); // MORA
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getSaldo(), Element.ALIGN_CENTER, i)); // SALDO
                                 break;
                             }
                             case "Cuotas": {
-                                // Las celdas alineadas
-                                PdfPCell dirCell = new PdfPCell(new Phrase(facturaVentas1.getDircl(), subtitleFont2));
-                                dirCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(dirCell); // DIRECCION
-
-                                PdfPCell montoCell = new PdfPCell(new Phrase(facturaVentas1.getMonto(), subtitleFont2));
-                                montoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(montoCell); // MONTO
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getDircl(), Element.ALIGN_CENTER, i)); // DIRECCION
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getMonto(), Element.ALIGN_CENTER, i)); // MONTO
 
                                 ncuotas = Integer.parseInt(facturaVentas1.getMonto()) / Integer.parseInt(facturaVentas1.getVcuotas());
-                                PdfPCell cuotaCell = new PdfPCell(new Phrase(String.valueOf(ncuotas), subtitleFont2));
-                                cuotaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(cuotaCell); // CUOTAS
-
-                                PdfPCell cobroCell = new PdfPCell(new Phrase(facturaVentas1.getCuotas(), subtitleFont2));
-                                cobroCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(cobroCell); // COBROS
-
-                                PdfPCell scoreCell = new PdfPCell(new Phrase(facturaVentas1.getScore(), subtitleFont2));
-                                scoreCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(scoreCell); // SCORE
-
+                                table.addCell(ReportePdfUtils.celda(String.valueOf(ncuotas), Element.ALIGN_CENTER, i)); // CUOTAS
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getCuotas(), Element.ALIGN_CENTER, i)); // COBROS
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getScore(), Element.ALIGN_CENTER, i)); // SCORE
                                 break;
                             }
                             case "Pagada": {
                                 //calcular el monto y saldo de la cartera
                                 tmora += Double.parseDouble(facturaVentas1.getMonto());
-                                // Las celdas alineadas
-                                PdfPCell fechaCell = new PdfPCell(new Phrase(facturaVentas1.getFecha(), subtitleFont2));
-                                fechaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(fechaCell); // FECHA
-
-                                PdfPCell plazoCell = new PdfPCell(new Phrase(facturaVentas1.getPlazo(), subtitleFont2));
-                                plazoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(plazoCell); // PLAZO
-
-                                PdfPCell cuotaCell = new PdfPCell(new Phrase(facturaVentas1.getMonto(), subtitleFont2));
-                                cuotaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(cuotaCell); // MONTO
-
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getFecha(), Element.ALIGN_CENTER, i)); // FECHA
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getPlazo(), Element.ALIGN_CENTER, i)); // PLAZO
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getMonto(), Element.ALIGN_CENTER, i)); // MONTO
                                 break;
                             }
                             case "Vencida": {
                                 //calcular el monto y saldo de la cartera
                                 tmora += Double.parseDouble(facturaVentas1.getVmora());
-                                // Las celdas alineadas
-                                PdfPCell plazoCell = new PdfPCell(new Phrase(facturaVentas1.getPlazo(), subtitleFont2));
-                                plazoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(plazoCell); // PLAZO
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getPlazo(), Element.ALIGN_CENTER, i)); // PLAZO
 
                                 // Extraer los días de diferencia
                                 long daysDifference = getDaysDifference(facturaVentas1.getPlazo());
-                                PdfPCell diasCell = new PdfPCell(new Phrase(String.valueOf(daysDifference), subtitleFont2));
-                                diasCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(diasCell); // DIAST
-
-                                PdfPCell cuotaCell = new PdfPCell(new Phrase(facturaVentas1.getVmora(), subtitleFont2));
-                                cuotaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(cuotaCell); // MORA
-
+                                table.addCell(ReportePdfUtils.celda(String.valueOf(daysDifference), Element.ALIGN_CENTER, i)); // DIAS
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getVmora(), Element.ALIGN_CENTER, i)); // MORA
                                 break;
                             }
                             case "Pendiente":
@@ -804,19 +734,9 @@ public class ConsultaVentasFragment extends Fragment implements Response.Listene
                                 //calcular el monto y saldo de la cartera
                                 tsaldo += Double.parseDouble(facturaVentas1.getSaldo());
                                 tmora += Double.parseDouble(facturaVentas1.getMonto());
-                                // Las celdas alineadas
-                                PdfPCell fechaCell = new PdfPCell(new Phrase(facturaVentas1.getFecha(), subtitleFont2));
-                                fechaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(fechaCell); // FECHA
-
-                                PdfPCell cuotaCell = new PdfPCell(new Phrase(facturaVentas1.getMonto(), subtitleFont2));
-                                cuotaCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(cuotaCell); // MONTO
-
-                                PdfPCell saldoCell = new PdfPCell(new Phrase(facturaVentas1.getSaldo(), subtitleFont2));
-                                saldoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                                table.addCell(saldoCell); // SALDO
-
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getFecha(), Element.ALIGN_CENTER, i)); // FECHA
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getMonto(), Element.ALIGN_CENTER, i)); // MONTO
+                                table.addCell(ReportePdfUtils.celda(facturaVentas1.getSaldo(), Element.ALIGN_CENTER, i)); // SALDO
                                 break;
                             }
                         }
@@ -827,50 +747,26 @@ public class ConsultaVentasFragment extends Fragment implements Response.Listene
                 //Resumen Cartera
                 switch (tipo) {
                     case "Cartera": {
-                        Font vcuotaFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                        Paragraph subtmora = new Paragraph("TOTAL MORA:" + String.format(Locale.US, "%.0f", tmora), vcuotaFont);//Subtítulo
-
-                        title.setAlignment(Element.ALIGN_LEFT);
-                        document.add(subtmora);
-                        Font saldoFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                        Paragraph subtsaldo = new Paragraph("TOTAL SALDO:" + String.format(Locale.US, "%.0f", tsaldo), saldoFont);//Subtítulo
-
-                        title.setAlignment(Element.ALIGN_LEFT);
-                        document.add(subtsaldo);
+                        document.add(ReportePdfUtils.filaTotal("TOTAL MORA", String.format(Locale.US, "%.0f", tmora)));
+                        document.add(ReportePdfUtils.filaTotal("TOTAL SALDO", String.format(Locale.US, "%.0f", tsaldo)));
                         break;
                     }
                     case "Pagada": {
-                        Font vcuotaFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                        Paragraph subtmora = new Paragraph("TOTAL MONTO:" + String.format(Locale.US, "%.0f", tmora), vcuotaFont);//Subtítulo
-
-                        title.setAlignment(Element.ALIGN_LEFT);
-                        document.add(subtmora);
+                        document.add(ReportePdfUtils.filaTotal("TOTAL MONTO", String.format(Locale.US, "%.0f", tmora)));
                         break;
                     }
                     case " ":
                     case "Pendiente": {
-                        Font vcuotaFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                        Paragraph subtmora = new Paragraph("TOTAL MONTO:" + String.format(Locale.US, "%.0f", tmora), vcuotaFont);//Subtítulo
-
-                        title.setAlignment(Element.ALIGN_LEFT);
-                        document.add(subtmora);
-                        Font saldoFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                        Paragraph subtsaldo = new Paragraph("TOTAL SALDO:" + String.format(Locale.US, "%.0f", tsaldo), saldoFont);//Subtítulo
-
-                        title.setAlignment(Element.ALIGN_LEFT);
-                        document.add(subtsaldo);
+                        document.add(ReportePdfUtils.filaTotal("TOTAL MONTO", String.format(Locale.US, "%.0f", tmora)));
+                        document.add(ReportePdfUtils.filaTotal("TOTAL SALDO", String.format(Locale.US, "%.0f", tsaldo)));
                         break;
                     }
                     case "Vencida": {
-                        Font vcuotaFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK);
-                        Paragraph subtmora = new Paragraph("TOTAL MORA:" + String.format(Locale.US, "%.0f", tmora), vcuotaFont);//Subtítulo
-
-                        title.setAlignment(Element.ALIGN_LEFT);
-                        document.add(subtmora);
+                        document.add(ReportePdfUtils.filaTotal("TOTAL MORA", String.format(Locale.US, "%.0f", tmora)));
                         break;
                     }
                 }
-                mostrarAlerta(true, "Reporte generado exitosamente!");
+                exito = true;
             }else{
                 mostrarAlerta(false, "No hay registros que mostrar!");
             }
@@ -879,8 +775,48 @@ public class ConsultaVentasFragment extends Fragment implements Response.Listene
             mostrarAlerta(false, "No se pudo generar el pdf!");
         } finally {
             document.close();
+            if (exito && getContext() != null) {
+                Toast.makeText(getContext(), "Reporte generado exitosamente!", Toast.LENGTH_SHORT).show();
+                AppUtils.abrirPdf(getContext(), new File(path));
+            }
         }
     }
+    //REPORTE DE CARTERA: tabla plana (sin agrupar por cliente) con sumatoria final
+    private boolean generarCartera(Document document) throws com.itextpdf.text.DocumentException {
+        if (adapter == null || adapter.getItemCount() == 0) {
+            return false;
+        }
+        String[] carteraHeaders = {"VENTA N°", "CLIENTE", "FECHA", "VALOR ÚLT. PAGO", "PLAZO", "DÍAS", "MONTO", "SALDO"};
+        float[]  carteraWidths  = {1.1f, 2.2f, 1.1f, 1.2f, 1.1f, 0.8f, 1.3f, 1.3f};
+
+        PdfPTable table = ReportePdfUtils.crearTabla(carteraWidths);
+        ReportePdfUtils.agregarEncabezadosTabla(table, carteraHeaders);
+
+        tsaldo = 0;
+        tmora  = 0;
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            Factura_Ventas fv = adapter.getItemAtPosition(i);
+            if (fv == null) continue;
+
+            table.addCell(ReportePdfUtils.celda(fv.getIdfv(), Element.ALIGN_CENTER, i));
+            table.addCell(ReportePdfUtils.celda(fv.getCliente(), Element.ALIGN_LEFT, i));
+            table.addCell(ReportePdfUtils.celda(fv.getFecha(), Element.ALIGN_CENTER, i));
+            table.addCell(ReportePdfUtils.celda(fv.getUltimopago(), Element.ALIGN_CENTER, i));
+            table.addCell(ReportePdfUtils.celda(fv.getPlazo(), Element.ALIGN_CENTER, i));
+            table.addCell(ReportePdfUtils.celda(String.valueOf(getDaysDifference(fv.getPlazo())), Element.ALIGN_CENTER, i));
+            table.addCell(ReportePdfUtils.celda(fv.getMonto(), Element.ALIGN_CENTER, i));
+            table.addCell(ReportePdfUtils.celda(fv.getSaldo(), Element.ALIGN_CENTER, i));
+
+            tsaldo += Double.parseDouble(fv.getSaldo());
+            tmora  += Double.parseDouble(fv.getVmora());
+        }
+        document.add(table);
+
+        document.add(ReportePdfUtils.filaTotal("TOTAL MORA", String.format(Locale.US, "%.0f", tmora)));
+        document.add(ReportePdfUtils.filaTotal("TOTAL SALDO", String.format(Locale.US, "%.0f", tsaldo)));
+        return true;
+    }
+
     //COVERTIR FORMATO DE FECHAS
     public String convertDateString(String inputDateString) {
         // 1. Definir el formato de la fecha de entrada

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amcsoftware.sidebar.Entidades.Agenda;
 import com.amcsoftware.sidebar.R;
 import com.amcsoftware.sidebar.utils.AppUtils;
+import com.amcsoftware.sidebar.utils.RecordatorioScheduler;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -174,6 +175,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
                             msj = "No se pudo procesar la respuesta del servidor.";
                         }
                         if (ok) {
+                            RecordatorioScheduler.cancelar(context, idt);
                             AppUtils.alertExito(context, "Éxito", msj);
                         } else {
                             AppUtils.alertError(context, "Atención", msj);

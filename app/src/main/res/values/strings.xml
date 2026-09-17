@@ -133,6 +133,11 @@
     <string name="priority">Prioridad:</string>
     <string name="hint_description">Ingrese la descripción</string>
     <string name="hint_date">Seleccione una fecha</string>
+    <string name="hora_recordatorio">Hora:</string>
+    <string name="hint_hora">Seleccione una hora</string>
+    <string name="repetir">Repetir:</string>
+    <string name="cada_dias">Cada cuántos días:</string>
+    <string name="hint_dias">Ej. 30</string>
     <string name="close">Cerrar</string>
     <string name="clear">Limpiar</string>
     <string name="save">Guardar</string>
@@ -279,6 +284,14 @@
         <item>Alta</item>
         <item>Media</item>
         <item>Baja</item>
+    </string-array>
+    <!-- Repetición del recordatorio (tipo alarma) -->
+    <string-array name="options_repetir">
+        <item>Ninguna</item>
+        <item>Diario</item>
+        <item>Semanal</item>
+        <item>Mensual</item>
+        <item>Personalizado</item>
     </string-array>
     <!-- Parráfo de inicio-->
     <string name="lblinfo">

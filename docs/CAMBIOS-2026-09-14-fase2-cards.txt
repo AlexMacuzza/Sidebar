@@ -1,0 +1,116 @@
+SoftPymes 2.4 - Fase II: RecyclerView en cards + búsqueda visible
+Fecha: 2026-09-14
+Rama: claude/android-recyclerview-cards-orientation-8b36a9
+
+RESUMEN
+-------
+Se modernizo el diseno de los listados (RecyclerView) de toda la app al
+estilo "card" ya usado en Agenda (Fase I), se agrego foto de perfil
+circular en Clientes, se reviso el soporte de orientacion horizontal y
+se mejoro la visibilidad de las barras de busqueda.
+
+1. CARDS EN TODOS LOS LISTADOS
+   Se convirtieron 14 layouts de item (antes LinearLayout plano, sin
+   elevacion) a androidx.cardview.widget.CardView con esquinas
+   redondeadas, elevacion y color de superficie del tema:
+     clientes_list.xml, buscar_clientes_list.xml,
+     buscar_clientes_list_image.xml, ventas_list.xml, compras_list.xml,
+     pagos_list.xml, proveedores_list.xml, vendedores_list.xml,
+     cobradores_list.xml, usuarios_list.xml, mercancia_list.xml,
+     inventario_list.xml, buscar_mercancia_list.xml,
+     mercancia_ventas_list.xml
+   Se corrigieron filas con layout_weight + layout_width="match_parent"
+   (deberia ser 0dp), causa de columnas mal proporcionadas en horizontal.
+   Ningun android:id se renombro: los adapters Java no se tocaron
+   (excepto ClientesImagenAdapter, ver punto 2).
+
+2. FOTO DE PERFIL CIRCULAR (Clientes)
+   ClientesImagenAdapter.java: unifica las 3 fuentes de imagen (foto
+   BLOB local, URL remota, placeholder) usando Glide .circleCrop(), en
+   vez de mezclar setImageBitmap/setImageResource sin recorte.
+   buscar_clientes_list_image.xml: avatar de 72dp con scaleType
+   centerCrop dentro del nuevo encabezado de card.
+
+3. ORIENTACION HORIZONTAL
+   No se forzo modo vertical: el manifiesto ya no bloqueaba rotacion y
+   el propio rediseno en cards (filas wrap_content en vez de weight
+   estirado) resuelve el problema real de columnas desproporcionadas en
+   horizontal. Verificado en dispositivo fisico girando pantalla en
+   Clientes.
+
+4. LIMPIEZA DE WARNINGS XML
+   - Textos fijos movidos a strings.xml (ventas, compras, pagos,
+     proveedores, usuarios, carrito de venta).
+   - DisableBaselineAlignment corregido en filas de dos columnas.
+   - contentDescription y labelFor agregados donde faltaban.
+   - Botones de accion subidos de 40dp a 48dp (tamano tactil minimo).
+   - Lint bajo de 612 a 557 warnings; 0 warnings en los 14 archivos
+     tocados.
+
+5. BARRA DE BUSQUEDA (SearchView) MAS VISIBLE
+   Problema reportado: el SearchView por defecto queda colapsado (solo
+   el icono de lupa, sin caja visible), dificil de identificar.
+   Cambios en los 14 fragments que usan SearchView:
+     - iconifiedByDefault="false" (la caja de busqueda queda siempre
+       visible, no hay que tocar la lupa primero).
+     - Fondo tipo "pill" (drawable/bg_search_pill.xml): fondo de
+       superficie, borde visible, esquinas redondeadas 24dp.
+     - Icono de lupa con color de marca (drawable/ic_search_teal.xml).
+     - queryHint especifico por modulo en vez de generico ("Buscar por
+       nombre...", "Buscar proveedor...", etc.) via strings.xml.
+   Archivos: fragment_agenda, fragment_clientes_ventas,
+     fragment_cobradores, fragment_consulta_compras,
+     fragment_consulta_lista_clientes(_imagen), fragment_consulta_ventas
+     (2 SearchView), fragment_inventario, fragment_mercancia(s)_ventas,
+     fragment_pagos, fragment_proveedores, fragment_usuarios,
+     fragment_vendedores.
+
+6. LIMPIEZA DE COMENTARIOS
+   ClientesImagenAdapter.java: comentarios largos/redundantes
+   reemplazados por explicaciones breves que ubican el bloque (ej.
+   "// Reordenar en la ruta: mover una posicion arriba/abajo"). Se
+   elimino un bloque de dialogo comentado (codigo muerto) y el import
+   Toast que ya no se usaba.
+
+VERIFICACION
+------------
+- ./gradlew assembleDebug: compila sin errores.
+- ./gradlew lintDebug: sin warnings nuevos en los archivos tocados
+  (quedan 21 errores InvalidSetHasFixedSize preexistentes, no
+  relacionados, derivados a tarea aparte).
+- Probado en dispositivo fisico con datos reales: Clientes (foto
+  circular), Compras, rotacion horizontal, barra de busqueda.
+
+PENDIENTE (fuera de este alcance)
+----------------------------------
+- Bug preexistente "InvalidSetHasFixedSize" en varios Fragments
+  (setHasFixedSize(true) sobre RecyclerView dentro de contenedor
+  wrap_content). Derivado como tarea separada.
+
+7. LIMPIEZA GLOBAL DE COMENTARIOS Y WARNINGS DE LINT (todo el proyecto)
+   Segunda pasada, a pedido del usuario, sobre TODO el proyecto (no solo
+   los archivos de Fase II):
+   - Comentarios largos/redundantes en Java acortados a una linea que
+     ubica el bloque (mismo estilo que ClientesImagenAdapter.java).
+     Se eliminaron varios bloques de codigo muerto comentado.
+   - Warnings de lint bajaron de 557 a 296. Categorias llevadas a 0:
+     HardcodedText, ContentDescription, RtlHardcoded, LabelFor,
+     ObsoleteLayoutParam, UselessParent, RedundantNamespace, UselessLeaf,
+     Autofill, DefaultLocale, Typos, InefficientWeight, TextFields,
+     TypographyEllipsis.
+   - Deliberadamente NO tocado (riesgo o fuera de alcance de "codigo"):
+     UnusedResources (164, riesgo de recursos referenciados dinamicamente
+     via getIdentifier), IconLocation/IconDuplicates/IconDuplicatesConfig/
+     IconLauncherShape/IconColors (60+, son assets de imagen, no codigo),
+     GradleDependency/UseTomlInstead/AndroidGradlePluginVersion/
+     OldTargetApi/ObsoleteSdkInt (decisiones de version, requieren
+     aprobacion aparte), UseCompoundDrawables/TextViewEdits (3, cambios
+     de layout no triviales, se dejaron para no arriesgar).
+   - Diccionario del IDE (.idea/dictionaries/alexm.xml) actualizado con
+     las palabras tecnicas en espanol nuevas usadas en comentarios/strings,
+     para evitar el aviso de "agregar al diccionario".
+   - Durante el proceso se corrigio un choque real: dos tandas de trabajo
+     en paralelo agregaron el mismo nombre de string (lblvalorcuota) y
+     rompian la compilacion; se renombro uno a lblvalorcuota_form.
+   - Verificado: compila limpio, sin ids de layout huerfanos respecto a
+     los usados en Java, app arranca sin crash en dispositivo fisico.

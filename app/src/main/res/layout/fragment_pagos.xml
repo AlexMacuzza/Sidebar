@@ -19,18 +19,18 @@
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/fondot"
-            tools:ignore="SpeakableTextPresentCheck" />
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
         <ImageButton
             android:id="@+id/btfecha"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/searchpage"
+            android:contentDescription="@string/desc_buscar_por_fecha"
             tools:ignore="SpeakableTextPresentCheck" />
 
 
@@ -39,11 +39,11 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/report"
+            android:contentDescription="@string/desc_generar_pdf"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <ImageButton
@@ -54,6 +54,7 @@
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/fecha"
+            android:contentDescription="@string/desc_fecha_cobro_btn"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <ImageButton
@@ -63,17 +64,17 @@
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/fondot"
-            tools:ignore="SpeakableTextPresentCheck" />
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
         <ImageButton
             android:id="@+id/fabWhatsapp"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/whatsapp1"
+            android:contentDescription="@string/desc_enviar_whatsapp"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
     <LinearLayout
@@ -84,7 +85,12 @@
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:queryHint="Cliente"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/bg_search_pill"
+            android:iconifiedByDefault="false"
+            android:searchIcon="@drawable/ic_search_teal"
+            android:queryHint="@string/hint_buscar_cliente"
             android:id="@+id/txtbuscar"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/idRecycler"

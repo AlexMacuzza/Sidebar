@@ -27,6 +27,12 @@
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/bg_search_pill"
+            android:iconifiedByDefault="false"
+            android:searchIcon="@drawable/ic_search_teal"
+            android:queryHint="@string/hint_buscar_vendedor"
             android:id="@+id/txtbuscar"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/idRecycler"

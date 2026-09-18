@@ -12,6 +12,7 @@ import com.amcsoftware.sidebar.Entidades.Mercancia;
 import com.amcsoftware.sidebar.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class InventarioAdapter extends RecyclerView.Adapter<InventarioAdapter.InventarioAdapterHolder> implements View.OnClickListener {
@@ -56,7 +57,7 @@ public class InventarioAdapter extends RecyclerView.Adapter<InventarioAdapter.In
             listaMercancia.addAll(filteredData);
         }else{
             List<Mercancia> colletion = listaMercancia.stream().
-                    filter(i -> i.getDescripcion().toLowerCase().contains(txtbuscar.toLowerCase()))
+                    filter(i -> i.getDescripcion().toLowerCase(Locale.ROOT).contains(txtbuscar.toLowerCase(Locale.ROOT)))
                     .collect(Collectors.toList());
             listaMercancia.clear();
             listaMercancia.addAll(colletion);
@@ -94,8 +95,6 @@ public class InventarioAdapter extends RecyclerView.Adapter<InventarioAdapter.In
 
     public static class  InventarioAdapterHolder  extends RecyclerView.ViewHolder implements View.OnClickListener{
         Context context;
-        //EditText txtcantidad;
-
         TextView txtidp,txtdesc,txtprecioc,txtpreciov,txtcantidad;
         public InventarioAdapterHolder(View itemView) {
             super(itemView);

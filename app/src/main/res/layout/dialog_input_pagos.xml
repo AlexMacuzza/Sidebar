@@ -17,11 +17,12 @@
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/delete"
+            android:contentDescription="@string/desc_cerrar_dialogo"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Registrar Pago"
+            android:text="@string/titulo_registrar_pago"
             android:gravity="center"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -188,11 +189,11 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/refresh"
+            android:contentDescription="@string/desc_limpiar"
             tools:ignore="SpeakableTextPresentCheck" />
         <ImageButton
             android:id="@+id/btnfecha"
@@ -203,7 +204,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/fecha"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:contentDescription="@string/desc_seleccionar_fecha"
             tools:ignore="SpeakableTextPresentCheck"/>
         <ImageButton
             android:id="@+id/btnpago"
@@ -213,6 +214,7 @@
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/aceptar"
+            android:contentDescription="@string/desc_registrar_pago"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
 </LinearLayout>

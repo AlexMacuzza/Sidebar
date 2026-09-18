@@ -1,164 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/buscar_clientes_list"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="5dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="?attr/colorSurface">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Encabezado: nombre + cédula -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lblidcl"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtidcl1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/txtcliente1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lblcl2"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                android:maxLines="1"
+                android:ellipsize="end" />
+            <TextView
+                android:id="@+id/txtidcl1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/lblidcl1"
+                android:textSize="13sp"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Cuerpo: datos de contacto -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="@string/lblidcl1"
-            android:textSize="17sp" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblced1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtid1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblced2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblcel1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtcelular1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblcel2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lbldir1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtdir1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lbldir2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblcode1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtcodeudor1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblcode2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblcel1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtcelcodeudor1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblcel2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/lblobs1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+            <TextView
+                android:id="@+id/txtobservacion1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/lblobs2"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface" />
+        </LinearLayout>
+
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lblced1"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtid1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="@string/lblced2"
-            android:textSize="17sp" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lblcl1"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtcliente1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="@string/lblcl2"
-            android:textSize="17sp" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lblcel1"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtcelular1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lblcel2"
-            android:textSize="17sp"
-            android:layout_weight=".8" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lbldir1"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtdir1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lbldir2"
-            android:textSize="17sp"
-            android:layout_weight=".8" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lblcode1"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtcodeudor1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight=".8"
-            android:text="@string/lblcode2"
-            android:textSize="17sp" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lblcel1"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtcelcodeudor1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lblcel2"
-            android:textSize="17sp"
-            android:layout_weight=".8" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/lblobs1"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/txtobservacion1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lblobs2"
-            android:textSize="17sp"
-            android:layout_weight=".8" />
-    </LinearLayout>
-        <TextView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginEnd="11dp"
-        android:background="@color/black" />
-</LinearLayout>
+
+</androidx.cardview.widget.CardView>

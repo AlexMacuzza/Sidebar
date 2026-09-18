@@ -60,8 +60,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
     private ArrayList<Proveedores>   listaProveedores;
     private ArrayList<Mercancia> listaMercancia;
     private ProveedoresAdapter adapter2;
-    // 'subtotal' ahora se usará como la variable que mantiene el total
-    // actual de los ítems en el RecyclerView.
+    // 'subtotal' mantiene el total actual de los ítems en el RecyclerView
     private double subtotal, total, saldo, vpagado;
     private EditText txtidfc,txttotal,txtsaldo,txtvpagado;
     private JSONObject jsonObject = null;
@@ -112,8 +111,8 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         ArrayList<Ventas> listaventas = new ArrayList<>();
         recyclerVentasM.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerVentasM.setHasFixedSize(true);
-        // MODIFICACIÓN CLAVE 2: Pasar 'this' (el fragmento) como el listener a VentasAdapter.
-        adapter     = new VentasAdapter(listaventas, this); // 'this' se refiere a esta instancia de VentasFragment
+        // 'this' se pasa como listener de VentasAdapter (implementa OnSubtotalChangeListener)
+        adapter     = new VentasAdapter(listaventas, this);
         recyclerVentasM.setAdapter(adapter); // Establece el adaptador al RecyclerView
         requestQueue    = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo POST
         request         = Volley.newRequestQueue(requireContext());//Respuesta de las peticiones metódo GET
@@ -233,12 +232,9 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
 
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
-
-
 
     public void mostrarDialogoInput(Context context) {
         builder.setTitle("Seleccionar Mercancía:");
@@ -329,7 +325,6 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
 
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
@@ -386,11 +381,10 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
 
         //Inflar la vista del alert
         builder.setView(viewInflada);
-        //builder.show();
         alertDialog = builder.create();
         alertDialog.show();
     }
-    
+
     private void buscarProveedores() {
         String url = "https://www.wmcsoftware.net/apps/softpymes/listaProveedores.php";
         // Mostrar el diálogo de carga
@@ -454,9 +448,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
     }
 
     private void loadData() {
-        /*--------------------*/
-        // Inicialización de StringBuilders para evitar NullPointerException.
-        // Reiniciar antes de cada nueva compra.
+        // Reinicia los StringBuilders antes de cada nueva compra
         auxcodpv   = new StringBuilder();
         auxdescv   = new StringBuilder();
         auxpreciov = new StringBuilder();
@@ -469,17 +461,15 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         cantv   = new StringBuilder();
         subtv   = new StringBuilder();
         obsv    = new StringBuilder();
-        /*------------------*/
-        // Inicialización de variables numéricas para el estado inicial de la venta.
-        subtotal  = 0; // El total acumulado de los ítems en el RecyclerView.
+        // Estado numérico inicial de la compra
+        subtotal  = 0;
         vpagado   = 0;
         saldo     = 0;
-        total     = 0; // Esta variable 'total' puede ser redundante si 'subtotal' es el total de la venta.
-        // Mantendré 'subtotal' como el total de ítems y 'txttotal' como el EditText que lo muestra.
+        total     = 0;
         txtidfc.setText("");
         txtvpagado.setText("");
-        txttotal.setText("0"); // Asegurar que el campo de texto del total se inicialice en 0.
-        txtsaldo.setText("0"); // Asegurar que el campo de texto del saldo se inicialice en 0.
+        txttotal.setText("0");
+        txtsaldo.setText("0");
         txtidfc.requestFocus();
     }
 
@@ -512,7 +502,6 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
                 },
                 error -> {
                     AppUtils.cerrarCargando(dialogCargando);
-                    // Manejar errores
                     String errorMessage = "Error desconocido al guardar compra.";
                     if (error.networkResponse != null) {
                         int statusCode = error.networkResponse.statusCode;
@@ -566,10 +555,9 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         txtidfc.setText("");
         txtidcl.setText("");
         txtcliente.setText("");
-        txttotal.setText("0"); // Asegurar que el total visual se resetee a 0
+        txttotal.setText("0");
         txtvpagado.setText("");
-        txtsaldo.setText("0"); // Asegurar que el saldo visual se resetee a 0
-        /*--------------------*/
+        txtsaldo.setText("0");
         // Limpiar los StringBuilders para la próxima compra
         auxcodpv.setLength(0);
         auxdescv.setLength(0);
@@ -583,16 +571,12 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         cantv.setLength(0);
         subtv.setLength(0);
         obsv.setLength(0);
-        /*------------------*/
         // Resetear las variables numéricas
-        subtotal  = 0; // Reiniciar la variable del total acumulado en el fragmento
+        subtotal  = 0;
         vpagado   = 0;
         saldo     = 0;
         total     = 0;
-        /*------------------*/
-        // Limpiar el RecyclerView de las ventas.
-        // Esto también notificará a este fragmento a través de onSubtotalChanged
-        // que el subtotal ha cambiado a 0 (si estaba lleno).
+        // Limpiar el RecyclerView; dispara onSubtotalChanged con el subtotal en 0
         adapter.clearData();
         txtidfc.requestFocus();
     }
@@ -618,7 +602,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
 
     @Override
     public void onResponse(JSONObject response) {
-        /*-- Lista de mercancías --*/
+        // Lista de mercancías
         JSONArray jsonMercancia = response.optJSONArray("mercancia");
         if (jsonMercancia != null) {
             try {
@@ -637,7 +621,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
                 AppUtils.alertError(requireContext(), "Error", "No se pudo procesar la mercancía.");
             }
         }
-        /*-- Lista de proveedores --*/
+        // Lista de proveedores
         Proveedores proveedor;
         JSONArray json = response.optJSONArray("proveedor");
         if (json != null) {
@@ -677,7 +661,7 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         fpago  = "";
     }
 
-    // MODIFICACIÓN CLAVE 3: Implementación del método de la interfaz OnSubtotalChangeListener
+    // Implementación de OnSubtotalChangeListener
     @Override
     public void onSubtotalChanged(double subtotalChange,int position) {
         auxcodpv = new StringBuilder(codpv);
@@ -694,23 +678,13 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         auxpreciov = removeElementAtPosition(preciov,position, separador);
         auxsubtv = removeElementAtPosition(subtv,position, separador);
         auxobsv = removeElementAtPosition(obsv,position,";");
-        // Este método es invocado por el VentasAdapter cada vez que el subtotal de la lista cambia
-        // (específicamente, cuando un ítem es eliminado, el 'subtotalChange' será negativo).
-
-        // Actualiza la variable 'subtotal' del fragmento con el cambio recibido.
+        // Invocado por VentasAdapter cuando cambia el subtotal (negativo si se elimina un ítem)
         subtotal += subtotalChange;
-
-        // Asegúrate de que el subtotal no sea negativo (si por alguna razón llega a serlo, lo fijamos en 0).
         if (subtotal < 0) {
             subtotal = 0;
         }
-
-        // Actualiza el EditText que muestra el total de la venta.
         txttotal.setText(String.format(Locale.US, "%.0f", subtotal));
-
-        // También, recalcula y actualiza el saldo, ya que el total de la venta ha cambiado.
-        // Aquí asumimos que 'vpagado' tiene el valor actual ingresado por el usuario.
-        // Si no se ha ingresado nada, o si txtvpagado está vacío, se asume 0 para el cálculo.
+        // Recalcula el saldo con el valor pagado actual (0 si el campo está vacío)
         double valorPagadoActual = 0;
         try {
             if (!txtvpagado.getText().toString().isEmpty()) {
@@ -718,7 +692,6 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
             }
         } catch (NumberFormatException e) {
             Log.e("ComprasFragment", "Error al parsear vpagado en onSubtotalChanged: " + e.getMessage());
-            // No es necesario mostrar un Toast aquí, ya que el usuario no está interactuando activamente con el campo.
         }
         saldo = subtotal - valorPagadoActual;
         txtsaldo.setText(String.format(Locale.US, "%.0f", saldo));
@@ -729,22 +702,17 @@ public class ComprasFragment extends Fragment implements Response.Listener<JSONO
         subtv   = auxsubtv;
         obsv    = auxobsv;
     }
-    //Remover un item de array cuando se elimina un elemento del recyclerview
+    // Elimina el elemento en 'position' de un StringBuilder separado por 'separator'
     public static StringBuilder removeElementAtPosition(StringBuilder sb, int position, String separator) {
-        // 1. Dividir el StringBuilder en sus elementos lógicos
         String fullString = sb.toString();
         String[] elementsArray = fullString.split(separator);
-        // 2. Validar la posición
         if (position < 0 || position >= elementsArray.length) {
             System.out.println("Error: Posición " + position + " fuera de rango. No se realizó ninguna eliminación.");
             return sb;
         }
-        // 3. Crear una lista mutable para eliminar el elemento fácilmente
         List<String> elementsList = new ArrayList<>(Arrays.asList(elementsArray));
-        // 4. Eliminar el elemento en la posición especificada
         elementsList.remove(position);
-        // 5. Reconstruir el StringBuilder a partir de la lista modificada
-        sb.setLength(0); // Vaciar el StringBuilder existente
+        sb.setLength(0);
         for (int i = 0; i < elementsList.size(); i++) {
             sb.append(elementsList.get(i));
             sb.append(separator);

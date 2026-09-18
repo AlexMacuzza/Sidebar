@@ -31,9 +31,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.amcsoftware.sidebar.Entidades.Mercancia;
 import com.amcsoftware.sidebar.adapter.InventarioAdapter;
 import com.amcsoftware.sidebar.utils.AppUtils;
+import com.amcsoftware.sidebar.utils.ReportePdfUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -46,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,7 +100,6 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
         OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
             @Override
             public void handleOnBackPressed() {
-                //Toast.makeText(requireContext(), "Botón en MyFragment", Toast.LENGTH_LONG).show();
             }
         };
 
@@ -108,80 +110,33 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
     }
 
     private void generarPdf() {
-        //Fecha y hora para el nombre del archivo
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String fechahora = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(new Date());
-        // Definir la ruta donde se guardará el archivo
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/Inventario_"+timeStamp+".pdf";
 
-        // Crear el documento
         Document document = new Document();
+        boolean exito = false;
 
         try {
             PdfWriter.getInstance(document, new FileOutputStream(path));
             document.open();
-            // Obtener la imagen y ajustar su tamaño
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_negocio1);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            Image logo = Image.getInstance(stream.toByteArray());
-            logo.scaleToFit(250, 250); // Redimensionar el logo a 50x50 puntos
-            // Posicionar el logo en la esquina superior izquierda
-            logo.setAbsolutePosition(20, 740);
-            document.add(logo);
-            // Definir una fuente para el título
-            Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 20, BaseColor.BLACK);
-            // Crear el párrafo del título y centrarlo
-            Paragraph title = new Paragraph("INVENTARIO", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            // Agregar un título al documento
-            document.add(title);
-            document.add(new Paragraph("\n")); // Salto de línea
-            // Definir una fuente para el subtítulo
-            Font subtitleFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, BaseColor.BLACK);
-            // Crear el párrafo del título y centrarlo
-            Paragraph subtitle = new Paragraph(fechahora, subtitleFont);
-            subtitle.setAlignment(Element.ALIGN_LEFT);
-            // Agregar un subtítulo al documento
-            document.add(subtitle);
-            document.add(new Paragraph("\n")); // Salto de línea
-            // Definir anchos relativos para 3 columnas (por ejemplo, 10% para la primera, 45% para las otras dos)
+            ReportePdfUtils.agregarEncabezado(document, requireContext(), "INVENTARIO", null);
+
+            // Tabla con encabezados ID/DETALLE/CANTIDAD
             float[] columnWidths = {1f, 4.5f, 2f};
-            PdfPTable table = new PdfPTable(columnWidths);
-            //table.setWidthPercentage(100); // Ocupa el 100% del ancho de la página
-            // Definir una fuente para los encabezados
-            Font headerFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 10, BaseColor.WHITE);
-            // Definir un color de fondo para las celdas de encabezado
-            BaseColor headerColor = new BaseColor(0, 169, 143); // Un color azul oscuro
-            // Definir los encabezados de la tabla
-            String[] headers = {"ID", "DETALLE", "CANTIDAD"};
-            for (String header : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-                cell.setBackgroundColor(headerColor);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER); // Alinear el texto al centro
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alinear verticalmente al centro
-                table.addCell(cell);
-            }
-            // Llenar la tabla con datos
+            PdfPTable table = ReportePdfUtils.crearTabla(columnWidths);
+            ReportePdfUtils.agregarEncabezadosTabla(table, new String[]{"ID", "DETALLE", "CANTIDAD"});
+            // Llenar la tabla con los datos del inventario
             if (adapter != null && adapter.getItemCount() > 0) {
                 for (int i = 0; i < adapter.getItemCount(); i++) {
                     Mercancia mercancia1= adapter.getItemAtPosition(i);
                     if (mercancia1 != null) {
-                        // Las celdas de datos también se pueden alinear
-                        PdfPCell idCell = new PdfPCell(new Phrase(mercancia1.getIdp(),subtitleFont));
-                        idCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(idCell); // ID
-                        PdfPCell detalle = new PdfPCell(new Phrase(mercancia1.getDescripcion(),subtitleFont));
-                        detalle.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        table.addCell(detalle); // Detalle
-                        PdfPCell qtyCell = new PdfPCell(new Phrase(mercancia1.getCantidad(),subtitleFont));
-                        qtyCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.addCell(qtyCell); // Cantidad
+                        table.addCell(ReportePdfUtils.celda(mercancia1.getIdp(), Element.ALIGN_CENTER, i));
+                        table.addCell(ReportePdfUtils.celda(mercancia1.getDescripcion(), Element.ALIGN_LEFT, i));
+                        table.addCell(ReportePdfUtils.celda(mercancia1.getCantidad(), Element.ALIGN_CENTER, i));
                     }
                 }
-                // Agregar la tabla al documento
                 document.add(table);
-                AppUtils.alertExito(requireContext(), "Éxito", "Reporte generado exitosamente.");
+                exito = true;
             }else{
                 AppUtils.alertAdvertencia(requireContext(), "Sin datos", "No hay registros que mostrar.");
             }
@@ -190,6 +145,10 @@ public class InventarioFragment extends Fragment implements Response.Listener<JS
             AppUtils.alertError(requireContext(), "Error", "No se pudo generar el PDF.");
         } finally {
             document.close();
+            if (exito && getContext() != null) {
+                Toast.makeText(getContext(), "Reporte generado exitosamente!", Toast.LENGTH_SHORT).show();
+                AppUtils.abrirPdf(getContext(), new File(path));
+            }
         }
 
     }

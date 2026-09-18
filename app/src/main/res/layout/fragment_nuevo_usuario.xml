@@ -72,13 +72,12 @@
         android:enabled="false"
         android:hint="@string/txtsuc"
         android:inputType="text"
-        android:text="INPROASEO"
+        android:text="@string/valor_sucursal_defecto"
         tools:ignore="Autofill" />
     <ImageButton
         android:id="@+id/btregistrar"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentStart="true"
         android:layout_marginStart="51dp"
         android:background="@null"
         android:gravity="center"

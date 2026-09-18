@@ -11,6 +11,11 @@
     <!-- maxSdkVersion="28" asegura que estos permisos solo se pidan en dispositivos con Android 9 o inferior -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <!-- Recordatorios de Agenda: notificación (Android 13+), alarma exacta (Android 12+)
+         y reprogramación tras reiniciar el dispositivo -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -31,5 +36,28 @@
         </activity>
         <activity android:name=".MainActivity"><!-- Necesario para abrir  el Navigation Drawer-->
         </activity>
+        <!-- Recibe el disparo de la alarma de un recordatorio de Agenda y muestra la notificación -->
+        <receiver
+            android:name=".notificaciones.RecordatorioReceiver"
+            android:exported="false" />
+        <!-- Reprograma los recordatorios de Agenda tras reiniciar el dispositivo -->
+        <receiver
+            android:name=".notificaciones.BootReceiver"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <!-- Permite compartir/abrir los PDF de reportes (carpeta Descargas) con visores de otras apps -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>

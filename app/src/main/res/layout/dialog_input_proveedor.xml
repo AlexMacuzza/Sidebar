@@ -14,6 +14,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@null"
+            android:contentDescription="@string/desc_cerrar_dialogo"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/delete"
@@ -22,7 +23,7 @@
             android:id="@+id/lbltitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nuevo Proveedor"
+            android:text="@string/lbltitulo_nuevo_proveedor"
             android:gravity="center"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -35,7 +36,7 @@
     <TextView
         android:id="@+id/lblidpr"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:text="Idpr"
         android:textSize="17sp"
@@ -122,6 +123,7 @@
             android:text="Celular:"
             android:textSize="17sp"
             android:textStyle="bold"
+            android:labelFor="@id/txtcel"
             tools:ignore="HardcodedText" />
         <EditText
             android:id="@+id/txtcel"
@@ -131,34 +133,30 @@
             android:maxLength="10"
             android:enabled="true"
             android:inputType="number"
+            android:autofillHints="phone"
             android:imeOptions="actionNext"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Dirección:"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText" />
+            android:layout_weight="1"
+            android:text="Dirección:"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
-            <EditText
-                android:id="@+id/txtdir"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".7"
-                android:inputType="text"
-                tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TextFields,TouchTargetSizeCheck,VisualLintTextFieldSize"
-                android:imeOptions="actionNext"/>
-        </LinearLayout>
+        <EditText
+            android:id="@+id/txtdir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
+            android:inputType="text"
+            tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TextFields,TouchTargetSizeCheck,VisualLintTextFieldSize"
+            android:imeOptions="actionNext"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -197,8 +195,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@null"
+            android:contentDescription="@string/desc_limpiar_form"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/refresh"
@@ -208,6 +206,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@null"
+            android:contentDescription="@string/desc_guardar"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/aceptar"
@@ -217,6 +216,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@null"
+            android:contentDescription="@string/bteliminar"
             android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/eliminar"

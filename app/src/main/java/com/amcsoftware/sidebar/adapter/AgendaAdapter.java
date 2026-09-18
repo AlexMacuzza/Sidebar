@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amcsoftware.sidebar.Entidades.Agenda;
 import com.amcsoftware.sidebar.R;
 import com.amcsoftware.sidebar.utils.AppUtils;
+import com.amcsoftware.sidebar.utils.RecordatorioScheduler;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -26,6 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -47,7 +49,6 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
         this.listaCompleta = new ArrayList<>(listaAgenda);
     }
 
-    // ── Creación del ViewHolder ───────────────────────────────────────────────
     @NonNull
     @Override
     public AgendaHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -63,7 +64,6 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
         return new AgendaHolder(vista, parentContext);
     }
 
-    // ── Enlace de datos ───────────────────────────────────────────────────────
     @Override
     public void onBindViewHolder(@NonNull AgendaHolder holder, int position) {
         Agenda item = listaAgenda.get(position);
@@ -81,9 +81,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
     @Override
     public int getItemCount() { return listaAgenda.size(); }
 
-    // ── Sincronizar la copia de respaldo cuando cambian TODOS los datos ────────
-    // Debe llamarse después de poblar listaAgenda desde el servidor (carga
-    // inicial o refresh), antes o junto a notifyDataSetChanged().
+    // Sincroniza la copia de respaldo tras recargar listaAgenda desde el servidor
     @SuppressLint("NotifyDataSetChanged")
     public void actualizarLista() {
         listaCompleta.clear();
@@ -92,30 +90,28 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
     }
 
 
-    // ── Filtrado por descripción ──────────────────────────────────────────────
     @SuppressLint("NotifyDataSetChanged")
     public void filtrado(String txtBuscar) {
         listaAgenda.clear();
         if (txtBuscar == null || txtBuscar.isEmpty()) {
             listaAgenda.addAll(listaCompleta);
         } else {
-            String query = txtBuscar.toLowerCase().trim();
+            String query = txtBuscar.toLowerCase(Locale.ROOT).trim();
             List<Agenda> filtrados = listaCompleta.stream()
-                    .filter(a -> a.getDescripcion().toLowerCase().contains(query))
+                    .filter(a -> a.getDescripcion().toLowerCase(Locale.ROOT).contains(query))
                     .collect(Collectors.toList());
             listaAgenda.addAll(filtrados);
         }
         notifyDataSetChanged();
     }
 
-    // ── Agregar un ítem al tope sin recargar toda la lista ────────────────────
+    // Agrega un ítem al tope sin recargar toda la lista
     public void agregarItem(Agenda agenda) {
         listaAgenda.add(0, agenda);
         listaCompleta.add(0, agenda);
         notifyItemInserted(0);
     }
 
-    // ── Click listener delegado ───────────────────────────────────────────────
     public void setOnClickListener(View.OnClickListener listener) {
         this.listener = listener;
     }
@@ -125,7 +121,6 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
         if (listener != null) listener.onClick(v);
     }
 
-    // ── Helper: color según prioridad ─────────────────────────────────────────
     private int colorPrioridad(String prioridad) {
         if (prioridad == null) return COLOR_DEF;
         switch (prioridad.trim()) {
@@ -136,7 +131,6 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
         }
     }
 
-    // ── ViewHolder ────────────────────────────────────────────────────────────
     public static class AgendaHolder extends RecyclerView.ViewHolder {
         public Context context;
         TextView txtid, txtdescripcion, txtfecha, txtprioridad;
@@ -181,6 +175,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.AgendaHold
                             msj = "No se pudo procesar la respuesta del servidor.";
                         }
                         if (ok) {
+                            RecordatorioScheduler.cancelar(context, idt);
                             AppUtils.alertExito(context, "Éxito", msj);
                         } else {
                             AppUtils.alertError(context, "Atención", msj);

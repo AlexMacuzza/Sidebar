@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="alexm">
     <words>
+      <w>acceso</w>
       <w>acción</w>
       <w>aceptable</w>
       <w>aceptar</w>
@@ -35,6 +36,7 @@
       <w>auxidfv</w>
       <w>auxsaldo</w>
       <w>auxvcuota</w>
+      <w>avatar</w>
       <w>avisar</w>
       <w>bien</w>
       <w>borrar</w>
@@ -58,6 +60,7 @@
       <w>búsqueda</w>
       <w>calcular</w>
       <w>calendario</w>
+      <w>calificación</w>
       <w>calificar</w>
       <w>calificarcliente</w>
       <w>cambiar</w>
@@ -80,6 +83,7 @@
       <w>cerrar</w>
       <w>cerrarse</w>
       <w>cierra</w>
+      <w>circular</w>
       <w>claro</w>
       <w>clave</w>
       <w>cliente</w>
@@ -93,6 +97,7 @@
       <w>codpago</w>
       <w>codperfil</w>
       <w>cola</w>
+      <w>compra</w>
       <w>colletion</w>
       <w>color</w>
       <w>columnas</w>
@@ -127,6 +132,8 @@
       <w>dependiendo</w>
       <w>desactivar</w>
       <w>desapercibido</w>
+      <w>descripcion</w>
+      <w>descripción</w>
       <w>desea</w>
       <w>destruye</w>
       <w>detrás</w>
@@ -152,6 +159,7 @@
       <w>enviar</w>
       <w>errores</w>
       <w>escribir</w>
+      <w>específico</w>
       <w>esquina</w>
       <w>estrictamente</w>
       <w>está</w>
@@ -238,6 +246,7 @@
       <w>mayor</w>
       <w>menor</w>
       <w>mensaje</w>
+      <w>mercancía</w>
       <w>mismo</w>
       <w>mostrar</w>
       <w>mover</w>
@@ -270,11 +279,13 @@
       <w>pagos</w>
       <w>pagoxfecha</w>
       <w>pantalla</w>
+      <w>pdf</w>
       <w>parámetros</w>
       <w>pasaba</w>
       <w>pendiente</w>
       <w>pendientes</w>
       <w>perfil</w>
+      <w>perfiles</w>
       <w>permanece</w>
       <w>personalizado</w>
       <w>peticiones</w>
@@ -289,6 +300,8 @@
       <w>primera</w>
       <w>principio</w>
       <w>programar</w>
+      <w>proveedor</w>
+      <w>proveedores</w>
       <w>próximo</w>
       <w>puede</w>
       <w>puedes</w>
@@ -308,15 +321,20 @@
       <w>recaudo</w>
       <w>recaudox</w>
       <w>recibida</w>
+      <w>recortada</w>
+      <w>recortado</w>
       <w>recycler</w>
       <w>recyclerview</w>
       <w>redimensionar</w>
+      <w>redondeada</w>
+      <w>redondeado</w>
       <w>referencia</w>
       <w>refrescar</w>
       <w>registrar</w>
       <w>registros</w>
       <w>regresar</w>
       <w>relativos</w>
+      <w>reordenar</w>
       <w>repoblarla</w>
       <w>reporte</w>
       <w>reprogramar</w>
@@ -334,6 +352,7 @@
       <w>saldoant</w>
       <w>salto</w>
       <w>segunda</w>
+      <w>seleccionar</w>
       <w>seguro</w>
       <w>seleccion</w>
       <w>seleccionada</w>
@@ -394,6 +413,7 @@
       <w>título</w>
       <w>usamos</w>
       <w>usuario</w>
+      <w>usuarios</w>
       <w>vacía</w>
       <w>vacío</w>
       <w>valida</w>
@@ -402,6 +422,8 @@
       <w>valorp</w>
       <w>vcuota</w>
       <w>vector</w>
+      <w>vendedor</w>
+      <w>vendedores</w>
       <w>venta</w>
       <w>ventana</w>
       <w>ventas</w>

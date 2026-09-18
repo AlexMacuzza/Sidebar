@@ -1,14 +1,48 @@
 package com.amcsoftware.sidebar.utils;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import android.net.Uri;
+import androidx.core.content.FileProvider;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import java.io.File;
 
 public class AppUtils {
 
     // Constructor privado: clase utilitaria, no se instancia
     private AppUtils() {}
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  ARCHIVOS – Abrir PDF generado
+    // ════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Abre un PDF recién generado con el visor que el usuario tenga instalado,
+     * en vez de dejarlo solo guardado en Descargas para que lo busque a mano.
+     * Usa FileProvider porque desde Android 7 (API 24) un content:// es
+     * obligatorio para compartir un archivo del almacenamiento externo con
+     * otra app.
+     *
+     * @param context Contexto de la Activity o Fragment
+     * @param archivo Archivo PDF ya cerrado/escrito en disco
+     */
+    public static void abrirPdf(Context context, File archivo) {
+        try {
+            Uri uri = FileProvider.getUriForFile(context,
+                    context.getPackageName() + ".fileprovider", archivo);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, "application/pdf");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            alertAdvertencia(context, "Sin visor de PDF",
+                    "El reporte se guardó en Descargas, pero no hay una app instalada para abrirlo.");
+        }
+    }
 
     // ════════════════════════════════════════════════════════════════════════
     //  CONECTIVIDAD

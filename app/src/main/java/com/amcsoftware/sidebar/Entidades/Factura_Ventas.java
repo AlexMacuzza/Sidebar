@@ -15,7 +15,10 @@ public class Factura_Ventas {
     private String vmora;
     private String score;
     private String vcuotas;
+    private String ultimopago;
 
+    public String getUltimopago() { return ultimopago; }
+    public void setUltimopago(String ultimopago) { this.ultimopago = ultimopago; }
     public String getScore() {return score;}
     public void setScore(String score) {this.score = score;}
     public String getVcuotas() {return vcuotas;}
